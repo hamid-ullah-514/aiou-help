@@ -866,19 +866,79 @@ button, input, textarea, select,
     background: #f8fafc;
     border: 1px solid var(--border-light);
     border-radius: var(--radius-sm);
-    padding: 0.55rem 0.85rem;
-    font-size: 0.92rem;
+    padding: 0.65rem 0.95rem;
+    font-size: 0.95rem;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.65rem;
+    transition: all 0.18s ease;
+    cursor: pointer;
+    user-select: none;
+}
+
+.mcq-option-choice:hover {
+    background: #f1f5f9;
+    border-color: #0f766e;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.mcq-option-badge {
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    color: #334155;
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: all 0.15s ease;
 }
 
-.mcq-option-choice.correct-highlight {
-    background: #dcfce7;
-    border-color: #86efac;
-    color: #15803d;
+.mcq-option-choice:hover .mcq-option-badge {
+    background: #0f766e;
+    color: #ffffff;
+}
+
+.mcq-option-choice.selected-correct {
+    background: #dcfce7 !important;
+    border-color: #16a34a !important;
+    color: #15803d !important;
     font-weight: 700;
+    box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.25);
+}
+
+.mcq-option-choice.selected-correct .mcq-option-badge {
+    background: #16a34a !important;
+    color: #ffffff !important;
+}
+
+.mcq-option-choice.selected-wrong {
+    background: #fee2e2 !important;
+    border-color: #ef4444 !important;
+    color: #b91c1c !important;
+    font-weight: 700;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25);
+}
+
+.mcq-option-choice.selected-wrong .mcq-option-badge {
+    background: #ef4444 !important;
+    color: #ffffff !important;
+}
+
+.mcq-option-choice.correct-highlight {
+    background: #dcfce7 !important;
+    border-color: #16a34a !important;
+    color: #15803d !important;
+    font-weight: 700;
+}
+
+.mcq-option-choice.correct-highlight .mcq-option-badge {
+    background: #16a34a !important;
+    color: #ffffff !important;
 }
 
 .mcq-reveal-box {
@@ -1205,10 +1265,393 @@ button, input, textarea, select,
 .image-q-footer {
     background: #f8fafc;
     border-top: 1px solid var(--border-light);
-    padding: 0.85rem 1.25rem;
+    padding: 0.85rem 125rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 0.75rem;
 }
+
+/* ==========================================================================
+   3-COLUMN FEATURE LAYOUT (Matching User's Student Portal Mockup)
+   ========================================================================== */
+.feature-layout-3col {
+    display: grid;
+    grid-template-columns: 250px 1fr 250px;
+    gap: 1.25rem;
+    align-items: start;
+    margin-top: 1.25rem;
+}
+
+.steps-guide-card {
+    background: #f8fafc;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.guide-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.guide-steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.guide-step-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.step-num-badge {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.88rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 3px rgba(15, 118, 110, 0.3);
+}
+
+.step-text {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.8;
+}
+
+.center-feature-card {
+    background: #ffffff;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.features-summary-card {
+    background: #f0fdfa;
+    border: 1px solid #ccfbf1;
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.features-checklist {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.features-checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.92rem;
+    color: #134e4a;
+    font-weight: 600;
+    line-height: 1.9;
+}
+
+.check-icon {
+    color: #0d9488;
+    font-weight: 900;
+    font-size: 1rem;
+}
+
+/* ==========================================================================
+   MOBILE BOTTOM NAVIGATION BAR (Mobile App Feel)
+   ========================================================================== */
+.mobile-bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid #e2e8f0;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+    z-index: 9999;
+    padding: 0.35rem 0.4rem;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 0.35rem 0.25rem;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    flex: 1;
+    text-align: center;
+}
+
+.mobile-nav-item:active {
+    transform: scale(0.94);
+}
+
+.mobile-nav-item.active {
+    color: var(--primary);
+    background: var(--primary-light);
+}
+
+.mobile-nav-icon {
+    font-size: 1.3rem;
+    line-height: 1;
+    margin-bottom: 0.15rem;
+}
+
+.mobile-nav-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN & MOBILE OPTIMIZATIONS
+   ========================================================================== */
+@media (max-width: 1024px) {
+    .feature-layout-3col {
+        grid-template-columns: 1fr;
+    }
+    .center-feature-card {
+        order: 1;
+    }
+    .steps-guide-card {
+        order: 2;
+    }
+    .features-summary-card {
+        order: 3;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-bottom: 78px !important;
+        font-size: 15px;
+    }
+
+    .mobile-bottom-nav {
+        display: flex;
+    }
+
+    .app-container {
+        padding: 0.75rem 0.5rem;
+        max-width: 100%;
+    }
+
+    .card {
+        padding: 1.25rem 0.85rem;
+        border-radius: var(--radius-md);
+        margin-bottom: 1rem;
+    }
+
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+
+    .header-logo-group {
+        justify-content: center;
+    }
+
+    .header-title-text {
+        font-size: 1.3rem;
+    }
+
+    .header-subtitle-text {
+        font-size: 0.85rem;
+    }
+
+    /* Hide redundant desktop scope selector on mobile if desired, or compact it */
+    .selector-card {
+        padding: 1rem 0.75rem;
+    }
+
+    .features-nav-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+    }
+
+    .feature-card-btn {
+        padding: 0.75rem 0.5rem;
+        min-height: auto;
+    }
+
+    .feature-icon {
+        font-size: 1.4rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .feature-name {
+        font-size: 0.92rem;
+    }
+
+    .feature-caption {
+        font-size: 0.72rem;
+        display: none; /* Hide verbose subtitle on small buttons for neatness */
+    }
+
+    .form-select, .form-input, .form-textarea {
+        font-size: 16px; /* Prevents auto-zoom on iOS */
+        padding: 0.65rem 0.85rem;
+    }
+
+    .option-picker-box {
+        padding: 0.85rem;
+    }
+
+    .picker-radios {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .picker-pill {
+        padding: 0.6rem 0.85rem;
+        font-size: 0.9rem;
+    }
+
+    .button-row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .button-row .btn, .center-feature-card .btn {
+        width: 100% !important;
+        justify-content: center;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+    }
+
+    .mcq-options-container {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .mcq-option-choice {
+        padding: 0.65rem 0.85rem;
+        font-size: 0.92rem;
+        width: 100%;
+    }
+
+    .chapter-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.6rem;
+        padding: 0.85rem 1rem;
+    }
+
+    .chapter-header .btn {
+        width: 100%;
+        font-size: 0.82rem;
+    }
+
+    .chapter-title-text {
+        font-size: 1rem;
+    }
+
+    .exam-summary-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+        padding: 1rem 0.85rem;
+    }
+
+    .exam-summary-bar .btn {
+        width: 100%;
+        font-size: 0.85rem;
+    }
+
+    .copy-actions-bar, .exam-q-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .copy-actions-bar .btn, .exam-q-actions .btn {
+        width: 100%;
+        font-size: 0.85rem;
+    }
+
+    .mcq-winner-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .image-dropzone {
+        padding: 1.5rem 1rem;
+    }
+
+    .dropzone-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .dropzone-actions .btn {
+        width: 100%;
+    }
+
+    .image-preview-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .image-preview-thumb {
+        width: 100%;
+        max-width: 240px;
+        height: auto;
+        max-height: 200px;
+    }
+
+    .image-preview-info {
+        min-width: 100%;
+    }
+
+    .toast {
+        left: 1rem;
+        right: 1rem;
+        bottom: 85px; /* Above the mobile nav */
+        max-width: calc(100% - 2rem);
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .features-nav-grid {
+        grid-template-columns: 1fr;
+    }
+    .header-logo-badge {
+        font-size: 1.8rem;
+    }
+}
+

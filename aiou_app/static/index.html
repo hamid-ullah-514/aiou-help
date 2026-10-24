@@ -291,34 +291,101 @@
                     <p class="panel-subtitle">منتخب کردہ کتاب کے تمام چیپٹرز سے جامع تعلیمی ماڈل نوٹس، تعریفات، ذیلی سرخیاں، مستند حوالہ جات اور خلاصہ جات حاصل کریں۔</p>
                 </div>
 
-                <!-- Question Count Selection -->
-                <div class="option-picker-box">
-                    <span class="picker-label">آپ ہر چیپٹر سے کتنے تفصیلی سوالات تیار کرنا چاہتے ہیں؟</span>
-                    <div class="picker-radios">
-                        <label class="picker-pill">
-                            <input type="radio" name="exam-count" value="3" checked>
-                            <span>ہر چیپٹر سے 3 سوالات (مجموعی 27 سوالات)</span>
-                        </label>
-                        <label class="picker-pill">
-                            <input type="radio" name="exam-count" value="4">
-                            <span>ہر چیپٹر سے 4 سوالات (مجموعی 36 سوالات)</span>
-                        </label>
-                        <label class="picker-pill">
-                            <input type="radio" name="exam-count" value="5">
-                            <span>ہر چیپٹر سے 5 سوالات (مجموعی 45 سوالات)</span>
-                        </label>
+                <div class="feature-layout-3col">
+                    <!-- Right side (in RTL): مرحلہ وار ہدایات -->
+                    <div class="steps-guide-card">
+                        <div class="guide-title">
+                            <span>📋</span>
+                            <span>مرحلہ وار ہدایات</span>
+                        </div>
+                        <div class="guide-steps-list">
+                            <div class="guide-step-item">
+                                <span class="step-num-badge">۱</span>
+                                <span class="step-text">سمسٹر کا انتخاب کریں</span>
+                            </div>
+                            <div class="guide-step-item">
+                                <span class="step-num-badge">۲</span>
+                                <span class="step-text">متعلقہ کتاب منتخب کریں</span>
+                            </div>
+                            <div class="guide-step-item">
+                                <span class="step-num-badge">۳</span>
+                                <span class="step-text">سوالات کی تعداد مقرر کریں</span>
+                            </div>
+                            <div class="guide-step-item">
+                                <span class="step-num-badge">۴</span>
+                                <span class="step-text">سوالات تیار کریں پر کلک کریں</span>
+                            </div>
+                            <div class="guide-step-item">
+                                <span class="step-num-badge">۵</span>
+                                <span class="step-text">مکمل امتحانی نوٹس حاصل کریں</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Center Form: Form controls -->
+                    <div class="center-feature-card">
+                        <div class="form-group">
+                            <label class="form-label" for="exam-semester-select">
+                                <span>۱۔ سمسٹر منتخب کریں:</span>
+                            </label>
+                            <select id="exam-semester-select" class="form-select urdu-text" onchange="onSemesterChange('exam')">
+                                <option value="">-- پہلے سمسٹر کا انتخاب کریں --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label class="form-label" for="exam-course-select">
+                                <span>۲۔ کتاب / کورس منتخب کریں:</span>
+                            </label>
+                            <select id="exam-course-select" class="form-select urdu-text" onchange="onCourseChange('exam')">
+                                <option value="">-- پہلے سمسٹر کا انتخاب ضروری ہے --</option>
+                            </select>
+                        </div>
+
+                        <!-- Question Count Selection -->
+                        <div class="option-picker-box" style="margin-top: 1rem;">
+                            <span class="picker-label">۳۔ آپ ہر چیپٹر سے کتنے تفصیلی سوالات تیار کرنا چاہتے ہیں؟</span>
+                            <div class="picker-radios">
+                                <label class="picker-pill">
+                                    <input type="radio" name="exam-count" value="3" checked>
+                                    <span>3 سوالات (کل 27 نوٹس)</span>
+                                </label>
+                                <label class="picker-pill">
+                                    <input type="radio" name="exam-count" value="4">
+                                    <span>4 سوالات (کل 36 نوٹس)</span>
+                                </label>
+                                <label class="picker-pill">
+                                    <input type="radio" name="exam-count" value="5">
+                                    <span>5 سوالات (کل 45 نوٹس)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="button-row" style="margin-top: 1.25rem;">
+                            <button id="exam-generate-btn" class="btn btn-primary" style="width: 100%; font-size: 1.05rem; padding: 0.85rem;" onclick="handleExamGenerate()">
+                                <span id="exam-spinner" class="spinner" style="display: none;"></span>
+                                <span>📝 امتحانی سوالات و ماڈل جوابات تیار کریں</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Left side (in RTL): خصوصیات -->
+                    <div class="features-summary-card">
+                        <div class="guide-title">
+                            <span>✨</span>
+                            <span>اہم خصوصیات</span>
+                        </div>
+                        <ul class="features-checklist">
+                            <li><span class="check-icon">✓</span> <span>ہر باب سے تفصیلی امتحانی سوالات</span></li>
+                            <li><span class="check-icon">✓</span> <span>تعریف، تشریح، قرآنی دلائل و خلاصہ</span></li>
+                            <li><span class="check-icon">✓</span> <span>کتاب کے مصدقہ صفحات کا حوالہ</span></li>
+                            <li><span class="check-icon">✓</span> <span>یک کلک کاپی برائے MS Word و موبائل</span></li>
+                        </ul>
                     </div>
                 </div>
 
-                <div class="button-row">
-                    <button id="exam-generate-btn" class="btn btn-primary" onclick="handleExamGenerate()">
-                        <span id="exam-spinner" class="spinner" style="display: none;"></span>
-                        <span>سوالات تیار کریں (Generate Exam Questions)</span>
-                    </button>
-                </div>
-
                 <!-- Exam Questions Display Area -->
-                <div id="exam-results-container" class="exam-display-area" style="display: none;">
+                <div id="exam-results-container" class="exam-display-area" style="display: none; margin-top: 2rem;">
                     <div class="exam-summary-bar">
                         <div>
                             <strong id="exam-summary-title">کتاب کے تمام چیپٹرز کے امتحانی سوالات</strong>
@@ -341,41 +408,109 @@
             <div class="card">
                 <div class="panel-header">
                     <h2 class="panel-title">📊 فیچر نمبر ۴: ہر چیپٹر سے MCQs تیار کریں</h2>
-                    <p class="panel-subtitle">منتخب کردہ کتاب کے ہر چیپٹر سے مصدقہ 4 آپشنز (الف، ب، ج، د) والے معروضی سوالات، درست جوابات اور صفحہ نمبر حاصل کریں۔</p>
+                    <p class="panel-subtitle">منتخب کردہ کتاب کے ہر باب سے مصدقہ 4 آپشنز (الف، ب، ج، د) والے معروضی سوالات، انٹرایکٹو ٹیسٹ، درست جوابات اور صفحہ نمبر حاصل کریں۔</p>
                 </div>
 
-                <!-- MCQ Count Selection -->
-                <div class="option-picker-box">
-                    <span class="picker-label">آپ ہر چیپٹر سے کتنے MCQs تیار کرنا چاہتے ہیں؟</span>
-                    <div class="picker-radios">
-                        <label class="picker-pill">
-                            <input type="radio" name="mcq-gen-count" value="10" checked>
-                            <span>ہر چیپٹر سے 10 MCQs (مجموعی 90 معروضی)</span>
-                        </label>
-                        <label class="picker-pill">
-                            <input type="radio" name="mcq-gen-count" value="15">
-                            <span>ہر چیپٹر سے 15 MCQs (مجموعی 135 معروضی)</span>
-                        </label>
-                        <label class="picker-pill">
-                            <input type="radio" name="mcq-gen-count" value="20">
-                            <span>ہر چیپٹر سے 20 MCQs (مجموعی 180 معروضی)</span>
-                        </label>
-                        <label class="picker-pill">
-                            <input type="radio" name="mcq-gen-count" value="25">
-                            <span>ہر چیپٹر سے 25 MCQs (مجموعی 225 معروضی)</span>
-                        </label>
+                <div class="feature-layout-3col">
+                    <!-- Right side (in RTL): مرحلہ وار ہدایات -->
+                    <div class="steps-guide-card">
+                        <div class="guide-title">
+                            <span>📋</span>
+                            <span>مرحلہ وار ہدایات</span>
+                        </div>
+                        <div class="guide-steps-list">
+                            <div class="guide-step-item">
+                                <span class="step-num-badge">۱</span>
+                                <span class="step-text">سمسٹر کا انتخاب کریں</span>
+                            </div>
+                            <div class="guide-step-item">
+                                <span class="step-num-badge">۲</span>
+                                <span class="step-text">کورس اور کتاب منتخب کریں</span>
+                            </div>
+                            <div class="guide-step-item">
+                                <span class="step-num-badge">۳</span>
+                                <span class="step-text">MCQs کی تعداد مقرر کریں</span>
+                            </div>
+                            <div class="guide-step-item">
+                                <span class="step-num-badge">۴</span>
+                                <span class="step-text">MCQs تیار کریں پر کلک کریں</span>
+                            </div>
+                            <div class="guide-step-item">
+                                <span class="step-num-badge">۵</span>
+                                <span class="step-text">آپشن پر کلک کر کے فوری ٹیسٹ لیں</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Center Form: Form controls -->
+                    <div class="center-feature-card">
+                        <div class="form-group">
+                            <label class="form-label" for="mcq-semester-select">
+                                <span>۱۔ سمسٹر منتخب کریں:</span>
+                            </label>
+                            <select id="mcq-semester-select" class="form-select urdu-text" onchange="onSemesterChange('mcq')">
+                                <option value="">-- پہلے سمسٹر کا انتخاب کریں --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label class="form-label" for="mcq-course-select">
+                                <span>۲۔ کتاب / کورس کا انتخاب کریں:</span>
+                            </label>
+                            <select id="mcq-course-select" class="form-select urdu-text" onchange="onCourseChange('mcq')">
+                                <option value="">-- پہلے سمسٹر کا انتخاب ضروری ہے --</option>
+                            </select>
+                        </div>
+
+                        <!-- MCQ Count Selection -->
+                        <div class="option-picker-box" style="margin-top: 1rem;">
+                            <span class="picker-label">۳۔ آپ ہر چیپٹر سے کتنے MCQs تیار کرنا چاہتے ہیں؟</span>
+                            <div class="picker-radios">
+                                <label class="picker-pill">
+                                    <input type="radio" name="mcq-gen-count" value="10" checked>
+                                    <span>10 MCQs (ہر باب)</span>
+                                </label>
+                                <label class="picker-pill">
+                                    <input type="radio" name="mcq-gen-count" value="15">
+                                    <span>15 MCQs (ہر باب)</span>
+                                </label>
+                                <label class="picker-pill">
+                                    <input type="radio" name="mcq-gen-count" value="20">
+                                    <span>20 MCQs (ہر باب)</span>
+                                </label>
+                                <label class="picker-pill">
+                                    <input type="radio" name="mcq-gen-count" value="25">
+                                    <span>25 MCQs (ہر باب)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="button-row" style="margin-top: 1.25rem;">
+                            <button id="mcq-gen-btn" class="btn btn-primary" style="width: 100%; font-size: 1.05rem; padding: 0.85rem;" onclick="handleMCQGenerate()">
+                                <span id="mcq-gen-spinner" class="spinner" style="display: none;"></span>
+                                <span>📊 MCQs تیار کریں (Generate Chapter MCQs)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Left side (in RTL): خصوصیات -->
+                    <div class="features-summary-card">
+                        <div class="guide-title">
+                            <span>✨</span>
+                            <span>اہم خصوصیات</span>
+                        </div>
+                        <ul class="features-checklist">
+                            <li><span class="check-icon">✓</span> <span>ہر باب سے مصدقہ کثیر الانتخابی سوالات</span></li>
+                            <li><span class="check-icon">✓</span> <span>انٹرایکٹو کلک سے درست/غلط کی نشاندہی</span></li>
+                            <li><span class="check-icon">✓</span> <span>اصل کتاب کا صفحہ نمبر اور حوالہ</span></li>
+                            <li><span class="check-icon">✓</span> <span>ہر سوال کی مدلل تشریح</span></li>
+                            <li><span class="check-icon">✓</span> <span>یک کلک کاپی برائے MS Word و پرچہ</span></li>
+                        </ul>
                     </div>
                 </div>
 
-                <div class="button-row">
-                    <button id="mcq-gen-btn" class="btn btn-primary" onclick="handleMCQGenerate()">
-                        <span id="mcq-gen-spinner" class="spinner" style="display: none;"></span>
-                        <span>MCQs تیار کریں (Generate Chapter MCQs)</span>
-                    </button>
-                </div>
-
                 <!-- MCQs Output Area -->
-                <div id="mcq-gen-results-area" class="exam-display-area" style="display: none;">
+                <div id="mcq-gen-results-area" class="exam-display-area" style="display: none; margin-top: 2rem;">
                     <div class="exam-summary-bar">
                         <div>
                             <strong id="mcq-gen-summary-title">کتاب کے تمام چیپٹرز کے MCQs</strong>
@@ -385,7 +520,7 @@
                             <button class="btn btn-secondary" onclick="toggleAllMCQAnswers()">
                                 <span id="mcq-toggle-text">👁️ تمام درست جوابات دکھائیں</span>
                             </button>
-                            <button class="btn btn-primary" onclick="copyEntireBookMCQs()">
+                            <button class="btn btn-primary" onclick="copyEntireBookMCQs(this)">
                                 <span>💾 تمام چیپٹرز کے MCQs کاپی کریں (برائے MS Word)</span>
                             </button>
                         </div>
@@ -478,6 +613,30 @@
         <p>AIOU Help — علامہ اقبال اوپن یونیورسٹی بی ایس اسلامیات (2.5 سالہ پروگرام)</p>
         <p style="margin-top: 0.25rem;">تمام سوالات، امتحانی نوٹس اور معروضی جوابات اصل نصابی کتب سے مصدقہ ہیں (Zero Hallucination)</p>
     </footer>
+
+    <!-- Mobile Bottom Navigation Bar (Fixed for Mobile Screens) -->
+    <nav class="mobile-bottom-nav">
+        <button class="mobile-nav-item active" id="mob-btn-qa" onclick="switchFeature('qa')">
+            <span class="mobile-nav-icon">🔍</span>
+            <span class="mobile-nav-label">سوال پوچھیں</span>
+        </button>
+        <button class="mobile-nav-item" id="mob-btn-image_qa" onclick="switchFeature('image_qa', true)">
+            <span class="mobile-nav-icon">📸</span>
+            <span class="mobile-nav-label">تصویر سے سوال</span>
+        </button>
+        <button class="mobile-nav-item" id="mob-btn-exam" onclick="switchFeature('exam')">
+            <span class="mobile-nav-icon">🎓</span>
+            <span class="mobile-nav-label">امتحانی تیاری</span>
+        </button>
+        <button class="mobile-nav-item" id="mob-btn-mcq_gen" onclick="switchFeature('mcq_gen')">
+            <span class="mobile-nav-icon">📊</span>
+            <span class="mobile-nav-label">MCQs بنائیں</span>
+        </button>
+        <button class="mobile-nav-item" id="mob-btn-quiz" onclick="switchFeature('quiz')">
+            <span class="mobile-nav-icon">✅</span>
+            <span class="mobile-nav-label">کوئز جواب</span>
+        </button>
+    </nav>
 
     <!-- Toast Notification -->
     <div id="toast" class="toast">

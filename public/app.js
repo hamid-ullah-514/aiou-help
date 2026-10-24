@@ -38,83 +38,132 @@ async function initApp() {
 }
 
 function populateSemesterDropdown(catalog) {
-    const semSelect = document.getElementById("semester-select");
-    semSelect.innerHTML = `<option value="">-- براہِ کرم پہلے سمسٹر منتخب کریں --</option>`;
+    const semIds = ["semester-select", "exam-semester-select", "mcq-semester-select"];
+    
+    semIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.innerHTML = `<option value="">-- براہِ کرم پہلے سمسٹر منتخب کریں --</option>`;
 
-    if (!catalog || !catalog.semesters || catalog.semesters.length === 0) {
-        semSelect.innerHTML += `<option value="1">سمسٹر 1 (Semester 1)</option>`;
-        return;
-    }
+        if (!catalog || !catalog.semesters || catalog.semesters.length === 0) {
+            el.innerHTML += `<option value="1">سمسٹر 1 (Semester 1)</option>`;
+            return;
+        }
 
-    catalog.semesters.forEach(s => {
-        const opt = document.createElement("option");
-        opt.value = s.semester_num;
-        opt.textContent = `${s.semester_name_ur || `سمسٹر ${s.semester_num}`} (${s.books ? s.books.length : 0} کتب)`;
-        semSelect.appendChild(opt);
+        catalog.semesters.forEach(s => {
+            const opt = document.createElement("option");
+            opt.value = s.semester_num;
+            opt.textContent = `${s.semester_name_ur || `سمسٹر ${s.semester_num}`} (${s.books ? s.books.length : 0} کتب)`;
+            el.appendChild(opt);
+        });
+
+        // Default to Semester 1 for immediate smooth student experience
+        el.value = "1";
     });
 
-    // Default to Semester 1 for immediate smooth student experience
-    semSelect.value = "1";
     onSemesterChange();
 }
 
-function onSemesterChange() {
-    const semSelect = document.getElementById("semester-select");
-    const courseSelect = document.getElementById("course-select");
+function onSemesterChange(source = "global") {
+    let semNum = "1";
+    if (source === "mcq" && document.getElementById("mcq-semester-select")) {
+        semNum = document.getElementById("mcq-semester-select").value;
+    } else if (source === "exam" && document.getElementById("exam-semester-select")) {
+        semNum = document.getElementById("exam-semester-select").value;
+    } else if (document.getElementById("semester-select")) {
+        semNum = document.getElementById("semester-select").value;
+    }
+
+    // Sync all semester selects
+    ["semester-select", "exam-semester-select", "mcq-semester-select"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = semNum;
+    });
+
+    const courseIds = ["course-select", "exam-course-select", "mcq-course-select"];
     const scopeBannerText = document.getElementById("scope-banner-text");
     const scopeStatsPill = document.getElementById("scope-stats-pill");
 
-    const semNum = semSelect.value;
     if (!semNum) {
-        courseSelect.disabled = true;
-        courseSelect.innerHTML = `<option value="">-- پہلے سمسٹر کا انتخاب ضروری ہے --</option>`;
-        scopeBannerText.textContent = "براہِ کرم اوپر دیے گئے ڈراپ ڈاؤن سے اپنا سمسٹر منتخب کریں۔";
-        scopeStatsPill.textContent = "0 کتب دستیاب";
+        courseIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.disabled = true;
+                el.innerHTML = `<option value="">-- پہلے سمسٹر کا انتخاب ضروری ہے --</option>`;
+            }
+        });
+        if (scopeBannerText) scopeBannerText.textContent = "براہِ کرم اوپر دیے گئے ڈراپ ڈاؤن سے اپنا سمسٹر منتخب کریں۔";
+        if (scopeStatsPill) scopeStatsPill.textContent = "0 کتب دستیاب";
         return;
     }
 
-    courseSelect.disabled = false;
-    courseSelect.innerHTML = `<option value="ALL">-- سمسٹر ${semNum} کی تمام کتب (جامع سرچ) --</option>`;
-
+    let booksInSem = [];
+    let semData = null;
     if (currentCatalog && currentCatalog.semesters) {
-        const semData = currentCatalog.semesters.find(s => String(s.semester_num) === String(semNum));
+        semData = currentCatalog.semesters.find(s => String(s.semester_num) === String(semNum));
         if (semData && semData.books) {
-            semData.books.forEach(b => {
-                const opt = document.createElement("option");
-                opt.value = b.course_code;
-                opt.textContent = `${b.course_code}: ${b.course_title_ur} (${b.pages_count || 0} صفحات)`;
-                courseSelect.appendChild(opt);
-            });
-
-            scopeBannerText.textContent = `فعال دائرہ کار: ${semData.semester_name_ur} | نصاب کے مطابق کتب شامل ہیں۔`;
-            scopeStatsPill.textContent = `${semData.books.length} کتب دستیاب`;
-            
-            // Auto-select first real course if available
-            if (semData.books.length > 0) {
-                courseSelect.value = semData.books[0].course_code;
-                onCourseChange();
-            }
-            return;
+            booksInSem = semData.books;
         }
     }
 
-    scopeBannerText.textContent = `فعال دائرہ کار: سمسٹر ${semNum}`;
-    scopeStatsPill.textContent = "کتب فعال ہیں";
+    courseIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.disabled = false;
+        el.innerHTML = `<option value="ALL">-- سمسٹر ${semNum} کی تمام کتب (جامع سرچ) --</option>`;
+
+        booksInSem.forEach(b => {
+            const opt = document.createElement("option");
+            opt.value = b.course_code;
+            opt.textContent = `${b.course_code}: ${b.course_title_ur} (${b.pages_count || 0} صفحات)`;
+            el.appendChild(opt);
+        });
+
+        // Default to first real course
+        if (booksInSem.length > 0) {
+            el.value = booksInSem[0].course_code;
+        }
+    });
+
+    if (semData) {
+        if (scopeBannerText) scopeBannerText.textContent = `فعال دائرہ کار: ${semData.semester_name_ur} | نصاب کے مطابق کتب شامل ہیں۔`;
+        if (scopeStatsPill) scopeStatsPill.textContent = `${booksInSem.length} کتب دستیاب`;
+    }
+
+    onCourseChange("global");
 }
 
-function onCourseChange() {
+function onCourseChange(source = "global") {
+    let cCode = "";
+    if (source === "mcq" && document.getElementById("mcq-course-select")) {
+        cCode = document.getElementById("mcq-course-select").value;
+    } else if (source === "exam" && document.getElementById("exam-course-select")) {
+        cCode = document.getElementById("exam-course-select").value;
+    } else if (document.getElementById("course-select")) {
+        cCode = document.getElementById("course-select").value;
+    }
+
+    // Sync all course selects
+    ["course-select", "exam-course-select", "mcq-course-select"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.value !== cCode) {
+            el.value = cCode;
+        }
+    });
+
     const semSelect = document.getElementById("semester-select");
     const courseSelect = document.getElementById("course-select");
     const scopeBannerText = document.getElementById("scope-banner-text");
+    if (!scopeBannerText || !semSelect || !courseSelect) return;
 
     const semNum = semSelect.value;
-    const cCode = courseSelect.value;
-
     if (!cCode || cCode === "ALL") {
         scopeBannerText.textContent = `فعال دائرہ کار: سمسٹر ${semNum} کی تمام متعلقہ کتب میں بیک وقت تلاش جاری ہے۔`;
     } else {
         const selectedOption = courseSelect.options[courseSelect.selectedIndex];
-        scopeBannerText.textContent = `منتخب شدہ کتاب: ${selectedOption.textContent} (سمسٹر ${semNum})`;
+        if (selectedOption) {
+            scopeBannerText.textContent = `منتخب شدہ کتاب: ${selectedOption.textContent} (سمسٹر ${semNum})`;
+        }
     }
 }
 
@@ -126,13 +175,18 @@ function switchFeature(feat, autoTriggerFile = false) {
     tabs.forEach(t => {
         const btn = document.getElementById(`feat-btn-${t}`);
         const sec = document.getElementById(`section-${t}`);
+        const mobBtn = document.getElementById(`mob-btn-${t}`);
         if (btn) btn.classList.remove("active");
+        if (mobBtn) mobBtn.classList.remove("active");
         if (sec) sec.style.display = "none";
     });
 
     const activeBtn = document.getElementById(`feat-btn-${feat}`);
+    const activeMobBtn = document.getElementById(`mob-btn-${feat}`);
     const activeSec = document.getElementById(`section-${feat}`);
+    
     if (activeBtn) activeBtn.classList.add("active");
+    if (activeMobBtn) activeMobBtn.classList.add("active");
     if (activeSec) {
         activeSec.style.display = "block";
         activeSec.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -318,15 +372,19 @@ async function copyQAQuestion(btn = null) {
 // FEATURE 2: پیپر کی تیاری (Exam Preparation)
 // ==========================================
 async function handleExamGenerate() {
-    let courseCode = document.getElementById("course-select").value;
-    const courseSelect = document.getElementById("course-select");
+    let courseCode = document.getElementById("exam-course-select") ? document.getElementById("exam-course-select").value : "";
+    if (!courseCode || courseCode === "ALL") {
+        const cs = document.getElementById("course-select");
+        if (cs) courseCode = cs.value;
+    }
+    const courseSelect = document.getElementById("exam-course-select") || document.getElementById("course-select");
 
     // Automatically select the first real course if "ALL" or empty
     if (!courseCode || courseCode === "ALL") {
         if (courseSelect && courseSelect.options.length > 1) {
             courseSelect.selectedIndex = 1;
             courseCode = courseSelect.value;
-            onCourseChange();
+            onCourseChange("exam");
         } else {
             alert("براہِ کرم پہلے سمسٹر منتخب فرمائیں تاکہ کتب لوڈ ہو سکیں۔");
             return;
@@ -615,18 +673,22 @@ async function copyEntireBookExamPrep() {
 }
 
 // ==========================================
-// FEATURE 3: MCQs تیار کریں (Chapter MCQs)
+// FEATURE 4: MCQs تیار کریں (Chapter MCQs)
 // ==========================================
 async function handleMCQGenerate() {
-    let courseCode = document.getElementById("course-select").value;
-    const courseSelect = document.getElementById("course-select");
+    let courseCode = document.getElementById("mcq-course-select") ? document.getElementById("mcq-course-select").value : "";
+    if (!courseCode || courseCode === "ALL") {
+        const cs = document.getElementById("course-select");
+        if (cs) courseCode = cs.value;
+    }
+    const courseSelect = document.getElementById("mcq-course-select") || document.getElementById("course-select");
 
     // Automatically select the first real course if "ALL" or empty
     if (!courseCode || courseCode === "ALL") {
         if (courseSelect && courseSelect.options.length > 1) {
             courseSelect.selectedIndex = 1;
             courseCode = courseSelect.value;
-            onCourseChange();
+            onCourseChange("mcq");
         } else {
             alert("براہِ کرم پہلے سمسٹر منتخب فرمائیں تاکہ کتب لوڈ ہو سکیں۔");
             return;
@@ -688,7 +750,10 @@ function renderMCQGenResults(data) {
 
     container.innerHTML = "";
     areAllMCQsRevealed = false;
-    document.getElementById("mcq-toggle-text").textContent = "👁️ تمام درست جوابات دکھائیں";
+    const toggleBtn = document.getElementById("mcq-toggle-text");
+    if (toggleBtn) toggleBtn.textContent = "👁️ تمام درست جوابات دکھائیں";
+
+    const optMap = { A: "الف", B: "ب", C: "ج", D: "د", "الف": "الف", "ب": "ب", "ج": "ج", "د": "د" };
 
     (data.chapters || []).forEach((chap, cIdx) => {
         const block = document.createElement("div");
@@ -702,34 +767,53 @@ function renderMCQGenResults(data) {
             const optC = m.options ? m.options.C || m.options["ج"] || "" : "";
             const optD = m.options ? m.options.D || m.options["د"] || "" : "";
 
-            const isA = m.correct_option === "A" || m.correct_option === "الف";
-            const isB = m.correct_option === "B" || m.correct_option === "ب";
-            const isC = m.correct_option === "C" || m.correct_option === "ج";
-            const isD = m.correct_option === "D" || m.correct_option === "د";
+            const winnerUrdu = optMap[m.correct_option] || m.correct_option;
 
             mcqsHtml += `
-                <div class="mcq-display-item">
-                    <div class="mcq-q-title">${escapeHtml(m.question)}</div>
+                <div class="mcq-display-item" id="mcq-item-${cIdx}-${mIdx}">
+                    <div class="mcq-q-title">
+                        <span style="color: var(--primary);">سوال ${mIdx + 1}:</span> ${escapeHtml(m.question)}
+                    </div>
                     <div class="mcq-options-container">
-                        <div class="mcq-option-choice ${isA ? "correct-highlight" : ""}">
-                            <strong>الف)</strong> <span>${escapeHtml(optA)}</span>
+                        <div class="mcq-option-choice mcq-choice-A" onclick="checkMCQChoice(${cIdx}, ${mIdx}, 'A')">
+                            <span class="mcq-option-badge">الف</span>
+                            <span>${escapeHtml(optA)}</span>
                         </div>
-                        <div class="mcq-option-choice ${isB ? "correct-highlight" : ""}">
-                            <strong>ب)</strong> <span>${escapeHtml(optB)}</span>
+                        <div class="mcq-option-choice mcq-choice-B" onclick="checkMCQChoice(${cIdx}, ${mIdx}, 'B')">
+                            <span class="mcq-option-badge">ب</span>
+                            <span>${escapeHtml(optB)}</span>
                         </div>
-                        <div class="mcq-option-choice ${isC ? "correct-highlight" : ""}">
-                            <strong>ج)</strong> <span>${escapeHtml(optC)}</span>
+                        <div class="mcq-option-choice mcq-choice-C" onclick="checkMCQChoice(${cIdx}, ${mIdx}, 'C')">
+                            <span class="mcq-option-badge">ج</span>
+                            <span>${escapeHtml(optC)}</span>
                         </div>
-                        <div class="mcq-option-choice ${isD ? "correct-highlight" : ""}">
-                            <strong>د)</strong> <span>${escapeHtml(optD)}</span>
+                        <div class="mcq-option-choice mcq-choice-D" onclick="checkMCQChoice(${cIdx}, ${mIdx}, 'D')">
+                            <span class="mcq-option-badge">د</span>
+                            <span>${escapeHtml(optD)}</span>
                         </div>
                     </div>
-                    <div id="${mId}" class="mcq-reveal-box" style="display: block;">
-                        <div><strong style="color: #15803d;">✓ درست جواب:</strong> آپشن (${escapeHtml(m.correct_option)}) — ${escapeHtml(m.correct_text || optA)}</div>
-                        <div style="font-size: 0.88rem; color: #334155; margin-top: 0.25rem;"><strong>علمی تشریح:</strong> ${escapeHtml(m.explanation || "")}</div>
-                        <div style="font-size: 0.82rem; color: #64748b; margin-top: 0.25rem;">
-                            <strong>کتابی حوالہ:</strong> صفحہ ${escapeHtml(m.printed_page || "")} | اقتباس: « ${escapeHtml(m.source_passage || "")} »
+                    
+                    <div id="${mId}" class="mcq-reveal-box" style="display: none;">
+                        <div style="font-weight: 700; color: #15803d; font-size: 0.98rem;">
+                            ✓ درست جواب: آپشن (${winnerUrdu}) — « ${escapeHtml(m.correct_text || optA)} »
                         </div>
+                        <div style="font-size: 0.9rem; color: #334155; margin-top: 0.35rem;">
+                            <strong>علمی تشریح:</strong> ${escapeHtml(m.explanation || "")}
+                        </div>
+                        <div style="font-size: 0.84rem; color: #64748b; margin-top: 0.35rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <span class="ref-badge badge-book">📚 ${escapeHtml(data.book_title || "نصابی کتاب")}</span>
+                            <span class="ref-badge badge-page">📄 صفحہ نمبر: ${escapeHtml(m.printed_page || "")}</span>
+                        </div>
+                        ${m.source_passage ? `
+                        <div style="font-size: 0.82rem; color: #475569; margin-top: 0.35rem; font-style: italic; background: #ffffff; padding: 0.4rem 0.6rem; border-radius: 4px; border: 1px solid #dcfce7;">
+                            اقتباس: « ${escapeHtml(m.source_passage)} »
+                        </div>` : ""}
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 0.65rem;">
+                        <button class="btn btn-outline" style="font-size: 0.8rem; padding: 0.35rem 0.8rem;" onclick="copySingleMCQ(${cIdx}, ${mIdx}, this)">
+                            <span>📋 یہ سوال کاپی کریں</span>
+                        </button>
                     </div>
                 </div>
             `;
@@ -738,7 +822,7 @@ function renderMCQGenResults(data) {
         block.innerHTML = `
             <div class="chapter-header">
                 <span class="chapter-title-text">${escapeHtml(chap.chapter_name)} (${chap.mcq_count || chap.mcqs.length} معروضی سوالات)</span>
-                <button class="btn btn-secondary" style="font-size: 0.82rem; padding: 0.4rem 0.85rem;" onclick="copyChapterMCQs(${cIdx})">
+                <button class="btn btn-secondary" style="font-size: 0.82rem; padding: 0.4rem 0.85rem;" onclick="copyChapterMCQs(${cIdx}, this)">
                     <span>💾 اس چیپٹر کے MCQs کاپی کریں</span>
                 </button>
             </div>
@@ -749,6 +833,50 @@ function renderMCQGenResults(data) {
 
         container.appendChild(block);
     });
+}
+
+function checkMCQChoice(cIdx, mIdx, chosenOpt) {
+    if (!lastMCQGenData || !lastMCQGenData.chapters[cIdx]) return;
+    const m = lastMCQGenData.chapters[cIdx].mcqs[mIdx];
+    const correctOpt = m.correct_option; // "A", "B", "C", "D"
+
+    const itemEl = document.getElementById(`mcq-item-${cIdx}-${mIdx}`);
+    if (!itemEl) return;
+
+    // Reset styles on this question's choices
+    const choices = itemEl.querySelectorAll(".mcq-option-choice");
+    choices.forEach(c => {
+        c.classList.remove("selected-correct", "selected-wrong", "correct-highlight");
+    });
+
+    const clicked = itemEl.querySelector(`.mcq-choice-${chosenOpt}`);
+    const correct = itemEl.querySelector(`.mcq-choice-${correctOpt}`);
+
+    const isMatch = (chosenOpt === correctOpt ||
+        (chosenOpt === "A" && (correctOpt === "الف" || correctOpt === "A")) ||
+        (chosenOpt === "B" && (correctOpt === "ب" || correctOpt === "B")) ||
+        (chosenOpt === "C" && (correctOpt === "ج" || correctOpt === "C")) ||
+        (chosenOpt === "D" && (correctOpt === "د" || correctOpt === "D"))
+    );
+
+    if (isMatch) {
+        if (clicked) clicked.classList.add("selected-correct");
+        showToast("✓ ماشاءاللہ، درست جواب!");
+    } else {
+        if (clicked) clicked.classList.add("selected-wrong");
+        if (correct) correct.classList.add("correct-highlight");
+        showToast("✗ جواب غلط ہے۔ درست جواب کی نشاندہی کر دی گئی ہے۔");
+    }
+
+    const revBox = document.getElementById(`mcq-rev-${cIdx}-${mIdx}`);
+    if (revBox) revBox.style.display = "block";
+}
+
+async function copySingleMCQ(cIdx, mIdx, btn = null) {
+    if (!lastMCQGenData || !lastMCQGenData.chapters[cIdx]) return;
+    const m = lastMCQGenData.chapters[cIdx].mcqs[mIdx];
+    const text = formatSingleMCQText(m);
+    await copyToClipboard(text, "معروضی سوال کاپی ہو گیا۔", btn);
 }
 
 function toggleAllMCQAnswers() {
@@ -779,36 +907,39 @@ function formatSingleMCQText(m) {
     ].join("\n");
 }
 
-async function copyChapterMCQs(cIdx) {
+async function copyChapterMCQs(cIdx, btn = null) {
     if (!lastMCQGenData || !lastMCQGenData.chapters[cIdx]) return;
     const chap = lastMCQGenData.chapters[cIdx];
     let out = [
+        `============================================================`,
         `=== ${chap.chapter_name} (MCQs معروضی پرچہ) ===`,
-        `کتاب: ${lastMCQGenData.book_title} (کورس: ${lastMCQGenData.course_code})\n`
+        `کتاب: ${lastMCQGenData.book_title} (کورس: ${lastMCQGenData.course_code})`,
+        `============================================================\r\n`
     ];
     chap.mcqs.forEach(m => {
         out.push(formatSingleMCQText(m));
     });
-    await copyToClipboard(out.join("\n"), "چیپٹر کے تمام MCQs کاپی ہو گئے۔");
+    await copyToClipboard(out.join("\r\n"), "چیپٹر کے تمام MCQs کاپی ہو گئے۔", btn);
 }
 
-async function copyEntireBookMCQs() {
+async function copyEntireBookMCQs(btn = null) {
     if (!lastMCQGenData || !lastMCQGenData.chapters) return;
     let out = [
         `============================================================`,
         `   AIOU Help — کثیر الانتخابی سوالات بینک (All Chapters MCQs)`,
         `   کتاب: ${lastMCQGenData.book_title} (کورس: ${lastMCQGenData.course_code})`,
-        `============================================================\n`
+        `   کل چیپٹرز: ${lastMCQGenData.total_chapters} | کل MCQs: ${lastMCQGenData.total_mcqs}`,
+        `============================================================\r\n`
     ];
 
     lastMCQGenData.chapters.forEach(chap => {
-        out.push(`\n### ${chap.chapter_name} ###\n`);
+        out.push(`\r\n### ${chap.chapter_name} ###\r\n`);
         chap.mcqs.forEach(m => {
             out.push(formatSingleMCQText(m));
         });
     });
 
-    await copyToClipboard(out.join("\n"), "پوری کتاب کے تمام MCQs کاپی ہو گئے (برائے MS Word)۔");
+    await copyToClipboard(out.join("\r\n"), "پوری کتاب کے تمام MCQs کاپی ہو گئے (برائے MS Word)۔", btn);
 }
 
 // ==========================================
