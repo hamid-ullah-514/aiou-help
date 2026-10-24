@@ -1222,6 +1222,67 @@ button, input, textarea, select,
     color: #ffffff !important;
 }
 
+/* Visible Tick Badge on the Correct Option */
+.mcq-option-choice.is-correct-choice {
+    background: #f0fdf4 !important;
+    border-color: #86efac !important;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(16, 185, 129, 0.12);
+}
+
+.mcq-option-choice.is-correct-choice .mcq-option-badge,
+.mcq-option-badge.badge-winner {
+    background: #16a34a !important;
+    color: #ffffff !important;
+}
+
+.mcq-option-text {
+    flex: 1;
+    font-weight: 500;
+}
+
+.mcq-tick-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #86efac;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 0.2rem 0.65rem;
+    border-radius: 9999px;
+    margin-right: auto;
+    box-shadow: 0 1px 2px rgba(16, 185, 129, 0.15);
+    white-space: nowrap;
+}
+
+.mcq-tick-badge .tick-icon {
+    font-size: 0.95rem;
+    font-weight: 900;
+    color: #16a34a;
+}
+
+/* When answers are hidden in self-quiz test mode */
+.hide-mcq-ticks .mcq-tick-badge {
+    display: none !important;
+}
+
+.hide-mcq-ticks .mcq-option-choice.is-correct-choice:not(.selected-correct):not(.selected-wrong) {
+    background: #f8fafc !important;
+    border-color: var(--border-light) !important;
+    box-shadow: none !important;
+}
+
+.hide-mcq-ticks .mcq-option-choice.is-correct-choice:not(.selected-correct):not(.selected-wrong) .mcq-option-badge {
+    background: #e2e8f0 !important;
+    color: var(--text-secondary) !important;
+}
+
+.hide-mcq-ticks .mcq-reveal-box {
+    display: none !important;
+}
+
 .mcq-reveal-box {
     background: #f0fdf4;
     border: 1px solid #86efac;

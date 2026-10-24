@@ -742,9 +742,9 @@ function renderMCQGenResults(data) {
     subtitleEl.textContent = `کل چیپٹرز: ${data.total_chapters || 9} | ہر چیپٹر سے MCQs: ${data.count_per_chapter || 10} | مجموعی معروضی: ${data.total_mcqs || 90}`;
 
     container.innerHTML = "";
-    areAllMCQsRevealed = false;
+    areAllMCQsRevealed = true;
     const toggleBtn = document.getElementById("mcq-toggle-text");
-    if (toggleBtn) toggleBtn.textContent = "👁️ تمام درست جوابات دکھائیں";
+    if (toggleBtn) toggleBtn.textContent = "🙈 درست جوابات پر ٹک چھپائیں (سیلف ٹیسٹ موڈ)";
 
     const optMap = { A: "الف", B: "ب", C: "ج", D: "د", "الف": "الف", "ب": "ب", "ج": "ج", "د": "د" };
 
@@ -760,35 +760,48 @@ function renderMCQGenResults(data) {
             const optC = m.options ? m.options.C || m.options["ج"] || "" : "";
             const optD = m.options ? m.options.D || m.options["د"] || "" : "";
 
-            const winnerUrdu = optMap[m.correct_option] || m.correct_option;
+            const winnerKey = m.correct_option || "A";
+            const winnerUrdu = optMap[winnerKey] || winnerKey;
+
+            const isWinnerA = (winnerKey === "A" || winnerKey === "الف");
+            const isWinnerB = (winnerKey === "B" || winnerKey === "ب");
+            const isWinnerC = (winnerKey === "C" || winnerKey === "ج");
+            const isWinnerD = (winnerKey === "D" || winnerKey === "د");
+
+            const winnerText = m.correct_text || (isWinnerA ? optA : isWinnerB ? optB : isWinnerC ? optC : optD);
 
             mcqsHtml += `
                 <div class="mcq-display-item" id="mcq-item-${cIdx}-${mIdx}">
                     <div class="mcq-q-title">
-                        <span style="color: var(--primary);">سوال ${mIdx + 1}:</span> ${escapeHtml(m.question)}
+                        <span style="color: var(--primary); font-weight: 800;">سوال ${mIdx + 1}:</span> ${escapeHtml(m.question)}
                     </div>
                     <div class="mcq-options-container">
-                        <div class="mcq-option-choice mcq-choice-A" onclick="checkMCQChoice(${cIdx}, ${mIdx}, 'A')">
+                        <div class="mcq-option-choice mcq-choice-A ${isWinnerA ? 'is-correct-choice' : ''}" onclick="checkMCQChoice(${cIdx}, ${mIdx}, 'A')">
                             <span class="mcq-option-badge">الف</span>
-                            <span>${escapeHtml(optA)}</span>
+                            <span class="mcq-option-text">${escapeHtml(optA)}</span>
+                            ${isWinnerA ? '<span class="mcq-tick-badge"><span class="tick-icon">✓</span> (درست جواب)</span>' : ''}
                         </div>
-                        <div class="mcq-option-choice mcq-choice-B" onclick="checkMCQChoice(${cIdx}, ${mIdx}, 'B')">
+                        <div class="mcq-option-choice mcq-choice-B ${isWinnerB ? 'is-correct-choice' : ''}" onclick="checkMCQChoice(${cIdx}, ${mIdx}, 'B')">
                             <span class="mcq-option-badge">ب</span>
-                            <span>${escapeHtml(optB)}</span>
+                            <span class="mcq-option-text">${escapeHtml(optB)}</span>
+                            ${isWinnerB ? '<span class="mcq-tick-badge"><span class="tick-icon">✓</span> (درست جواب)</span>' : ''}
                         </div>
-                        <div class="mcq-option-choice mcq-choice-C" onclick="checkMCQChoice(${cIdx}, ${mIdx}, 'C')">
+                        <div class="mcq-option-choice mcq-choice-C ${isWinnerC ? 'is-correct-choice' : ''}" onclick="checkMCQChoice(${cIdx}, ${mIdx}, 'C')">
                             <span class="mcq-option-badge">ج</span>
-                            <span>${escapeHtml(optC)}</span>
+                            <span class="mcq-option-text">${escapeHtml(optC)}</span>
+                            ${isWinnerC ? '<span class="mcq-tick-badge"><span class="tick-icon">✓</span> (درست جواب)</span>' : ''}
                         </div>
-                        <div class="mcq-option-choice mcq-choice-D" onclick="checkMCQChoice(${cIdx}, ${mIdx}, 'D')">
+                        <div class="mcq-option-choice mcq-choice-D ${isWinnerD ? 'is-correct-choice' : ''}" onclick="checkMCQChoice(${cIdx}, ${mIdx}, 'D')">
                             <span class="mcq-option-badge">د</span>
-                            <span>${escapeHtml(optD)}</span>
+                            <span class="mcq-option-text">${escapeHtml(optD)}</span>
+                            ${isWinnerD ? '<span class="mcq-tick-badge"><span class="tick-icon">✓</span> (درست جواب)</span>' : ''}
                         </div>
                     </div>
                     
-                    <div id="${mId}" class="mcq-reveal-box" style="display: none;">
-                        <div style="font-weight: 700; color: #15803d; font-size: 0.98rem;">
-                            ✓ درست جواب: آپشن (${winnerUrdu}) — « ${escapeHtml(m.correct_text || optA)} »
+                    <div id="${mId}" class="mcq-reveal-box" style="display: block;">
+                        <div style="font-weight: 700; color: #15803d; font-size: 0.98rem; display: flex; align-items: center; gap: 0.4rem;">
+                            <span>✓</span>
+                            <span>درست جواب: آپشن (${winnerUrdu}) — « ${escapeHtml(winnerText)} »</span>
                         </div>
                         <div style="font-size: 0.9rem; color: #334155; margin-top: 0.35rem;">
                             <strong>علمی تشریح:</strong> ${escapeHtml(m.explanation || "")}
@@ -803,9 +816,9 @@ function renderMCQGenResults(data) {
                         </div>` : ""}
                     </div>
 
-                    <div style="display: flex; justify-content: flex-end; margin-top: 0.65rem;">
-                        <button class="btn btn-outline" style="font-size: 0.8rem; padding: 0.35rem 0.8rem;" onclick="copySingleMCQ(${cIdx}, ${mIdx}, this)">
-                            <span>📋 یہ سوال کاپی کریں</span>
+                    <div style="display: flex; justify-content: flex-end; margin-top: 0.75rem;">
+                        <button class="btn btn-outline" style="font-size: 0.82rem; padding: 0.4rem 0.9rem;" onclick="copySingleMCQ(${cIdx}, ${mIdx}, this)">
+                            <span>📋 یہ سوال مع درست جواب (✓) کاپی کریں</span>
                         </button>
                     </div>
                 </div>
@@ -815,8 +828,8 @@ function renderMCQGenResults(data) {
         block.innerHTML = `
             <div class="chapter-header">
                 <span class="chapter-title-text">${escapeHtml(chap.chapter_name)} (${chap.mcq_count || chap.mcqs.length} معروضی سوالات)</span>
-                <button class="btn btn-secondary" style="font-size: 0.82rem; padding: 0.4rem 0.85rem;" onclick="copyChapterMCQs(${cIdx}, this)">
-                    <span>💾 اس چیپٹر کے MCQs کاپی کریں</span>
+                <button class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.45rem 1rem;" onclick="copyChapterMCQs(${cIdx}, this)">
+                    <span>💾 اس باب کے تمام MCQs (مع ✓ درست نشانات) کاپی کریں</span>
                 </button>
             </div>
             <div style="padding: 1.25rem;">
@@ -868,36 +881,66 @@ function checkMCQChoice(cIdx, mIdx, chosenOpt) {
 async function copySingleMCQ(cIdx, mIdx, btn = null) {
     if (!lastMCQGenData || !lastMCQGenData.chapters[cIdx]) return;
     const m = lastMCQGenData.chapters[cIdx].mcqs[mIdx];
-    const text = formatSingleMCQText(m);
-    await copyToClipboard(text, "معروضی سوال کاپی ہو گیا۔", btn);
+    const text = formatSingleMCQText(m, mIdx + 1);
+    await copyToClipboard(text, "سوال مع درست آپشن (✓) کاپی ہو گیا۔", btn);
 }
 
 function toggleAllMCQAnswers() {
     areAllMCQsRevealed = !areAllMCQsRevealed;
+    const container = document.getElementById("mcq-gen-chapters-container");
+    if (container) {
+        if (areAllMCQsRevealed) {
+            container.classList.remove("hide-mcq-ticks");
+        } else {
+            container.classList.add("hide-mcq-ticks");
+        }
+    }
+
     const boxes = document.querySelectorAll(".mcq-reveal-box");
     boxes.forEach(b => {
         b.style.display = areAllMCQsRevealed ? "block" : "none";
     });
-    document.getElementById("mcq-toggle-text").textContent = areAllMCQsRevealed ? "🙈 درست جوابات چھپائیں" : "👁️ تمام درست جوابات دکھائیں";
+    
+    const toggleBtn = document.getElementById("mcq-toggle-text");
+    if (toggleBtn) {
+        toggleBtn.textContent = areAllMCQsRevealed 
+            ? "🙈 درست جوابات پر ٹک چھپائیں (سیلف ٹیسٹ موڈ)" 
+            : "👁️ تمام درست جوابات پر ٹک دکھائیں";
+    }
 }
 
-function formatSingleMCQText(m) {
+function formatSingleMCQText(m, qNum = null) {
+    const optMap = { A: "الف", B: "ب", C: "ج", D: "د", "الف": "الف", "ب": "ب", "ج": "ج", "د": "د" };
+    const winnerKey = m.correct_option || "A";
+    const winnerUrdu = optMap[winnerKey] || winnerKey;
+
     const optA = m.options ? m.options.A || m.options["الف"] || "" : "";
     const optB = m.options ? m.options.B || m.options["ب"] || "" : "";
     const optC = m.options ? m.options.C || m.options["ج"] || "" : "";
     const optD = m.options ? m.options.D || m.options["د"] || "" : "";
 
+    const isWinnerA = (winnerKey === "A" || winnerKey === "الف");
+    const isWinnerB = (winnerKey === "B" || winnerKey === "ب");
+    const isWinnerC = (winnerKey === "C" || winnerKey === "ج");
+    const isWinnerD = (winnerKey === "D" || winnerKey === "د");
+
+    const winnerText = m.correct_text || (isWinnerA ? optA : isWinnerB ? optB : isWinnerC ? optC : optD);
+
+    const qTitle = (qNum !== null && !m.question.startsWith("سوال"))
+        ? `سوال نمبر ${qNum}: ${m.question}`
+        : m.question;
+
     return [
-        `${m.question}`,
-        `الف) ${optA}`,
-        `ب) ${optB}`,
-        `ج) ${optC}`,
-        `د) ${optD}`,
-        `✓ درست جواب: آپشن (${m.correct_option}) — ${m.correct_text || optA}`,
-        `وضاحت: ${m.explanation || ""}`,
-        `حوالہ: کتاب ${m.book_title}، صفحہ ${m.printed_page}`,
+        `${qTitle}`,
+        `الف) ${optA}${isWinnerA ? "  ✓ (درست جواب)" : ""}`,
+        `ب) ${optB}${isWinnerB ? "  ✓ (درست جواب)" : ""}`,
+        `ج) ${optC}${isWinnerC ? "  ✓ (درست جواب)" : ""}`,
+        `د) ${optD}${isWinnerD ? "  ✓ (درست جواب)" : ""}`,
+        `✓ درست جواب: آپشن (${winnerUrdu}) — ${winnerText}`,
+        m.explanation ? `علمی تشریح: ${m.explanation}` : "",
+        (m.book_title || m.printed_page) ? `مستند حوالہ: کتاب: ${m.book_title || "نصابی کتاب"} | صفحہ نمبر: ${m.printed_page || ""}` : "",
         `------------------------------------------------------------`
-    ].join("\n");
+    ].filter(Boolean).join("\r\n");
 }
 
 async function copyChapterMCQs(cIdx, btn = null) {
@@ -905,14 +948,15 @@ async function copyChapterMCQs(cIdx, btn = null) {
     const chap = lastMCQGenData.chapters[cIdx];
     let out = [
         `============================================================`,
-        `=== ${chap.chapter_name} (MCQs معروضی پرچہ) ===`,
-        `کتاب: ${lastMCQGenData.book_title} (کورس: ${lastMCQGenData.course_code})`,
+        `=== ${chap.chapter_name} (MCQs معروضی بینک) ===`,
+        `کتاب: ${lastMCQGenData.book_title} (کورس کوڈ: ${lastMCQGenData.course_code})`,
+        `کل معروضی سوالات: ${chap.mcq_count || chap.mcqs.length}`,
         `============================================================\r\n`
     ];
-    chap.mcqs.forEach(m => {
-        out.push(formatSingleMCQText(m));
+    chap.mcqs.forEach((m, idx) => {
+        out.push(formatSingleMCQText(m, idx + 1));
     });
-    await copyToClipboard(out.join("\r\n"), "چیپٹر کے تمام MCQs کاپی ہو گئے۔", btn);
+    await copyToClipboard(out.join("\r\n"), "اس باب کے تمام MCQs (مع ✓ درست نشانات) کاپی ہو گئے۔", btn);
 }
 
 async function copyEntireBookMCQs(btn = null) {
@@ -920,19 +964,20 @@ async function copyEntireBookMCQs(btn = null) {
     let out = [
         `============================================================`,
         `   AIOU Help — کثیر الانتخابی سوالات بینک (All Chapters MCQs)`,
-        `   کتاب: ${lastMCQGenData.book_title} (کورس: ${lastMCQGenData.course_code})`,
-        `   کل چیپٹرز: ${lastMCQGenData.total_chapters} | کل MCQs: ${lastMCQGenData.total_mcqs}`,
+        `   کتاب: ${lastMCQGenData.book_title} (کورس کوڈ: ${lastMCQGenData.course_code})`,
+        `   کل ابواب: ${lastMCQGenData.total_chapters} | کل MCQs: ${lastMCQGenData.total_mcqs}`,
+        `   (تمام سوالات کے سامنے درست آپشن پر ✓ کا نشان موجود ہے)`,
         `============================================================\r\n`
     ];
 
     lastMCQGenData.chapters.forEach(chap => {
-        out.push(`\r\n### ${chap.chapter_name} ###\r\n`);
-        chap.mcqs.forEach(m => {
-            out.push(formatSingleMCQText(m));
+        out.push(`\r\n\r\n### ${chap.chapter_name} ###\r\n`);
+        chap.mcqs.forEach((m, idx) => {
+            out.push(formatSingleMCQText(m, idx + 1));
         });
     });
 
-    await copyToClipboard(out.join("\r\n"), "پوری کتاب کے تمام MCQs کاپی ہو گئے (برائے MS Word)۔", btn);
+    await copyToClipboard(out.join("\r\n"), "پوری کتاب کے تمام MCQs (مع ✓ درست نشانات) کاپی ہو گئے (برائے MS Word)۔", btn);
 }
 
 // ==========================================
@@ -1094,18 +1139,21 @@ function renderQuizResult(data) {
     }
 
     const optMap = { A: "الف", B: "ب", C: "ج", D: "د", "الف": "الف", "ب": "ب", "ج": "ج", "د": "د" };
-    const winnerUrdu = optMap[data.correct_option] || data.correct_option;
-    const winnerText = data.correct_text || (data.options ? data.options[data.correct_option] : "");
+    const winnerKey = data.correct_option || "A";
+    const winnerUrdu = optMap[winnerKey] || winnerKey;
+    const winnerText = data.correct_text || (data.options ? data.options[winnerKey] : "");
 
     let optionsHtml = "";
     if (data.options && Object.keys(data.options).length > 0) {
-        optionsHtml = `<div class="mcq-options-container" style="margin-top: 0.75rem;">`;
+        optionsHtml = `<div class="mcq-options-container" style="margin-top: 0.85rem;">`;
         for (const [k, val] of Object.entries(data.options)) {
-            const isWinner = (k === data.correct_option || optMap[k] === winnerUrdu);
+            const isWinner = (k === winnerKey || optMap[k] === winnerUrdu || (winnerKey === "A" && (k === "A" || k === "الف")));
             const urduKey = optMap[k] || k;
             optionsHtml += `
-                <div class="mcq-option-choice ${isWinner ? 'correct-highlight' : ''}">
-                    <strong>${urduKey})</strong> <span>${escapeHtml(val)}</span>
+                <div class="mcq-option-choice ${isWinner ? 'is-correct-choice correct-highlight' : ''}">
+                    <span class="mcq-option-badge ${isWinner ? 'badge-winner' : ''}">${urduKey}</span>
+                    <span class="mcq-option-text">${escapeHtml(val)}</span>
+                    ${isWinner ? '<span class="mcq-tick-badge"><span class="tick-icon">✓</span> (درست جواب)</span>' : ''}
                 </div>
             `;
         }
@@ -1114,39 +1162,40 @@ function renderQuizResult(data) {
 
     content.innerHTML = `
         <div style="margin-bottom: 0.75rem;">
-            <strong style="color: #0f172a;">❓ کوئز سوال:</strong>
-            <p style="font-size: 1.05rem; font-weight: 600; color: #1e293b; margin-top: 0.25rem;">${escapeHtml(data.question || "")}</p>
+            <strong style="color: #0f172a; font-size: 1.05rem;">❓ کوئز سوال:</strong>
+            <p style="font-size: 1.1rem; font-weight: 700; color: #0f172a; margin-top: 0.35rem; line-height: 2;">${escapeHtml(data.question || "")}</p>
         </div>
 
         ${optionsHtml}
 
-        <div class="mcq-winner-row" style="margin-top: 1rem;">
-            <span class="winner-pill">
+        <div class="mcq-winner-row" style="margin-top: 1.15rem; background: #ecfdf5; border: 1px solid #86efac; border-radius: 8px; padding: 0.85rem 1rem;">
+            <span class="winner-pill" style="font-size: 0.95rem; font-weight: 800; background: #16a34a; color: #ffffff; padding: 0.3rem 0.85rem; border-radius: 9999px;">
                 ✓ تصدیق شدہ درست جواب: آپشن (${winnerUrdu})
             </span>
-            <span style="font-weight: 700; font-size: 1.05rem; color: #15803d;">
+            <span style="font-weight: 800; font-size: 1.15rem; color: #15803d; margin-top: 0.35rem; display: block;">
                 « ${escapeHtml(winnerText)} »
             </span>
         </div>
 
         <div style="margin-top: 0.85rem; padding-top: 0.85rem; border-top: 1px solid #bbf7d0;">
-            <div style="font-weight: 700; color: #166534; margin-bottom: 0.35rem;">📖 کتابی ثبوت اور علمی حوالہ:</div>
-            <p style="color: #1e293b;">${escapeHtml(data.explanation || "کتاب کی اصل عبارت کے مطابق یہ آپشن درست ہے۔")}</p>
+            <div style="font-weight: 700; color: #166534; margin-bottom: 0.35rem;">📖 نصابی ثبوت اور علمی حوالہ:</div>
+            <p style="color: #1e293b; line-height: 2.1;">${escapeHtml(data.explanation || "کتاب کی اصل عبارت کے مطابق یہ آپشن درست ہے۔")}</p>
             
+            ${data.verified_quote ? `
             <div class="ref-quote urdu-text" style="background: #ffffff; border-right-color: #16a34a; margin-top: 0.65rem;">
-                « ${escapeHtml(data.verified_quote || (data.references && data.references[0] ? data.references[0].quotation : ""))} »
-            </div>
+                « ${escapeHtml(data.verified_quote)} »
+            </div>` : ""}
 
             <div style="margin-top: 0.75rem; font-size: 0.88rem; color: #475569; display: flex; gap: 0.5rem; flex-wrap: wrap;">
                 <span class="ref-badge badge-book">📚 ${escapeHtml(data.book_title || "نصابی کتاب")} (${escapeHtml(data.course_code || "")})</span>
-                <span class="ref-badge badge-page">📄 صفحہ نمبر: ${escapeHtml(data.printed_page || "")}</span>
+                ${data.printed_page ? `<span class="ref-badge badge-page">📄 صفحہ نمبر: ${escapeHtml(data.printed_page)}</span>` : ""}
                 ${data.line_reference ? `<span class="ref-badge badge-line">سطر نمبر: ${escapeHtml(data.line_reference)}</span>` : ""}
             </div>
         </div>
 
         <div style="margin-top: 1.25rem;">
             <button class="btn btn-outline" onclick="copyQuizResult(this)">
-                <span>📋 تصدیق شدہ کوئز حل کاپی کریں</span>
+                <span>📋 کوئز سوال مع درست آپشن (✓) کاپی کریں</span>
             </button>
         </div>
     `;
@@ -1154,24 +1203,37 @@ function renderQuizResult(data) {
 
 async function copyQuizResult(btn = null) {
     if (!lastQuizResult) return;
-    const optMap = { A: "الف", B: "ب", C: "ج", D: "د" };
-    const winnerUrdu = optMap[lastQuizResult.correct_option] || lastQuizResult.correct_option;
-    const winnerText = lastQuizResult.correct_text || (lastQuizResult.options ? lastQuizResult.options[lastQuizResult.correct_option] : "");
+    const optMap = { A: "الف", B: "ب", C: "ج", D: "د", "الف": "الف", "ب": "ب", "ج": "ج", "د": "د" };
+    const winnerKey = lastQuizResult.correct_option || "A";
+    const winnerUrdu = optMap[winnerKey] || winnerKey;
+    const winnerText = lastQuizResult.correct_text || (lastQuizResult.options ? lastQuizResult.options[winnerKey] : "");
+
+    let optionsLines = [];
+    if (lastQuizResult.options) {
+        for (const [k, val] of Object.entries(lastQuizResult.options)) {
+            const isWinner = (k === winnerKey || optMap[k] === winnerUrdu || (winnerKey === "A" && (k === "A" || k === "الف")));
+            const urduKey = optMap[k] || k;
+            optionsLines.push(`${urduKey}) ${val}${isWinner ? "  ✓ (درست جواب)" : ""}`);
+        }
+    }
 
     const text = [
         `============================================================`,
         `   AIOU Help — تصدیق شدہ کوئز حل (Verified Quiz Solution)`,
         `============================================================`,
         `سوال: ${lastQuizResult.question || ""}`,
-        `درست جواب: آپشن (${winnerUrdu}) — ${winnerText}`,
-        `حوالہ: کتاب «${lastQuizResult.book_title || ""}» (کورس: ${lastQuizResult.course_code || ""})`,
-        `صفحہ نمبر: ${lastQuizResult.printed_page || ""} | ${lastQuizResult.line_reference ? "سطر: " + lastQuizResult.line_reference : ""}`,
-        `علمی وضاحت: ${lastQuizResult.explanation || ""}`,
-        `اصل کتابی عبارت: « ${lastQuizResult.verified_quote || ""} »`,
+        `آپشنز:`,
+        optionsLines.join("\r\n"),
+        ``,
+        `✓ درست جواب: آپشن (${winnerUrdu}) — ${winnerText}`,
+        `کتاب: «${lastQuizResult.book_title || "نصابی کتاب"}» (کورس: ${lastQuizResult.course_code || ""})`,
+        `صفحہ / حوالہ: صفحہ ${lastQuizResult.printed_page || ""} | ${lastQuizResult.line_reference ? "سطر: " + lastQuizResult.line_reference : "مستند ماخذ"}`,
+        `علمی تشریح: ${lastQuizResult.explanation || ""}`,
+        lastQuizResult.verified_quote ? `اصل کتابی عبارت: « ${lastQuizResult.verified_quote} »` : "",
         `============================================================`
-    ].join("\r\n");
+    ].filter(Boolean).join("\r\n");
 
-    await copyToClipboard(text, "کوئز کا تصدیق شدہ حل کاپی ہو گیا۔", btn);
+    await copyToClipboard(text, "کوئز سوال مع درست آپشن (✓) کاپی ہو گیا۔", btn);
 }
 
 // ==========================================
