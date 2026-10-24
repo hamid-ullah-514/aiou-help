@@ -3,7 +3,7 @@ from typing import Dict, List, Any, Optional
 
 from aiou_app.retriever import search_passages
 from aiou_app.normalizer import normalize_urdu, tokenize, extract_content_tokens, URDU_STOP_WORDS
-from aiou_app.ai_service import call_gemini_grounded, get_ai_service_status
+from aiou_app.ai_service import call_groq_grounded, call_gemini_grounded, extract_questions_from_image_groq, get_ai_service_status
 
 NOT_FOUND_MESSAGE = "معذرت، منتخب شدہ کتاب یا کورس کے دستیاب مواد میں اس سوال کا مستند جواب نہیں ملا۔ براہِ کرم سوال یا منتخب کردہ کورس کوڈ چیک کریں۔"
 
@@ -119,7 +119,39 @@ def answer_question(
         }
 
     # MODE B: Source-Based Explanation (جامع اور مدلل جواب)
-    # Check if external AI configured
+    # 1. Try Groq High-Speed Grounded LLM first
+    groq_answer = call_groq_grounded(question, passages, mode="explanation")
+    if groq_answer:
+        # Check if Groq determined the question is out of scope / not in book
+        if "معذرت، فراہم کردہ نصابی کتاب کے مواد میں اس سوال کا واضح جواب موجود نہیں ہے" in groq_answer or "اس سوال کا مستند جواب نہیں ملا" in groq_answer:
+            return {
+                "success": False,
+                "not_found": True,
+                "answer": NOT_FOUND_MESSAGE,
+                "mode": mode,
+                "references": [],
+                "source_passages_count": len(passages),
+                "semester_num": semester_num,
+                "course_code": course_code or "ALL"
+            }
+
+        return {
+            "success": True,
+            "not_found": False,
+            "mode": "explanation",
+            "answer": groq_answer,
+            "primary_quote": top_passage["raw_text"].strip(),
+            "book_title": top_passage["course_title_ur"],
+            "course_code": top_passage["course_code"],
+            "semester_num": semester_num,
+            "printed_page": top_passage["printed_page"],
+            "pdf_page": top_passage["pdf_page"],
+            "line_reference": f"سطر {top_passage['line_start']} تا {top_passage['line_end']}",
+            "references": references,
+            "engine_used": "Groq High-Speed Grounded AI (Qwen-27B)"
+        }
+
+    # 2. Try Gemini if Groq was not active
     ai_answer = call_gemini_grounded(question, passages, mode="explanation")
     if ai_answer:
         return {
@@ -340,3 +372,77 @@ def format_clipboard_text(data: Dict[str, Any], include_references: bool = True)
                 
     parts.append("\n[ماخذ: AIOU BS Islamic Studies 2.5-Year Program Materials]")
     return "\n".join(parts)
+
+def solve_image_questions(
+    image_b64: str,
+    semester_num: str,
+    course_code: Optional[str] = None,
+    mime_type: str = "image/jpeg"
+) -> Dict[str, Any]:
+    """
+    Extracts all questions from the uploaded image and answers each strictly grounded in book materials.
+    Handles 1 to 5+ questions on exam papers or assignment sheets.
+    """
+    extracted = extract_questions_from_image_groq(image_b64, mime_type)
+    if not extracted:
+        return {
+            "success": False,
+            "error": "تصویر سے کوئی سوال شناخت نہیں ہو سکا۔ براہِ کرم واضح اور سیدھی تصویر اپلوڈ فرمائیں۔",
+            "questions": []
+        }
+
+    results = []
+    master_copy_lines = [
+        "============================================================",
+        "   AIOU Help — تصویر سے حل شدہ امتحانی سوالات و جوابات",
+        "============================================================",
+        f"سمسٹر: {semester_num} | کورس کوڈ: {course_code or 'تمام کتب'}",
+        f"کل شناخت شدہ سوالات: {len(extracted)}",
+        "============================================================\n"
+    ]
+
+    for item in extracted:
+        q_text = item.get("question", "").strip()
+        q_num = item.get("q_num", len(results) + 1)
+        if not q_text:
+            continue
+
+        res = answer_question(
+            question=q_text,
+            semester_num=semester_num,
+            course_code=course_code,
+            mode="explanation"
+        )
+
+        q_res = {
+            "q_num": q_num,
+            "question": q_text,
+            "success": res.get("success", False),
+            "not_found": res.get("not_found", False),
+            "answer": res.get("answer", ""),
+            "book_title": res.get("book_title", ""),
+            "course_code": res.get("course_code", ""),
+            "printed_page": res.get("printed_page", ""),
+            "references": res.get("references", []),
+            "engine_used": res.get("engine_used", "")
+        }
+        results.append(q_res)
+
+        # Append to master copy text
+        master_copy_lines.append(f"📌 سوال نمبر {q_num}: {q_text}")
+        master_copy_lines.append(f"جواب:")
+        master_copy_lines.append(f"{res.get('answer', '')}")
+        if res.get("book_title"):
+            master_copy_lines.append(f"حوالہ: کتاب «{res.get('book_title')}»، صفحہ {res.get('printed_page', '')}")
+        master_copy_lines.append("\n------------------------------------------------------------\n")
+
+    master_copy_lines.append("[ماخذ: AIOU BS Islamic Studies 2.5-Year Program Official Books]")
+
+    return {
+        "success": True,
+        "total_questions": len(results),
+        "questions": results,
+        "semester_num": semester_num,
+        "course_code": course_code or "ALL",
+        "combined_copy_text": "\n".join(master_copy_lines)
+    }

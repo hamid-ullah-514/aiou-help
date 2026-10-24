@@ -11,11 +11,28 @@ DB_NAME = os.environ.get("AIOU_DB_NAME", "aiou_" + "search.db")
 DB_PATH = DATA_DIR / DB_NAME
 CATALOG_CACHE_PATH = DATA_DIR / "catalog_cache.json"
 
+# Load local .env file if present
+env_file = BASE_DIR / ".env"
+if env_file.exists():
+    try:
+        with open(env_file, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#") and "=" in line:
+                    k, v = line.split("=", 1)
+                    k, v = k.strip(), v.strip().strip("'").strip('"')
+                    if k and k not in os.environ:
+                        os.environ[k] = v
+    except Exception:
+        pass
+
 # Server configuration
 HOST = os.environ.get("AIOU_HOST", "127.0.0.1")
 PORT = int(os.environ.get("AIOU_PORT", "8000"))
 
-# AI API Keys
+# AI API Keys (Read securely from environment variables)
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "").strip()
+GROQ_MODEL = os.environ.get("GROQ_MODEL", "qwen/qwen3.8-27b").strip()
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "").strip()
 

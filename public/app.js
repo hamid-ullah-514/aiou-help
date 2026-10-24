@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function initApp() {
     try {
+        setupImageDropzone();
         const resp = await fetch("/api/catalog");
         if (!resp.ok) {
             throw new Error(`Catalog request failed: ${resp.status}`);
@@ -113,11 +114,11 @@ function onCourseChange() {
     }
 }
 
-// Switch between the 4 primary tabs
+// Switch between the 5 primary tabs
 function switchFeature(feat) {
     currentFeature = feat;
 
-    const tabs = ["qa", "exam", "mcq_gen", "quiz"];
+    const tabs = ["qa", "image_qa", "exam", "mcq_gen", "quiz"];
     tabs.forEach(t => {
         const btn = document.getElementById(`feat-btn-${t}`);
         const sec = document.getElementById(`section-${t}`);
@@ -937,21 +938,284 @@ async function copyQuizResult() {
         `حوالہ: ${lastQuizResult.book_title}، صفحہ ${lastQuizResult.printed_page}`,
         `اصل عبارت: « ${lastQuizResult.verified_quote || ""} »`,
         `============================================================`
-    ].join("\n");
+    ].join("\r\n");
 
     await copyToClipboard(text, "کوئز کا تصدیق شدہ حل کاپی ہو گیا۔");
 }
 
 // ==========================================
+// FEATURE 2: تصویر سے سوال پوچھیں (Vision Image Q&A)
+// ==========================================
+let selectedImageDataUrl = null;
+let selectedImageFile = null;
+let lastImageQAResult = null;
+
+function triggerImageFileInput() {
+    const inp = document.getElementById("image-file-input");
+    if (inp) inp.click();
+}
+
+function triggerCameraInput() {
+    const inp = document.getElementById("camera-file-input");
+    if (inp) inp.click();
+}
+
+function handleImageFileSelected(input) {
+    if (!input || !input.files || input.files.length === 0) return;
+    const file = input.files[0];
+    processImageFile(file);
+}
+
+function processImageFile(file) {
+    if (!file || !file.type.startsWith("image/")) {
+        alert("براہِ کرم صرف تصویر فائل (JPG, PNG, WEBP) منتخب فرمائیں۔");
+        return;
+    }
+
+    selectedImageFile = file;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        selectedImageDataUrl = e.target.result;
+        showImagePreview(file, selectedImageDataUrl);
+    };
+    reader.readAsDataURL(file);
+}
+
+function showImagePreview(file, dataUrl) {
+    const previewCard = document.getElementById("image-preview-card");
+    const thumb = document.getElementById("image-preview-thumb");
+    const nameEl = document.getElementById("image-filename");
+    const sizeEl = document.getElementById("image-filesize");
+
+    if (thumb) thumb.src = dataUrl;
+    if (nameEl) nameEl.textContent = file.name || "سوالیہ تصویر";
+    const sizeKb = Math.round((file.size || 0) / 1024);
+    if (sizeEl) sizeEl.textContent = `سائز: ${sizeKb} KB`;
+
+    if (previewCard) previewCard.style.display = "flex";
+}
+
+function removeSelectedImage() {
+    selectedImageDataUrl = null;
+    selectedImageFile = null;
+    const fileInp = document.getElementById("image-file-input");
+    const camInp = document.getElementById("camera-file-input");
+    if (fileInp) fileInp.value = "";
+    if (camInp) camInp.value = "";
+    const previewCard = document.getElementById("image-preview-card");
+    const resArea = document.getElementById("image-results-area");
+    if (previewCard) previewCard.style.display = "none";
+    if (resArea) resArea.style.display = "none";
+}
+
+function clearImageQAForm() {
+    removeSelectedImage();
+    lastImageQAResult = null;
+}
+
+function setupImageDropzone() {
+    const dropzone = document.getElementById("image-dropzone");
+    if (!dropzone) return;
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.add('dragover');
+        }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.remove('dragover');
+        }, false);
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files && files.length > 0) {
+            processImageFile(files[0]);
+        }
+    }, false);
+
+    // Global Paste Listener (Ctrl+V) for images anywhere on page
+    window.addEventListener('paste', (e) => {
+        if (!e.clipboardData || !e.clipboardData.items) return;
+        const items = e.clipboardData.items;
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') !== -1) {
+                const blob = items[i].getAsFile();
+                if (blob) {
+                    processImageFile(blob);
+                    switchFeature('image_qa');
+                    showToast("کلپ بورڈ سے تصویر وصول ہو گئی ہے۔");
+                    break;
+                }
+            }
+        }
+    });
+}
+
+async function handleImageQASubmit() {
+    const semNum = document.getElementById("semester-select").value;
+    const courseCode = document.getElementById("course-select").value;
+
+    if (!semNum) {
+        alert("براہِ کرم پہلے سمسٹر منتخب فرمائیں۔");
+        return;
+    }
+    if (!selectedImageDataUrl) {
+        alert("براہِ کرم پہلے سوالیہ پرچے کی تصویر اپلوڈ فرمائیں۔");
+        return;
+    }
+
+    const spinner = document.getElementById("image-spinner");
+    const submitBtn = document.getElementById("image-submit-btn");
+    spinner.style.display = "inline-block";
+    submitBtn.disabled = true;
+
+    try {
+        const resp = await fetch("/api/ask_image", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                image_b64: selectedImageDataUrl,
+                semester_num: semNum,
+                course_code: courseCode === "ALL" ? null : courseCode,
+                mime_type: selectedImageFile ? selectedImageFile.type : "image/jpeg"
+            })
+        });
+
+        if (!resp.ok) {
+            throw new Error(`Server returned status: ${resp.status}`);
+        }
+
+        const data = await resp.json();
+        lastImageQAResult = data;
+        renderImageQAResults(data);
+    } catch (e) {
+        console.error("Image QA error:", e);
+        showToast("تصویر کے سوالات حل کرنے میں دشواری پیش آئی۔ دوبارہ کوشش کریں۔");
+    } finally {
+        spinner.style.display = "none";
+        submitBtn.disabled = false;
+    }
+}
+
+function renderImageQAResults(data) {
+    const resultsArea = document.getElementById("image-results-area");
+    const countText = document.getElementById("image-master-count-text");
+    const container = document.getElementById("image-questions-container");
+
+    resultsArea.style.display = "block";
+    resultsArea.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    if (!data.success || !data.questions || data.questions.length === 0) {
+        countText.textContent = "نتیجہ: سوال شناخت نہیں ہو سکا";
+        container.innerHTML = `
+            <div style="background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px; padding: 1.25rem; color: #92400e;">
+                <p style="font-weight: 700; font-size: 1.05rem;">⚠️ ${escapeHtml(data.error || "تصویر میں کوئی واضح سوال شناخت نہیں ہو سکا۔")}</p>
+                <p style="margin-top: 0.35rem;">براہِ کرم واضح، سیدھی اور پڑھنے کے قابل تصویر اپلوڈ فرمائیں جس میں سوالات صاف نظر آ رہے ہوں۔</p>
+            </div>
+        `;
+        return;
+    }
+
+    countText.textContent = `تصویر سے ${data.total_questions || data.questions.length} سوالات شناخت کر کے مدلل حل کر دیے گئے ہیں:`;
+    container.innerHTML = "";
+
+    const urduNums = ["۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹", "۱۰"];
+
+    data.questions.forEach((q, idx) => {
+        const card = document.createElement("div");
+        card.className = "image-q-card";
+
+        const qNumUr = urduNums[idx] || (idx + 1);
+
+        card.innerHTML = `
+            <div class="image-q-header">
+                <span class="image-q-number">📌 سوال نمبر ${qNumUr}</span>
+                <span class="ref-badge badge-book">📚 ${escapeHtml(q.book_title || "نصابی کتاب")}</span>
+            </div>
+            <div class="image-q-text">
+                ❓ <strong>سوال:</strong> ${escapeHtml(q.question)}
+            </div>
+            <div class="image-q-answer urdu-text">
+                ${escapeHtml(q.answer)}
+            </div>
+            <div class="image-q-footer">
+                <span class="ref-badge badge-page">📄 صفحہ نمبر: ${escapeHtml(q.printed_page || "متعلقہ")}</span>
+                <button class="btn btn-outline" onclick="copySingleImageQuestion(${idx}, this)">
+                    <span>📋 صرف یہ سوال و جواب کاپی کریں</span>
+                </button>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+async function copySingleImageQuestion(idx, btn = null) {
+    if (!lastImageQAResult || !lastImageQAResult.questions || !lastImageQAResult.questions[idx]) return;
+    const q = lastImageQAResult.questions[idx];
+    const text = [
+        `============================================================`,
+        `   AIOU Help — سوال و جواب (تصویر سے حل شدہ)`,
+        `============================================================`,
+        `سوال نمبر ${idx + 1}: ${q.question}`,
+        `جواب:`,
+        q.answer,
+        `حوالہ: کتاب «${q.book_title}»، صفحہ ${q.printed_page}`,
+        `============================================================`
+    ].join("\r\n");
+
+    await copyToClipboard(text, `سوال نمبر ${idx + 1} کا مکمل جواب کاپی ہو گیا۔`, btn);
+}
+
+async function copyAllImageQA(btn = null) {
+    if (!lastImageQAResult) return;
+    const copyText = lastImageQAResult.combined_copy_text || "کوئی مواد نہیں ملا۔";
+    await copyToClipboard(copyText, "تمام سوالات و جوابات کلپ بورڈ پر کاپی ہو گئے۔", btn || document.getElementById("btn-copy-all-image-qa"));
+}
+
+// ==========================================
+// PASTE HELPER
+// ==========================================
+async function pasteIntoInput(inputId) {
+    const el = document.getElementById(inputId);
+    if (!el) return;
+    try {
+        if (navigator.clipboard && navigator.clipboard.readText) {
+            const text = await navigator.clipboard.readText();
+            if (text) {
+                el.value = text;
+                el.focus();
+                showToast("کلپ بورڈ سے ٹیکسٹ کامیابی سے پیسٹ ہو گیا۔");
+                return;
+            }
+        }
+    } catch (err) {
+        console.warn("Clipboard readText restricted:", err);
+    }
+    el.focus();
+    showToast("کی بورڈ سے Ctrl + V دبائیں یا اسکرین پر دبا کر پیسٹ کریں۔");
+}
+
+// ==========================================
 // UNIVERSAL BULLETPROOF CLIPBOARD COPY
 // ==========================================
-async function copyToClipboard(text, successMessage = "مواد کلپ بورڈ پر کاپی ہو گیا ہے۔") {
+async function copyToClipboard(text, successMessage = "مواد کلپ بورڈ پر کاپی ہو گیا ہے۔", btnElement = null) {
     let success = false;
+    
+    // Normalize newlines for Windows Word / WhatsApp paste cleanly
+    const formattedText = (text || "").replace(/\r?\n/g, "\r\n");
 
     // 1. Try Modern Clipboard API
     if (navigator.clipboard && window.isSecureContext) {
         try {
-            await navigator.clipboard.writeText(text);
+            await navigator.clipboard.writeText(formattedText);
             success = true;
         } catch (err) {
             console.warn("navigator.clipboard failed, falling back to textarea:", err);
@@ -962,12 +1226,13 @@ async function copyToClipboard(text, successMessage = "مواد کلپ بورڈ 
     if (!success) {
         try {
             const ta = document.createElement("textarea");
-            ta.value = text;
+            ta.value = formattedText;
             ta.style.position = "fixed";
             ta.style.left = "-9999px";
             ta.style.top = "-9999px";
             ta.setAttribute("readonly", "");
             document.body.appendChild(ta);
+            ta.focus();
             ta.select();
             ta.setSelectionRange(0, 99999);
             success = document.execCommand("copy");
@@ -979,6 +1244,15 @@ async function copyToClipboard(text, successMessage = "مواد کلپ بورڈ 
 
     if (success) {
         showToast(successMessage);
+        if (btnElement) {
+            const origHTML = btnElement.innerHTML;
+            btnElement.classList.add("btn-copied");
+            btnElement.innerHTML = `<span>✓ کاپی ہو گیا!</span>`;
+            setTimeout(() => {
+                btnElement.classList.remove("btn-copied");
+                btnElement.innerHTML = origHTML;
+            }, 2000);
+        }
     } else {
         alert("کاپی کرنے میں دشواری ہوئی۔ براہِ کرم ٹیکسٹ خود منتخب کر کے کاپی فرمائیں۔");
     }

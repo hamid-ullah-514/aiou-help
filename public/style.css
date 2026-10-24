@@ -1,5 +1,28 @@
+/* Jameel Noori Nastaleeq Official Web Font Support */
+@font-face {
+    font-family: 'Jameel Noori Nastaleeq';
+    src: url('https://cdn.jsdelivr.net/npm/jameel-noori/fonts/jameel-noori-nastaleeq4.woff2') format('woff2'),
+         url('https://unpkg.com/jameel-noori/fonts/jameel-noori-nastaleeq4.woff2') format('woff2'),
+         local('Jameel Noori Nastaleeq'),
+         local('JameelNooriNastaliq'),
+         local('Jameel-Noori-Nastaleeq');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Jameel Noori Nastaleeq Kasheeda';
+    src: local('Jameel Noori Nastaleeq Kasheeda'),
+         local('JameelNooriNastaleeqKasheeda');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 /* AIOU Help — Professional Urdu Educational & Exam Theme */
 :root {
+    --urdu-font: 'JameelNooriNastaliq', 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'Gulzar', 'Urdu Typesetting', serif;
     --bg-main: #f8fafc;
     --bg-card: #ffffff;
     --text-primary: #0f172a;
@@ -38,18 +61,26 @@
 body {
     background-color: var(--bg-main);
     color: var(--text-primary);
-    font-family: 'Amiri', 'Noto Nastaliq Urdu', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-    line-height: 1.8;
+    font-family: var(--urdu-font);
+    line-height: 2.3;
     direction: rtl;
     text-align: right;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    font-size: 1.05rem;
+    text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6,
+button, input, textarea, select,
+.nav-tab, .btn, .card, .urdu-text, .answer-body, .panel-title, .site-title, .feature-name {
+    font-family: var(--urdu-font) !important;
 }
 
 /* Urdu Typography Optimization */
 .urdu-text {
-    font-family: 'Noto Nastaliq Urdu', 'Gulzar', 'Jameel Noori Nastaleeq', 'Urdu Typesetting', Tahoma, sans-serif;
+    font-family: var(--urdu-font) !important;
     line-height: 2.3;
     letter-spacing: 0.01em;
 }
@@ -976,4 +1007,208 @@ body {
 .toast.show {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* ==========================================
+   PASTE HELPER BUTTON & COPY SUCCESS STATE
+   ========================================== */
+.form-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.btn-paste {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: #0f766e;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: all 0.2s ease;
+}
+
+.btn-paste:hover {
+    background: #e2e8f0;
+    border-color: #0f766e;
+}
+
+.btn-copied {
+    background-color: #16a34a !important;
+    color: #ffffff !important;
+    border-color: #16a34a !important;
+    transition: all 0.2s ease;
+}
+
+/* ==========================================
+   IMAGE Q&A SOLVER (5th Feature Panel)
+   ========================================== */
+.image-dropzone {
+    border: 2px dashed #0f766e;
+    background: #f0fdfa;
+    border-radius: var(--radius-lg);
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    margin-top: 1rem;
+}
+
+.image-dropzone:hover, .image-dropzone.dragover {
+    background: #ccfbf1;
+    border-color: #115e59;
+    transform: scale(1.005);
+}
+
+.dropzone-icon {
+    font-size: 3rem;
+    margin-bottom: 0.75rem;
+}
+
+.dropzone-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #0f766e;
+    margin-bottom: 0.35rem;
+}
+
+.dropzone-desc {
+    color: #475569;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+}
+
+.dropzone-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.image-preview-card {
+    background: #ffffff;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    margin-top: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    box-shadow: var(--shadow-sm);
+    flex-wrap: wrap;
+}
+
+.image-preview-thumb {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    border: 1px solid #cbd5e1;
+}
+
+.image-preview-info {
+    flex: 1;
+    min-width: 220px;
+}
+
+.image-meta-pill {
+    display: inline-block;
+    background: #e0f2fe;
+    color: #0369a1;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    margin-top: 0.35rem;
+}
+
+/* Image Multi-Questions Results Container */
+.image-results-wrapper {
+    margin-top: 2rem;
+}
+
+.image-master-bar {
+    background: #f8fafc;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.image-master-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #0f766e;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.image-q-card {
+    background: #ffffff;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    border-right: 4px solid #0f766e;
+}
+
+.image-q-header {
+    background: #f0fdfa;
+    border-bottom: 1px solid #ccfbf1;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.image-q-number {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #115e59;
+}
+
+.image-q-text {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0.75rem 1.25rem;
+    line-height: 2.1;
+    background: #f8fafc;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+}
+
+.image-q-answer {
+    padding: 1.25rem;
+    line-height: 2.3;
+    font-size: 1.02rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.image-q-footer {
+    background: #f8fafc;
+    border-top: 1px solid var(--border-light);
+    padding: 0.85rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
 }

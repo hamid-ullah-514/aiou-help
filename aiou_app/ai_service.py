@@ -1,88 +1,225 @@
+# -*- coding: utf-8 -*-
+"""
+AIOU Help — AI Service Provider (Groq High-Speed LLM & Vision Grounding Engine)
+Supports Qwen-27B Vision / Multimodal for both text questions and image-based questions.
+Strict zero-hallucination policy: answers strictly from provided AIOU book passages.
+"""
+
 import os
+import re
 import json
 import urllib.request
 import urllib.error
 from typing import Dict, List, Any, Optional
 
-from aiou_app.config import GEMINI_API_KEY, OPENAI_API_KEY
+from aiou_app.config import GROQ_API_KEY, GROQ_MODEL, GEMINI_API_KEY, OPENAI_API_KEY
 
 def get_ai_service_status() -> Dict[str, Any]:
     """Returns status of external AI providers."""
+    has_groq = bool(GROQ_API_KEY)
+    has_gemini = bool(GEMINI_API_KEY)
+    has_openai = bool(OPENAI_API_KEY)
+
+    active_provider = "groq" if has_groq else ("gemini" if has_gemini else ("openai" if has_openai else "local_source_engine"))
+
     return {
-        "has_gemini": bool(GEMINI_API_KEY),
-        "has_openai": bool(OPENAI_API_KEY),
-        "active_provider": "gemini" if GEMINI_API_KEY else ("openai" if OPENAI_API_KEY else "local_source_engine"),
-        "is_configured": bool(GEMINI_API_KEY or OPENAI_API_KEY),
+        "has_groq": has_groq,
+        "has_gemini": has_gemini,
+        "has_openai": has_openai,
+        "active_provider": active_provider,
+        "model": GROQ_MODEL if has_groq else "gemini-1.5-flash",
+        "is_configured": bool(has_groq or has_gemini or has_openai),
         "message_ur": (
-            "بیرونی AI ماڈل منسلک ہے۔ (External AI Connected)"
-            if (GEMINI_API_KEY or OPENAI_API_KEY)
-            else "مقامی تصدیق شدہ سورس انجن فعال ہے۔ (Local Source Grounded Engine Active - Zero hallucination)"
+            "Groq تیز ترین AI ماڈل (Qwen-27B Vision & Text) منسلک ہے۔"
+            if has_groq
+            else ("بیرونی AI ماڈل منسلک ہے۔" if (has_gemini or has_openai) else "مقامی تصدیق شدہ سورس انجن فعال ہے۔")
         )
     }
 
-def call_gemini_grounded(
+def call_groq_grounded(
     prompt: str,
     passages: List[Dict[str, Any]],
     mode: str = "explanation"
 ) -> Optional[str]:
     """
-    Calls Gemini API with strict grounding exclusively on provided book passages.
+    Calls Groq high-speed AI with strict grounding exclusively on provided book passages.
+    Produces comprehensive, academic Urdu examination answers with headings, definitions,
+    and citations.
     """
-    if not GEMINI_API_KEY:
+    if not GROQ_API_KEY:
         return None
 
     # Construct context from passages
     context_blocks = []
-    for idx, p in enumerate(passages[:5]):
+    for idx, p in enumerate(passages[:6]):
         pg_str = p.get('printed_page', f"PDF {p.get('pdf_page')}")
         context_blocks.append(
-            f"[Passage {idx+1} | Book: {p.get('course_title_ur')} (Code {p.get('course_code')}) | Page: {pg_str} | Lines: {p.get('line_start')}-{p.get('line_end')}]\n{p.get('raw_text')}"
+            f"[مقتبس {idx+1} | کتاب: {p.get('course_title_ur', '')} (کورس کوڈ: {p.get('course_code', '')}) | صفحہ: {pg_str} | سطور: {p.get('line_start', '')}-{p.get('line_end', '')}]\n{p.get('raw_text', '')}"
         )
     context_text = "\n\n".join(context_blocks)
 
     system_instruction = (
-        "You are AIOU Help, a strictly grounded educational study assistant for AIOU BS Islamic Studies program.\n"
-        "STRICT RULES:\n"
-        "1. You MUST answer EXCLUSIVELY using the provided context passages below.\n"
-        "2. Do NOT use any external or general AI knowledge.\n"
-        "3. Preserve the original terminology and Islamic terms.\n"
-        "4. In your Urdu response, clearly distinguish direct quotation from explanation.\n"
-        "5. If the context does not contain enough evidence, state:\n"
-        "معذرت، منتخب شدہ کتاب یا کورس کے دستیاب مواد میں اس سوال کا مستند جواب نہیں ملا۔ براہِ کرم سوال یا منتخب کردہ کورس کوڈ چیک کریں۔\n"
+        "آپ علامہ اقبال اوپن یونیورسٹی (AIOU) کے بی ایس اسلامیات (2.5 سالہ پروگرام) کے باوقار، علمی اور مستند امتحانی استاد ہیں۔\n"
+        "آپ کا کام طالب علم کے سوال کا جواب فراہم کردہ نصابی کتاب کے مواد کی روشنی میں نہایت خوبصورت، خوشخط، مفصل اور امتحانی معیار پر تیار کرنا ہے۔\n\n"
+        "سخت امتحانی و شرعی اصول:\n"
+        "۱۔ جواب صرف اور صرف نیچے فراہم کردہ کتاب کے اصل مواد (Book Passages) سے تیار کریں۔ اپنی طرف سے کوئی غیر مصدقہ بات یا بیرونی عمومی معلومات ہرگز شامل نہ کریں۔\n"
+        "۲۔ امتحانی پرچے کے مطابق مکمل تحریری ڈھانچہ تشکیل دیں:\n"
+        "   - **اساسی تعارف (Introduction):** موضوع کا پس منظر اور امتحانی اہمیت۔\n"
+        "   - **لغوی و اصطلاحی مفہوم (Definition):** لغت اور شریعت کی روشنی میں جامع تعریف۔\n"
+        "   - **تفصیلی علمی وضاحت (Detailed Explanation):** کتاب کے متن کی روشنی میں مکمل علمی گفتگو۔\n"
+        "   - **اہم ذیلی سرخیاں (Key Subheadings):** کم از کم ۳ سے ۴ ذیلی عنوانات کے تحت نکات۔\n"
+        "   - **دلائل و براہین (Evidence & Quotations):** قرآنی آیات، احادیثِ نبویہ یا فقہی اقوال (جو کتاب کے مواد میں آئے ہوں)۔\n"
+        "   - **حاصلِ کلام / نتیجہ (Conclusion):** جامع خلاصہ۔\n"
+        "۳۔ اہم ترین اصول (عدم موجودگی کی صورت میں):\n"
+        "اگر طالب علم کے سوال کا تعلق فراہم کردہ کتابی مواد سے نہ ہو، یا کتاب کے اس متن میں اس سوال کا جواب نہ پایا جاتا ہو، تو اپنی طرف سے کوئی من گھڑت جواب نہ دیں، بلکہ حرف بہ حرف صرف اور صرف یہ جملہ لکھیں:\n"
+        "معذرت، فراہم کردہ نصابی کتاب کے مواد میں اس سوال کا واضح جواب موجود نہیں ہے۔\n"
     )
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+    url = "https://api.groq.com/openai/v1/chat/completions"
     payload = {
-        "contents": [
+        "model": GROQ_MODEL,
+        "messages": [
+            {"role": "system", "content": system_instruction},
             {
                 "role": "user",
-                "parts": [
-                    {
-                        "text": f"{system_instruction}\n\nCONTEXT PASSAGES FROM BOOKS:\n{context_text}\n\nSTUDENT QUESTION / TASK:\n{prompt}"
-                    }
-                ]
+                "content": f"نصابی کتاب سے اقتباسات:\n{context_text}\n\nطالب علم کا سوال:\n{prompt}"
             }
         ],
-        "generationConfig": {
-            "temperature": 0.1,
-            "maxOutputTokens": 1024
-        }
+        "temperature": 0.2,
+        "max_tokens": 1500
     }
 
     try:
         req = urllib.request.Request(
             url,
             data=json.dumps(payload).encode("utf-8"),
-            headers={"Content-Type": "application/json"}
+            headers={
+                "Authorization": f"Bearer {GROQ_API_KEY}",
+                "Content-Type": "application/json",
+                "User-Agent": "AIOU-Help-Assistant/1.0"
+            }
         )
-        with urllib.request.urlopen(req, timeout=15) as resp:
+        with urllib.request.urlopen(req, timeout=45) as resp:
             data = json.loads(resp.read().decode("utf-8"))
-            candidates = data.get("candidates", [])
-            if candidates:
-                parts = candidates[0].get("content", {}).get("parts", [])
-                if parts:
-                    return parts[0].get("text", "").strip()
+            choices = data.get("choices", [])
+            if choices:
+                msg = choices[0].get("message", {}).get("content", "").strip()
+                return msg
     except Exception as e:
-        print("Gemini API call notice:", e)
+        print("Groq API Grounded Answer Error:", e)
         return None
     return None
+
+def extract_questions_from_image_groq(
+    image_b64: str,
+    mime_type: str = "image/jpeg"
+) -> List[Dict[str, Any]]:
+    """
+    Uses Groq Vision (Qwen-27B Multimodal) to read an image uploaded by the student
+    and extract all questions written on it (whether 1, 2, 3, 5, or more questions).
+    Returns a list of dicts: [{'q_num': 1, 'question': '...'}, ...]
+    """
+    if not GROQ_API_KEY:
+        return []
+
+    # Ensure clean base64 data without data:image/...;base64, prefix if passed raw
+    clean_b64 = image_b64
+    if "," in image_b64:
+        header, clean_b64 = image_b64.split(",", 1)
+        if "png" in header:
+            mime_type = "image/png"
+        elif "webp" in header:
+            mime_type = "image/webp"
+
+    url = "https://api.groq.com/openai/v1/chat/completions"
+    
+    prompt = (
+        "آپ امتحانی پرچوں اور اردو سوالیہ پیپرز کے ماہر OCR ریڈر ہیں۔\n"
+        "اس تصویر کو باریک بینی سے پڑھیں اور اس میں موجود تمام سوالات (چاہے ایک سوال ہو، دو ہوں یا پانچ سوالات ہوں) کو الگ الگ شناخت کریں۔\n"
+        "صرف اور صرف درست اور مکمل JSON ارے (Array) کی شکل میں جواب دیں:\n"
+        "[\n"
+        "  {\"q_num\": 1, \"question\": \"سوال کا مکمل اردو متن\"},\n"
+        "  {\"q_num\": 2, \"question\": \"دوسرے سوال کا مکمل اردو متن\"}\n"
+        "]\n"
+        "سخت ہدایت: کسی قسم کی وضاحت، مارک ڈاؤن بیک ٹکس یا فالتو الفاظ نہ لکھیں، صرف خالص JSON ارے واپس کریں۔"
+    )
+
+    payload = {
+        "model": GROQ_MODEL,
+        "messages": [
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": prompt},
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:{mime_type};base64,{clean_b64}"
+                        }
+                    }
+                ]
+            }
+        ],
+        "temperature": 0.1,
+        "max_tokens": 1024
+    }
+
+    try:
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={
+                "Authorization": f"Bearer {GROQ_API_KEY}",
+                "Content-Type": "application/json",
+                "User-Agent": "AIOU-Help-Assistant/1.0"
+            }
+        )
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            raw_text = data.get("choices", [{}])[0].get("message", {}).get("content", "").strip()
+            
+            # Clean possible markdown wrapping like ```json ... ```
+            cleaned = re.sub(r"^```(?:json)?", "", raw_text, flags=re.MULTILINE)
+            cleaned = re.sub(r"```$", "", cleaned, flags=re.MULTILINE).strip()
+            
+            # Find JSON array
+            start_idx = cleaned.find("[")
+            end_idx = cleaned.rfind("]")
+            if start_idx != -1 and end_idx != -1:
+                json_str = cleaned[start_idx:end_idx+1]
+                questions = json.loads(json_str)
+                if isinstance(questions, list):
+                    return questions
+
+            # Fallback line-by-line parsing if json failed
+            lines = [l.strip() for l in raw_text.split("\n") if l.strip()]
+            q_list = []
+            for idx, line in enumerate(lines):
+                if any(kw in line for kw in ["سوال", "Question", "1.", "2.", "3.", "4.", "5.", "۱۔", "۲۔", "۳۔", "؟"]):
+                    q_list.append({"q_num": len(q_list) + 1, "question": line})
+            return q_list
+
+    except Exception as e:
+        print("Groq Vision OCR Error:", e)
+        return []
+
+def call_gemini_grounded(
+    prompt: str,
+    passages: List[Dict[str, Any]],
+    mode: str = "explanation"
+) -> Optional[str]:
+    """Fallback to Gemini if configured."""
+    if not GEMINI_API_KEY:
+        return None
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+    payload = {
+        "contents": [{"role": "user", "parts": [{"text": prompt}]}],
+        "generationConfig": {"temperature": 0.1, "maxOutputTokens": 1024}
+    }
+    try:
+        req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            return data["candidates"][0]["content"]["parts"][0]["text"].strip()
+    except Exception:
+        return None

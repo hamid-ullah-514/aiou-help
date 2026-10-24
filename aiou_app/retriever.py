@@ -113,6 +113,16 @@ def search_json_fallback(
                     phrase_bonus = 4.0 if norm_q in norm_text else 0.0
                     score = (token_coverage * 7.0) + phrase_bonus + (matched_tokens * 0.6)
 
+                    sub_headings_text = "\n".join([f"- {sh.get('heading', '')}: {sh.get('content', '')}" for sh in q.get("subheadings", [])])
+                    full_book_content = (
+                        f"سوال / عنوان: {q.get('question', '')}\n"
+                        f"بنیادی تعریف: {q.get('definition', '')}\n"
+                        f"تفصیلی وضاحت: {q.get('detailed_explanation', '')}\n"
+                        f"اہم نکات:\n{sub_headings_text}\n"
+                        f"دلائل و براہین: {q.get('key_evidence', '')}\n"
+                        f"اصل عبارت: {q.get('source_passage', '')}"
+                    )
+
                     results.append({
                         "passage_id": 1,
                         "doc_id": 1,
@@ -126,7 +136,7 @@ def search_json_fallback(
                         "printed_page": q.get("printed_page", "1"),
                         "line_start": 1,
                         "line_end": 15,
-                        "raw_text": q.get("source_passage") or q.get("definition") or q.get("detailed_explanation", ""),
+                        "raw_text": full_book_content,
                         "norm_text": norm_text,
                         "highlighted_text": highlight_matches(q.get("source_passage", ""), query),
                         "score": round(score, 3),
@@ -306,9 +316,13 @@ def search_passages(
             })
 
         con.close()
-        results = sorted(results, key=lambda x: x["score"], reverse=True)
-        if results:
-            return results[:limit]
+        # If top SQLite result has low coverage or very short text, combine with JSON fallback
+        json_results = search_json_fallback(query, semester_num, course_code, limit)
+        combined = results + json_results
+        # Sort descending by score
+        combined = sorted(combined, key=lambda x: (x.get("score", 0), len(x.get("raw_text", ""))), reverse=True)
+        if combined:
+            return combined[:limit]
 
     except Exception as e:
         print(f"SQLite search exception: {e}")

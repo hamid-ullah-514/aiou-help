@@ -12,7 +12,7 @@ from aiou_app.indexer import get_indexing_stats, index_all_books
 from aiou_app.ocr_engine import get_ocr_engine_status
 from aiou_app.ai_service import get_ai_service_status
 from aiou_app.retriever import search_passages, get_page_full_text
-from aiou_app.qa_engine import answer_question, solve_mcq, format_clipboard_text
+from aiou_app.qa_engine import answer_question, solve_mcq, format_clipboard_text, solve_image_questions
 from aiou_app.exam_engine import get_course_units, generate_exam_questions, generate_chapter_mcqs
 
 app = FastAPI(
@@ -85,6 +85,12 @@ class ChapterMCQRequest(BaseModel):
     course_code: str
     count_per_chapter: int = 10  # 10, 15, 20, or 25
 
+class ImageAskRequest(BaseModel):
+    image_b64: str
+    semester_num: str
+    course_code: Optional[str] = None
+    mime_type: str = "image/jpeg"
+
 @app.get("/")
 def get_index():
     index_file = STATIC_DIR / "index.html"
@@ -147,6 +153,26 @@ def ask_question_api(req: AskRequest):
         semester_num=req.semester_num,
         course_code=req.course_code,
         mode=req.mode
+    )
+    return result
+
+@app.post("/api/ask_image")
+@app.post("/ask_image")
+def ask_image_api(req: ImageAskRequest):
+    """
+    Extracts all questions from the uploaded image and answers each strictly grounded in book materials.
+    Handles 1 to 5+ questions on an exam paper or assignment photo.
+    """
+    if not req.semester_num:
+        raise HTTPException(status_code=400, detail="براہِ کرم پہلے سمسٹر کا انتخاب فرمائیں۔")
+    if not req.image_b64:
+        raise HTTPException(status_code=400, detail="براہِ کرم سوالیہ پرچے کی تصویر فراہم کریں۔")
+
+    result = solve_image_questions(
+        image_b64=req.image_b64,
+        semester_num=req.semester_num,
+        course_code=req.course_code,
+        mime_type=req.mime_type
     )
     return result
 
