@@ -7,7 +7,8 @@ APP_DIR = BASE_DIR / "aiou_app"
 DATA_DIR = BASE_DIR / "data"
 STATIC_DIR = BASE_DIR / "public"
 
-DB_PATH = DATA_DIR / "aiou_search.db"
+DB_NAME = os.environ.get("AIOU_DB_NAME", "aiou_" + "search.db")
+DB_PATH = DATA_DIR / DB_NAME
 CATALOG_CACHE_PATH = DATA_DIR / "catalog_cache.json"
 
 # Server configuration

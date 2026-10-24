@@ -1,0 +1,9 @@
+1st semster book/
+2nd semster book/
+3rd semster book/
+4th semster book/
+5th semster book/
+data/*.db*
+*.pdf
+*.docx
+*.doc

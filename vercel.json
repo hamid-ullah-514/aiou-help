@@ -1,5 +1,10 @@
 {
   "version": 2,
+  "functions": {
+    "api/index.py": {
+      "excludeFiles": "{*semster book/**,*.pdf,*.docx,*.doc,data/*.db*,data/aiou_search.db}"
+    }
+  },
   "rewrites": [
     {
       "source": "/api/(.*)",
