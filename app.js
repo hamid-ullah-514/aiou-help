@@ -155,25 +155,29 @@ function onCourseChange(source = "global") {
 
 // Switch between tabs / features
 function switchFeature(feat, autoTriggerFile = false) {
-    currentFeature = feat;
+    if (!feat) feat = "home";
+    const norm = feat.replace(/_/g, "-");
+    const under = feat.replace(/-/g, "_");
+    currentFeature = norm;
 
-    const tabs = ["home", "qa", "image_qa", "exam", "mcq_gen", "quiz"];
-    tabs.forEach(t => {
-        const btn = document.getElementById(`feat-btn-${t}`);
-        const navBtn = document.getElementById(`nav-btn-${t}`);
-        const sec = document.getElementById(`section-${t}`);
-        const mobBtn = document.getElementById(`mob-btn-${t}`);
+    const allTabs = ["home", "qa", "image-qa", "exam", "mcq-gen", "quiz"];
+    allTabs.forEach(t => {
+        const u = t.replace(/-/g, "_");
+        const btn = document.getElementById(`feat-btn-${t}`) || document.getElementById(`feat-btn-${u}`);
+        const navBtn = document.getElementById(`nav-btn-${t}`) || document.getElementById(`nav-btn-${u}`);
+        const sec = document.getElementById(`section-${t}`) || document.getElementById(`section-${u}`);
+        const mobBtn = document.getElementById(`mob-btn-${t}`) || document.getElementById(`mob-btn-${u}`);
         if (btn) btn.classList.remove("active");
         if (navBtn) navBtn.classList.remove("active");
         if (mobBtn) mobBtn.classList.remove("active");
         if (sec) sec.style.display = "none";
     });
 
-    const activeBtn = document.getElementById(`feat-btn-${feat}`);
-    const activeNavBtn = document.getElementById(`nav-btn-${feat}`);
-    const activeMobBtn = document.getElementById(`mob-btn-${feat}`);
-    const activeSec = document.getElementById(`section-${feat}`);
-    
+    const activeBtn = document.getElementById(`feat-btn-${norm}`) || document.getElementById(`feat-btn-${under}`);
+    const activeNavBtn = document.getElementById(`nav-btn-${norm}`) || document.getElementById(`nav-btn-${under}`);
+    const activeMobBtn = document.getElementById(`mob-btn-${norm}`) || document.getElementById(`mob-btn-${under}`);
+    const activeSec = document.getElementById(`section-${norm}`) || document.getElementById(`section-${under}`);
+
     if (activeBtn) activeBtn.classList.add("active");
     if (activeNavBtn) activeNavBtn.classList.add("active");
     if (activeMobBtn) activeMobBtn.classList.add("active");
@@ -182,14 +186,7 @@ function switchFeature(feat, autoTriggerFile = false) {
         window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    // Auto-open PC file picker if user clicked "تصویر سے سوال پوچھیں"
-    if (feat === "image_qa" && autoTriggerFile && !selectedImageDataUrl) {
-        setTimeout(() => {
-            triggerImageFileInput();
-        }, 100);
-    }
-}
-    if (feat === "image_qa" && autoTriggerFile && !selectedImageDataUrl) {
+    if ((norm === "image-qa" || under === "image_qa") && autoTriggerFile && !selectedImageDataUrl) {
         setTimeout(() => {
             triggerImageFileInput();
         }, 100);
