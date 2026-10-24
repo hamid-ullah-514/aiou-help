@@ -271,6 +271,49 @@ def parse_mcq_text(raw_text: str) -> tuple[str, Dict[str, str]]:
 
     return " ".join(q_lines), options
 
+def get_unit_info_for_page(course_code: Optional[str], page_str: Optional[str]) -> Dict[str, Any]:
+    """Finds unit_num and unit_name for a given course and page."""
+    if not course_code:
+        return {"unit_num": 1, "unit_name": "یونٹ نمبر 1"}
+
+    import re
+    from pathlib import Path
+    import json
+
+    base_dir = Path(__file__).resolve().parent.parent / "data"
+    for sub in ["mcq_banks", "exam_banks"]:
+        f = base_dir / sub / f"{course_code}.json"
+        if f.exists():
+            try:
+                with open(f, "r", encoding="utf-8") as fp:
+                    d = json.load(fp)
+                chapters = d.get("chapters", [])
+                p_num = None
+                if page_str:
+                    digits = re.findall(r'\d+', str(page_str))
+                    if digits:
+                        p_num = int(digits[0])
+
+                if p_num is not None:
+                    for chap in chapters:
+                        pr = chap.get("pages_range", "")
+                        parts = [int(x) for x in re.findall(r'\d+', pr)]
+                        if len(parts) >= 2 and parts[0] <= p_num <= parts[1]:
+                            return {
+                                "unit_num": chap.get("unit_num", 1),
+                                "unit_name": chap.get("chapter_name", f"یونٹ نمبر {chap.get('unit_num', 1)}")
+                            }
+
+                if chapters:
+                    return {
+                        "unit_num": chapters[0].get("unit_num", 1),
+                        "unit_name": chapters[0].get("chapter_name", "یونٹ نمبر 1")
+                    }
+            except Exception:
+                pass
+
+    return {"unit_num": 1, "unit_name": "یونٹ نمبر 1"}
+
 def solve_mcq(
     question: str,
     options: Dict[str, str],
@@ -358,12 +401,14 @@ def solve_mcq(
             book_name = ai_res.get("book_title") or "قرآن حکیم (تجوید و قرأت)"
             c_code = ai_res.get("course_code") or course_code or "4935"
             expl = ai_res.get("explanation") or f"نصابی قواعد کے مطابق اس کا درست جواب « {chosen_text} » ہے۔"
+            u_info = get_unit_info_for_page(c_code, "1")
 
             formatted_mcq = (
                 f"درست جواب: {chosen_text}\n"
                 f"آپشن: {best_opt_key}\n"
                 f"کتاب: {book_name}\n"
                 f"کورس کوڈ: {c_code}\n"
+                f"یونٹ نمبر: {u_info['unit_name']}\n"
                 f"صفحہ / حوالہ: نصابی اصول و مستند ماخذ\n"
                 f"وجہ و علمی تشریح: {expl}"
             )
@@ -381,6 +426,8 @@ def solve_mcq(
                 "book_title": book_name,
                 "course_code": c_code,
                 "semester_num": semester_num,
+                "unit_num": u_info["unit_num"],
+                "unit_name": u_info["unit_name"],
                 "printed_page": "نصابی ماخذ",
                 "pdf_page": 0,
                 "line_reference": "علمی حوالہ",
@@ -410,6 +457,7 @@ def solve_mcq(
     chosen_option_text = options[best_option_key]
     pg_str = best_passage.get("printed_page", f"PDF {best_passage.get('pdf_page')}")
     line_ref = f"سطر {best_passage.get('line_start')} تا {best_passage.get('line_end')}"
+    u_info = get_unit_info_for_page(best_passage.get("course_code"), pg_str)
 
     # Required Section 9 Display Template
     formatted_mcq = (
@@ -417,6 +465,7 @@ def solve_mcq(
         f"آپشن: {best_option_key}\n"
         f"کتاب: {best_passage.get('course_title_ur')}\n"
         f"کورس کوڈ: {best_passage.get('course_code')}\n"
+        f"یونٹ نمبر: {u_info['unit_name']}\n"
         f"صفحہ نمبر: {pg_str}\n"
         f"متعلقہ عبارت: « {best_passage.get('raw_text').strip()} »\n"
         f"متعلقہ سطر: {best_matched_line or line_ref}\n"
@@ -436,6 +485,8 @@ def solve_mcq(
         "book_title": best_passage.get("course_title_ur"),
         "course_code": best_passage.get("course_code"),
         "semester_num": semester_num,
+        "unit_num": u_info["unit_num"],
+        "unit_name": u_info["unit_name"],
         "printed_page": best_passage.get("printed_page"),
         "pdf_page": best_passage.get("pdf_page"),
         "line_reference": line_ref,

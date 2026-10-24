@@ -1293,6 +1293,310 @@ button, input, textarea, select,
     line-height: 2;
 }
 
+/* ============================================================ */
+/* MCQ 3-IN-1 MASTER COPY HUB & ADVANCED CARD STYLES            */
+/* ============================================================ */
+.mcq-master-copy-hub {
+    background: linear-gradient(135deg, #fdf4ff 0%, #f5f3ff 50%, #eff6ff 100%);
+    border: 2px solid #c084fc;
+    border-radius: var(--radius-md);
+    padding: 1.25rem 1.35rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 14px rgba(147, 51, 234, 0.08);
+}
+
+.copy-hub-header {
+    margin-bottom: 1rem;
+}
+
+.copy-hub-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #581c87;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.copy-hub-instruction {
+    font-size: 0.92rem;
+    color: #4c1d95;
+    margin-top: 0.35rem;
+    line-height: 1.8;
+}
+
+.copy-hub-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.15rem;
+}
+
+.copy-hub-card {
+    background: #ffffff;
+    border: 1px solid #e9d5ff;
+    border-radius: var(--radius-sm);
+    padding: 0.85rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+}
+
+.copy-hub-card.highlight {
+    border: 2px solid #9333ea;
+    background: #faf5ff;
+}
+
+.copy-hub-card .card-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #e9d5ff;
+    color: #581c87;
+    font-weight: 800;
+    font-size: 0.85rem;
+}
+
+.copy-hub-card.highlight .card-num {
+    background: #9333ea;
+    color: #ffffff;
+}
+
+.copy-hub-card .card-title {
+    font-weight: 800;
+    font-size: 0.96rem;
+    color: #1e1b4b;
+}
+
+.copy-hub-card .card-desc {
+    font-size: 0.85rem;
+    color: #6b21a8;
+    line-height: 1.7;
+}
+
+.copy-hub-main-action {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    padding-top: 0.85rem;
+    border-top: 1px dashed #d8b4fe;
+}
+
+.btn-copy-all-master {
+    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%) !important;
+    color: #ffffff !important;
+    font-size: 1rem !important;
+    font-weight: 800 !important;
+    padding: 0.8rem 1.5rem !important;
+    border-radius: var(--radius-md) !important;
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3) !important;
+    border: none !important;
+    cursor: pointer;
+    transition: all 0.2s ease !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-copy-all-master:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(124, 58, 237, 0.45) !important;
+}
+
+/* MCQ Card Header Bar & Metadata Badges */
+.mcq-item-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-bottom: 0.65rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px dashed #e2e8f0;
+}
+
+.mcq-meta-badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+    white-space: nowrap;
+}
+
+.badge-pill.badge-book {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+}
+
+.badge-pill.badge-unit {
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+.badge-pill.badge-page {
+    background: #fffbeb;
+    color: #b45309;
+    border: 1px solid #fde68a;
+}
+
+.btn-copy-single {
+    font-size: 0.82rem !important;
+    font-weight: 700 !important;
+    padding: 0.4rem 0.9rem !important;
+    border-radius: var(--radius-sm) !important;
+    border: 1px solid #cbd5e1 !important;
+    background: #f8fafc !important;
+    color: #0f766e !important;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.btn-copy-single:hover {
+    background: #0f766e !important;
+    color: #ffffff !important;
+    border-color: #0f766e !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(15, 118, 110, 0.2);
+}
+
+.mcq-q-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.85rem;
+    line-height: 1.9;
+    display: flex;
+    gap: 0.4rem;
+    align-items: baseline;
+}
+
+.mcq-q-num-tag {
+    color: var(--primary);
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.mcq-item-bottom-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.75rem;
+    padding-top: 0.5rem;
+    border-top: 1px dotted #e2e8f0;
+}
+
+/* Chapter Block Headers & Footers */
+.chapter-header-info {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.chapter-badge {
+    background: var(--primary);
+    color: #ffffff;
+    font-size: 0.82rem;
+    font-weight: 800;
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+}
+
+.chapter-count-pill {
+    background: #e2e8f0;
+    color: #334155;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.25rem 0.6rem;
+    border-radius: 9999px;
+}
+
+.chapter-pages-pill {
+    background: #fef3c7;
+    color: #92400e;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.25rem 0.6rem;
+    border-radius: 9999px;
+}
+
+.btn-copy-chapter {
+    background: #0284c7 !important;
+    color: #ffffff !important;
+    font-size: 0.88rem !important;
+    font-weight: 700 !important;
+    padding: 0.5rem 1.15rem !important;
+    border-radius: var(--radius-sm) !important;
+    border: none !important;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.btn-copy-chapter:hover {
+    background: #0369a1 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);
+}
+
+.chapter-footer-bar {
+    background: #f8fafc;
+    border-top: 1px solid var(--border-light);
+    padding: 0.85rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+
+.chapter-footer-info {
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: #15803d;
+}
+
+/* Master Bottom Bar */
+.mcq-bottom-master-bar {
+    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+    border: 2px solid #c084fc;
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    margin-top: 2rem;
+    box-shadow: 0 4px 14px rgba(147, 51, 234, 0.1);
+}
+
+.bottom-bar-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+}
+
 /* Feature 4: Quiz Finder Form */
 .mcq-container {
     display: flex;
@@ -1935,6 +2239,40 @@ button, input, textarea, select,
 
     .chapter-title-text {
         font-size: 1rem;
+    }
+
+    .mcq-item-header-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.6rem;
+    }
+
+    .mcq-item-header-bar .btn-copy-single,
+    .mcq-item-bottom-bar .btn-copy-single {
+        width: 100%;
+        justify-content: center;
+        font-size: 0.82rem;
+    }
+
+    .chapter-footer-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.6rem;
+        padding: 0.85rem 1rem;
+    }
+
+    .chapter-footer-bar .btn {
+        width: 100%;
+        justify-content: center;
+        font-size: 0.85rem;
+    }
+
+    .btn-copy-all-master {
+        width: 100%;
+        justify-content: center;
+        font-size: 0.92rem !important;
+        text-align: center;
+        padding: 0.85rem 1rem !important;
     }
 
     .exam-summary-bar {

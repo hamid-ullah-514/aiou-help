@@ -738,8 +738,11 @@ function renderMCQGenResults(data) {
     area.style.display = "block";
     area.scrollIntoView({ behavior: "smooth", block: "start" });
 
+    const totalChaps = data.total_chapters || (data.chapters ? data.chapters.length : 9);
+    const totalMCQs = data.total_mcqs || (data.chapters ? data.chapters.reduce((acc, c) => acc + (c.mcqs ? c.mcqs.length : 0), 0) : 90);
+
     titleEl.textContent = `کثیر الانتخابی سوالات (MCQs): ${data.book_title || "نصابی کتاب"} (کورس ${data.course_code || ""})`;
-    subtitleEl.textContent = `کل چیپٹرز: ${data.total_chapters || 9} | ہر چیپٹر سے MCQs: ${data.count_per_chapter || 10} | مجموعی معروضی: ${data.total_mcqs || 90}`;
+    subtitleEl.textContent = `کل چیپٹرز: ${totalChaps} | ہر چیپٹر سے MCQs: ${data.count_per_chapter || 10} | مجموعی معروضی: ${totalMCQs}`;
 
     container.innerHTML = "";
     areAllMCQsRevealed = true;
@@ -748,9 +751,57 @@ function renderMCQGenResults(data) {
 
     const optMap = { A: "الف", B: "ب", C: "ج", D: "د", "الف": "الف", "ب": "ب", "ج": "ج", "د": "د" };
 
+    // 1. MASTER QUICK COPY HUB (تینوں کاپی کے اختیارات)
+    const copyHub = document.createElement("div");
+    copyHub.className = "mcq-master-copy-hub";
+    copyHub.innerHTML = `
+        <div class="copy-hub-header">
+            <div class="copy-hub-title">
+                <span style="font-size: 1.25rem;">📋</span>
+                <span>معروضی سوالات (MCQs) کاپی کرنے کے ۳ آسان اختیارات</span>
+            </div>
+            <div class="copy-hub-instruction">
+                <span>آپ اپنی ضرورت کے مطابق درج ذیل ۳ طریقوں سے سوالات کاپی کر سکتے ہیں (تمام اختیارات میں درست جواب کے سامنے ✓ کا نشان، کتاب، یونٹ نمبر اور صفحہ نمبر شامل ہو گا):</span>
+            </div>
+        </div>
+        <div class="copy-hub-cards-grid">
+            <div class="copy-hub-card">
+                <div class="card-num">۱</div>
+                <div class="card-title">ایک ایک سوال کاپی کریں</div>
+                <div class="card-desc">ہر سوال کے اوپر اور نیچے کاپی کا بٹن موجود ہے۔</div>
+            </div>
+            <div class="copy-hub-card">
+                <div class="card-num">۲</div>
+                <div class="card-title">ایک پورا باب اکٹھا کاپی کریں</div>
+                <div class="card-desc">ہر باب کے شروع اور آخر میں اس باب کے تمام سوالات کاپی کرنے کا بٹن ہے۔</div>
+            </div>
+            <div class="copy-hub-card highlight">
+                <div class="card-num">۳</div>
+                <div class="card-title">تمام ابواب اکٹھے کاپی کریں</div>
+                <div class="card-desc">پوری کتاب کے تمام ۹ ابواب کے تمام ${totalMCQs} سوالات ایک ہی کلک سے کاپی کریں۔</div>
+            </div>
+        </div>
+        <div class="copy-hub-main-action">
+            <button class="btn btn-primary btn-purple btn-copy-all-master" onclick="copyEntireBookMCQs(this)">
+                <span>💾 پوری کتاب کے تمام چیپٹرز کے تمام MCQs ایک ساتھ کاپی کریں (مع ✓ درست نشانات برائے MS Word)</span>
+            </button>
+            <button class="btn btn-secondary" onclick="toggleAllMCQAnswers()">
+                <span id="mcq-toggle-text-hub">🙈 درست جوابات پر ٹک چھپائیں (سیلف ٹیسٹ موڈ)</span>
+            </button>
+        </div>
+    `;
+    container.appendChild(copyHub);
+
+    // 2. RENDER EACH CHAPTER
     (data.chapters || []).forEach((chap, cIdx) => {
         const block = document.createElement("div");
         block.className = "chapter-block";
+
+        const unitNum = chap.unit_num || (cIdx + 1);
+        const chapTitle = chap.chapter_name || `یونٹ نمبر ${unitNum}`;
+        const chapTitleClean = chapTitle.replace(/^یونٹ\s*نمبر\s*\d+[:\s-]*/, "");
+        const pagesRange = chap.pages_range || "";
+        const mcqCount = chap.mcq_count || (chap.mcqs ? chap.mcqs.length : 0);
 
         let mcqsHtml = "";
         (chap.mcqs || []).forEach((m, mIdx) => {
@@ -770,11 +821,32 @@ function renderMCQGenResults(data) {
 
             const winnerText = m.correct_text || (isWinnerA ? optA : isWinnerB ? optB : isWinnerC ? optC : optD);
 
+            const bookTitle = m.book_title || data.book_title || "نصابی کتاب";
+            const courseCode = data.course_code || "";
+            const pageNum = m.printed_page || pagesRange || "مستند ماخذ";
+
             mcqsHtml += `
                 <div class="mcq-display-item" id="mcq-item-${cIdx}-${mIdx}">
-                    <div class="mcq-q-title">
-                        <span style="color: var(--primary); font-weight: 800;">سوال ${mIdx + 1}:</span> ${escapeHtml(m.question)}
+                    <!-- Top Metadata Badges & Single Copy Button Bar -->
+                    <div class="mcq-item-header-bar">
+                        <div class="mcq-meta-badges">
+                            <span class="badge-pill badge-book" title="کتاب کا نام و کورس کوڈ">📚 کتاب: ${escapeHtml(bookTitle)} ${courseCode ? `(${escapeHtml(courseCode)})` : ''}</span>
+                            <span class="badge-pill badge-unit" title="یونٹ نمبر اور باب کا نام">📖 یونٹ نمبر ${unitNum}: ${escapeHtml(chapTitleClean)}</span>
+                            <span class="badge-pill badge-page" title="کتاب کا صفحہ نمبر">📄 صفحہ نمبر: ${escapeHtml(pageNum)}</span>
+                        </div>
+                        <button class="btn btn-outline btn-copy-single" onclick="copySingleMCQ(${cIdx}, ${mIdx}, this)" title="صرف یہ ایک سوال کاپی کریں">
+                            <span class="copy-icon">📋</span>
+                            <span>یہ ایک سوال کاپی کریں (مع ✓ درست نشان)</span>
+                        </button>
                     </div>
+
+                    <!-- Question Title -->
+                    <div class="mcq-q-title">
+                        <span class="mcq-q-num-tag">سوال ${mIdx + 1}:</span>
+                        <span class="mcq-q-text">${escapeHtml(m.question)}</span>
+                    </div>
+
+                    <!-- Options Container with ✓ on Winning Option -->
                     <div class="mcq-options-container">
                         <div class="mcq-option-choice mcq-choice-A ${isWinnerA ? 'is-correct-choice' : ''}" onclick="checkMCQChoice(${cIdx}, ${mIdx}, 'A')">
                             <span class="mcq-option-badge">الف</span>
@@ -798,6 +870,7 @@ function renderMCQGenResults(data) {
                         </div>
                     </div>
                     
+                    <!-- Reveal Box with Explanation, Book, Unit & Page Details -->
                     <div id="${mId}" class="mcq-reveal-box" style="display: block;">
                         <div style="font-weight: 700; color: #15803d; font-size: 0.98rem; display: flex; align-items: center; gap: 0.4rem;">
                             <span>✓</span>
@@ -807,8 +880,9 @@ function renderMCQGenResults(data) {
                             <strong>علمی تشریح:</strong> ${escapeHtml(m.explanation || "")}
                         </div>
                         <div style="font-size: 0.84rem; color: #64748b; margin-top: 0.35rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                            <span class="ref-badge badge-book">📚 ${escapeHtml(data.book_title || "نصابی کتاب")}</span>
-                            <span class="ref-badge badge-page">📄 صفحہ نمبر: ${escapeHtml(m.printed_page || "")}</span>
+                            <span class="ref-badge badge-book">📚 کتاب: ${escapeHtml(bookTitle)} ${courseCode ? `(${escapeHtml(courseCode)})` : ''}</span>
+                            <span class="ref-badge badge-unit">📖 یونٹ نمبر ${unitNum}</span>
+                            <span class="ref-badge badge-page">📄 صفحہ نمبر: ${escapeHtml(pageNum)}</span>
                         </div>
                         ${m.source_passage ? `
                         <div style="font-size: 0.82rem; color: #475569; margin-top: 0.35rem; font-style: italic; background: #ffffff; padding: 0.4rem 0.6rem; border-radius: 4px; border: 1px solid #dcfce7;">
@@ -816,9 +890,11 @@ function renderMCQGenResults(data) {
                         </div>` : ""}
                     </div>
 
-                    <div style="display: flex; justify-content: flex-end; margin-top: 0.75rem;">
-                        <button class="btn btn-outline" style="font-size: 0.82rem; padding: 0.4rem 0.9rem;" onclick="copySingleMCQ(${cIdx}, ${mIdx}, this)">
-                            <span>📋 یہ سوال مع درست جواب (✓) کاپی کریں</span>
+                    <!-- Bottom Secondary Copy Button (Quick Copy at bottom of card) -->
+                    <div class="mcq-item-bottom-bar">
+                        <button class="btn btn-outline btn-copy-single" onclick="copySingleMCQ(${cIdx}, ${mIdx}, this)">
+                            <span class="copy-icon">📋</span>
+                            <span>یہ ایک سوال کاپی کریں (مع ✓ درست نشان)</span>
                         </button>
                     </div>
                 </div>
@@ -827,18 +903,51 @@ function renderMCQGenResults(data) {
 
         block.innerHTML = `
             <div class="chapter-header">
-                <span class="chapter-title-text">${escapeHtml(chap.chapter_name)} (${chap.mcq_count || chap.mcqs.length} معروضی سوالات)</span>
-                <button class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.45rem 1rem;" onclick="copyChapterMCQs(${cIdx}, this)">
-                    <span>💾 اس باب کے تمام MCQs (مع ✓ درست نشانات) کاپی کریں</span>
+                <div class="chapter-header-info">
+                    <span class="chapter-badge">باب نمبر ${unitNum}</span>
+                    <span class="chapter-title-text">${escapeHtml(chapTitle)}</span>
+                    <span class="chapter-count-pill">${mcqCount} معروضی سوالات</span>
+                    ${pagesRange ? `<span class="chapter-pages-pill">صفحات: ${escapeHtml(pagesRange)}</span>` : ''}
+                </div>
+                <button class="btn btn-secondary btn-copy-chapter" onclick="copyChapterMCQs(${cIdx}, this)">
+                    <span class="copy-icon">📑</span>
+                    <span>اس پورے باب کے تمام سوالات کاپی کریں (مع ✓ درست نشانات)</span>
                 </button>
             </div>
-            <div style="padding: 1.25rem;">
+            <div class="chapter-body-content" style="padding: 1.25rem;">
                 ${mcqsHtml}
+            </div>
+            <div class="chapter-footer-bar">
+                <div class="chapter-footer-info">
+                    <span>✅ باب نمبر ${unitNum} کے تمام (${mcqCount}) معروضی سوالات مکمل۔</span>
+                </div>
+                <button class="btn btn-secondary btn-copy-chapter" onclick="copyChapterMCQs(${cIdx}, this)">
+                    <span class="copy-icon">📑</span>
+                    <span>باب نمبر ${unitNum} کے تمام سوالات اکٹھے کاپی کریں (مع ✓ درست نشانات)</span>
+                </button>
             </div>
         `;
 
         container.appendChild(block);
     });
+
+    // 3. MASTER BOTTOM EXPORT BAR (End-of-Page Copy All)
+    const bottomMasterBar = document.createElement("div");
+    bottomMasterBar.className = "mcq-bottom-master-bar";
+    bottomMasterBar.innerHTML = `
+        <div class="bottom-bar-content">
+            <div class="bottom-bar-text">
+                <strong style="font-size: 1.1rem; color: #4c1d95;">📚 تمام ${totalChaps} ابواب کے مجموعی ${totalMCQs} معروضی سوالات مکمل ہو چکے ہیں۔</strong>
+                <p style="margin-top: 0.35rem; color: #5b21b6; font-size: 0.95rem;">
+                    پوری کتاب کے تمام سوالات مع ✓ درست نشانات، کتاب، یونٹ نمبر اور صفحات ایک کلک سے کاپی کر کے MS Word یا WhatsApp میں محفوظ فرمائیں۔
+                </p>
+            </div>
+            <button class="btn btn-primary btn-purple btn-copy-all-master" onclick="copyEntireBookMCQs(this)">
+                <span>💾 پوری کتاب کے تمام چیپٹرز کے تمام MCQs ایک ساتھ کاپی کریں (مع ✓ درست نشانات برائے MS Word)</span>
+            </button>
+        </div>
+    `;
+    container.appendChild(bottomMasterBar);
 }
 
 function checkMCQChoice(cIdx, mIdx, chosenOpt) {
@@ -879,10 +988,11 @@ function checkMCQChoice(cIdx, mIdx, chosenOpt) {
 }
 
 async function copySingleMCQ(cIdx, mIdx, btn = null) {
-    if (!lastMCQGenData || !lastMCQGenData.chapters[cIdx]) return;
-    const m = lastMCQGenData.chapters[cIdx].mcqs[mIdx];
-    const text = formatSingleMCQText(m, mIdx + 1);
-    await copyToClipboard(text, "سوال مع درست آپشن (✓) کاپی ہو گیا۔", btn);
+    if (!lastMCQGenData || !lastMCQGenData.chapters || !lastMCQGenData.chapters[cIdx]) return;
+    const chap = lastMCQGenData.chapters[cIdx];
+    const m = chap.mcqs[mIdx];
+    const text = formatSingleMCQText(m, mIdx + 1, chap, lastMCQGenData);
+    await copyToClipboard(text, `سوال نمبر ${mIdx + 1} مع درست جواب (✓)، کتاب، یونٹ اور صفحہ نمبر کاپی ہو گیا۔`, btn);
 }
 
 function toggleAllMCQAnswers() {
@@ -901,15 +1011,18 @@ function toggleAllMCQAnswers() {
         b.style.display = areAllMCQsRevealed ? "block" : "none";
     });
     
+    const label = areAllMCQsRevealed 
+        ? "🙈 درست جوابات پر ٹک چھپائیں (سیلف ٹیسٹ موڈ)" 
+        : "👁️ تمام درست جوابات پر ٹک دکھائیں";
+
     const toggleBtn = document.getElementById("mcq-toggle-text");
-    if (toggleBtn) {
-        toggleBtn.textContent = areAllMCQsRevealed 
-            ? "🙈 درست جوابات پر ٹک چھپائیں (سیلف ٹیسٹ موڈ)" 
-            : "👁️ تمام درست جوابات پر ٹک دکھائیں";
-    }
+    if (toggleBtn) toggleBtn.textContent = label;
+
+    const toggleBtnHub = document.getElementById("mcq-toggle-text-hub");
+    if (toggleBtnHub) toggleBtnHub.textContent = label;
 }
 
-function formatSingleMCQText(m, qNum = null) {
+function formatSingleMCQText(m, qNum = null, chap = null, data = null) {
     const optMap = { A: "الف", B: "ب", C: "ج", D: "د", "الف": "الف", "ب": "ب", "ج": "ج", "د": "د" };
     const winnerKey = m.correct_option || "A";
     const winnerUrdu = optMap[winnerKey] || winnerKey;
@@ -930,54 +1043,84 @@ function formatSingleMCQText(m, qNum = null) {
         ? `سوال نمبر ${qNum}: ${m.question}`
         : m.question;
 
+    const bookTitle = m.book_title || (data && data.book_title) || (lastMCQGenData && lastMCQGenData.book_title) || "نصابی کتاب";
+    const courseCode = (data && data.course_code) || (lastMCQGenData && lastMCQGenData.course_code) || "";
+    const bookLine = courseCode ? `📚 کتاب: «${bookTitle}» (کورس کوڈ: ${courseCode})` : `📚 کتاب: «${bookTitle}»`;
+
+    const chapName = (chap && chap.chapter_name)
+        ? chap.chapter_name
+        : (m.unit_name ? m.unit_name : (m.unit_num ? `یونٹ نمبر ${m.unit_num}` : (chap && chap.unit_num ? `یونٹ نمبر ${chap.unit_num}` : "")));
+    const unitLine = chapName ? `📖 یونٹ نمبر: ${chapName}` : "";
+
+    const pageStr = m.printed_page || (chap && chap.pages_range) || "";
+    const pageLine = pageStr ? `📄 صفحہ نمبر: صفحہ ${pageStr}` : "";
+
     return [
+        `============================================================`,
         `${qTitle}`,
+        `------------------------------------------------------------`,
         `الف) ${optA}${isWinnerA ? "  ✓ (درست جواب)" : ""}`,
         `ب) ${optB}${isWinnerB ? "  ✓ (درست جواب)" : ""}`,
         `ج) ${optC}${isWinnerC ? "  ✓ (درست جواب)" : ""}`,
         `د) ${optD}${isWinnerD ? "  ✓ (درست جواب)" : ""}`,
-        `✓ درست جواب: آپشن (${winnerUrdu}) — ${winnerText}`,
-        m.explanation ? `علمی تشریح: ${m.explanation}` : "",
-        (m.book_title || m.printed_page) ? `مستند حوالہ: کتاب: ${m.book_title || "نصابی کتاب"} | صفحہ نمبر: ${m.printed_page || ""}` : "",
+        ``,
+        `✓ تصدیق شدہ درست جواب: آپشن (${winnerUrdu}) — ${winnerText}`,
+        bookLine,
+        unitLine,
+        pageLine,
+        m.explanation ? `💡 علمی تشریح و نصابی حوالہ: ${m.explanation}` : "",
         `------------------------------------------------------------`
     ].filter(Boolean).join("\r\n");
 }
 
 async function copyChapterMCQs(cIdx, btn = null) {
-    if (!lastMCQGenData || !lastMCQGenData.chapters[cIdx]) return;
+    if (!lastMCQGenData || !lastMCQGenData.chapters || !lastMCQGenData.chapters[cIdx]) return;
     const chap = lastMCQGenData.chapters[cIdx];
+    const unitNum = chap.unit_num || (cIdx + 1);
+    const mcqCount = chap.mcq_count || (chap.mcqs ? chap.mcqs.length : 0);
     let out = [
         `============================================================`,
-        `=== ${chap.chapter_name} (MCQs معروضی بینک) ===`,
-        `کتاب: ${lastMCQGenData.book_title} (کورس کوڈ: ${lastMCQGenData.course_code})`,
-        `کل معروضی سوالات: ${chap.mcq_count || chap.mcqs.length}`,
+        `   AIOU Help — باب کے تمام کثیر الانتخابی سوالات (Chapter MCQs)`,
+        `   کتاب: «${lastMCQGenData.book_title}» (کورس کوڈ: ${lastMCQGenData.course_code})`,
+        `   یونٹ: ${chap.chapter_name}`,
+        chap.pages_range ? `   صفحات: ${chap.pages_range}` : ``,
+        `   کل سوالات: ${mcqCount} معروضی سوالات (مع ✓ تصدیق شدہ درست نشانات)`,
         `============================================================\r\n`
-    ];
-    chap.mcqs.forEach((m, idx) => {
-        out.push(formatSingleMCQText(m, idx + 1));
+    ].filter(Boolean);
+
+    (chap.mcqs || []).forEach((m, idx) => {
+        out.push(formatSingleMCQText(m, idx + 1, chap, lastMCQGenData));
+        out.push("");
     });
-    await copyToClipboard(out.join("\r\n"), "اس باب کے تمام MCQs (مع ✓ درست نشانات) کاپی ہو گئے۔", btn);
+
+    await copyToClipboard(out.join("\r\n"), `باب نمبر ${unitNum} کے تمام (${mcqCount}) سوالات مع ✓ نشانات، کتاب، یونٹ اور صفحہ نمبر کاپی ہو گئے۔`, btn);
 }
 
 async function copyEntireBookMCQs(btn = null) {
     if (!lastMCQGenData || !lastMCQGenData.chapters) return;
+    const totalChaps = lastMCQGenData.total_chapters || lastMCQGenData.chapters.length;
+    const totalMCQs = lastMCQGenData.total_mcqs || lastMCQGenData.chapters.reduce((acc, c) => acc + (c.mcqs ? c.mcqs.length : 0), 0);
     let out = [
         `============================================================`,
-        `   AIOU Help — کثیر الانتخابی سوالات بینک (All Chapters MCQs)`,
-        `   کتاب: ${lastMCQGenData.book_title} (کورس کوڈ: ${lastMCQGenData.course_code})`,
-        `   کل ابواب: ${lastMCQGenData.total_chapters} | کل MCQs: ${lastMCQGenData.total_mcqs}`,
-        `   (تمام سوالات کے سامنے درست آپشن پر ✓ کا نشان موجود ہے)`,
+        `   AIOU Help — مکمل کتاب کے تمام چیپٹرز کے MCQs بینک`,
+        `   کتاب: «${lastMCQGenData.book_title}» (کورس کوڈ: ${lastMCQGenData.course_code})`,
+        `   مجموعی ابواب: ${totalChaps} چیپٹرز | کل معروضی سوالات: ${totalMCQs} سوالات (برائے MS Word)`,
+        `   (تمام سوالات کے سامنے درست آپشن پر ✓ کا نشان، کتاب، یونٹ نمبر اور صفحہ نمبر درج ہے)`,
         `============================================================\r\n`
     ];
 
-    lastMCQGenData.chapters.forEach(chap => {
-        out.push(`\r\n\r\n### ${chap.chapter_name} ###\r\n`);
-        chap.mcqs.forEach((m, idx) => {
-            out.push(formatSingleMCQText(m, idx + 1));
+    lastMCQGenData.chapters.forEach((chap, cIdx) => {
+        const unitNum = chap.unit_num || (cIdx + 1);
+        out.push(`\r\n############################################################`);
+        out.push(`### باب نمبر ${unitNum}: ${chap.chapter_name} ${chap.pages_range ? `(صفحات: ${chap.pages_range})` : ""} ###`);
+        out.push(`############################################################\r\n`);
+        (chap.mcqs || []).forEach((m, idx) => {
+            out.push(formatSingleMCQText(m, idx + 1, chap, lastMCQGenData));
+            out.push("");
         });
     });
 
-    await copyToClipboard(out.join("\r\n"), "پوری کتاب کے تمام MCQs (مع ✓ درست نشانات) کاپی ہو گئے (برائے MS Word)۔", btn);
+    await copyToClipboard(out.join("\r\n"), `پوری کتاب کے تمام چیپٹرز کے تمام (${totalMCQs}) سوالات مع ✓ درست نشانات برائے MS Word کاپی ہو گئے۔`, btn);
 }
 
 // ==========================================
@@ -1143,6 +1286,10 @@ function renderQuizResult(data) {
     const winnerUrdu = optMap[winnerKey] || winnerKey;
     const winnerText = data.correct_text || (data.options ? data.options[winnerKey] : "");
 
+    const unitDisplay = data.unit_name || (data.unit_num ? `یونٹ نمبر ${data.unit_num}` : (data.unit_title || "نصابی یونٹ"));
+    const bookDisplay = `${data.book_title || "نصابی کتاب"}${data.course_code ? " (" + data.course_code + ")" : ""}`;
+    const pageDisplay = data.printed_page || data.page_display || "نصابی ماخذ";
+
     let optionsHtml = "";
     if (data.options && Object.keys(data.options).length > 0) {
         optionsHtml = `<div class="mcq-options-container" style="margin-top: 0.85rem;">`;
@@ -1161,6 +1308,13 @@ function renderQuizResult(data) {
     }
 
     content.innerHTML = `
+        <!-- Top Prominent Metadata Badges: Book, Unit, Page -->
+        <div class="mcq-meta-badges quiz-meta-badges" style="margin-bottom: 1rem;">
+            <span class="badge-pill badge-book">📚 کتاب: ${escapeHtml(bookDisplay)}</span>
+            <span class="badge-pill badge-unit">📖 یونٹ نمبر: ${escapeHtml(unitDisplay)}</span>
+            <span class="badge-pill badge-page">📄 صفحہ نمبر: ${escapeHtml(pageDisplay)}</span>
+        </div>
+
         <div style="margin-bottom: 0.75rem;">
             <strong style="color: #0f172a; font-size: 1.05rem;">❓ کوئز سوال:</strong>
             <p style="font-size: 1.1rem; font-weight: 700; color: #0f172a; margin-top: 0.35rem; line-height: 2;">${escapeHtml(data.question || "")}</p>
@@ -1187,15 +1341,17 @@ function renderQuizResult(data) {
             </div>` : ""}
 
             <div style="margin-top: 0.75rem; font-size: 0.88rem; color: #475569; display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                <span class="ref-badge badge-book">📚 ${escapeHtml(data.book_title || "نصابی کتاب")} (${escapeHtml(data.course_code || "")})</span>
-                ${data.printed_page ? `<span class="ref-badge badge-page">📄 صفحہ نمبر: ${escapeHtml(data.printed_page)}</span>` : ""}
+                <span class="ref-badge badge-book">📚 کتاب: ${escapeHtml(bookDisplay)}</span>
+                <span class="ref-badge badge-unit">📖 یونٹ: ${escapeHtml(unitDisplay)}</span>
+                <span class="ref-badge badge-page">📄 صفحہ نمبر: ${escapeHtml(pageDisplay)}</span>
                 ${data.line_reference ? `<span class="ref-badge badge-line">سطر نمبر: ${escapeHtml(data.line_reference)}</span>` : ""}
             </div>
         </div>
 
         <div style="margin-top: 1.25rem;">
-            <button class="btn btn-outline" onclick="copyQuizResult(this)">
-                <span>📋 کوئز سوال مع درست آپشن (✓) کاپی کریں</span>
+            <button class="btn btn-outline btn-copy-single" style="font-size: 0.95rem; padding: 0.65rem 1.25rem;" onclick="copyQuizResult(this)">
+                <span class="copy-icon">📋</span>
+                <span>کوئز سوال مع درست آپشن (✓)، کتاب، یونٹ اور صفحہ کاپی کریں</span>
             </button>
         </div>
     `;
@@ -1217,23 +1373,31 @@ async function copyQuizResult(btn = null) {
         }
     }
 
+    const unitDisplay = lastQuizResult.unit_name || (lastQuizResult.unit_num ? `یونٹ نمبر ${lastQuizResult.unit_num}` : (lastQuizResult.unit_title || "نصابی یونٹ"));
+    const pageDisplay = lastQuizResult.printed_page || lastQuizResult.page_display || "نصابی ماخذ";
+    const bookTitle = lastQuizResult.book_title || "نصابی کتاب";
+    const courseCode = lastQuizResult.course_code || "";
+
     const text = [
         `============================================================`,
         `   AIOU Help — تصدیق شدہ کوئز حل (Verified Quiz Solution)`,
         `============================================================`,
         `سوال: ${lastQuizResult.question || ""}`,
+        `------------------------------------------------------------`,
         `آپشنز:`,
         optionsLines.join("\r\n"),
         ``,
-        `✓ درست جواب: آپشن (${winnerUrdu}) — ${winnerText}`,
-        `کتاب: «${lastQuizResult.book_title || "نصابی کتاب"}» (کورس: ${lastQuizResult.course_code || ""})`,
-        `صفحہ / حوالہ: صفحہ ${lastQuizResult.printed_page || ""} | ${lastQuizResult.line_reference ? "سطر: " + lastQuizResult.line_reference : "مستند ماخذ"}`,
-        `علمی تشریح: ${lastQuizResult.explanation || ""}`,
+        `✓ تصدیق شدہ درست جواب: آپشن (${winnerUrdu}) — ${winnerText}`,
+        `📚 کتاب: «${bookTitle}» ${courseCode ? `(کورس: ${courseCode})` : ""}`,
+        `📖 یونٹ نمبر: ${unitDisplay}`,
+        `📄 صفحہ نمبر: صفحہ ${pageDisplay}`,
+        lastQuizResult.line_reference ? `مقام / سطر: ${lastQuizResult.line_reference}` : "",
+        lastQuizResult.explanation ? `💡 نصابی ثبوت اور علمی حوالہ: ${lastQuizResult.explanation}` : "",
         lastQuizResult.verified_quote ? `اصل کتابی عبارت: « ${lastQuizResult.verified_quote} »` : "",
-        `============================================================`
+        `------------------------------------------------------------`
     ].filter(Boolean).join("\r\n");
 
-    await copyToClipboard(text, "کوئز سوال مع درست آپشن (✓) کاپی ہو گیا۔", btn);
+    await copyToClipboard(text, "کوئز سوال مع درست جواب (✓)، کتاب، یونٹ نمبر اور صفحہ نمبر کاپی ہو گیا۔", btn);
 }
 
 // ==========================================
