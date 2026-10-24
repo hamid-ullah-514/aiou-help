@@ -1,0 +1,375 @@
+{
+  "program": "BS Islamic Studies 2.5-Year Program (AIOU)",
+  "program_ur": "بی ایس اسلامیات 2.5 سالہ پروگرام (علامہ اقبال اوپن یونیورسٹی)",
+  "semesters": [
+    {
+      "semester_id": "semester_1",
+      "semester_num": "1",
+      "semester_name_ur": "سمسٹر 1 (Semester 1)",
+      "folder_name": "1st semster book",
+      "books_count": 6,
+      "books": [
+        {
+          "course_code": "1902",
+          "course_title_ur": "مطالعہ مذاہبِ عالم",
+          "course_title_en": "Study of World Religions",
+          "filename": "1902.pdf",
+          "relative_path": "1st semster book\\1902.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\1st semster book\\1902.pdf",
+          "size_mb": 11.54,
+          "pages_count": 391,
+          "has_selectable_text": true,
+          "is_scanned": false
+        },
+        {
+          "course_code": "1919",
+          "course_title_ur": "قواعد و انشاء (عربی گرامر)",
+          "course_title_en": "Arabic Grammar & Composition",
+          "filename": "1919.pdf",
+          "relative_path": "1st semster book\\1919.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\1st semster book\\1919.pdf",
+          "size_mb": 32.27,
+          "pages_count": 192,
+          "has_selectable_text": true,
+          "is_scanned": false
+        },
+        {
+          "course_code": "1951",
+          "course_title_ur": "تاریخ تفسیر و اصول تفسیر",
+          "course_title_en": "History & Principles of Tafseer",
+          "filename": "1951.pdf",
+          "relative_path": "1st semster book\\1951.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\1st semster book\\1951.pdf",
+          "size_mb": 9.18,
+          "pages_count": 393,
+          "has_selectable_text": true,
+          "is_scanned": false
+        },
+        {
+          "course_code": "2900",
+          "course_title_ur": "مطالعہ قرآن حکیم (اسلامیات)",
+          "course_title_en": "Study of the Holy Quran [Scanned]",
+          "filename": "2900-urdu.pdf",
+          "relative_path": "1st semster book\\2900-urdu.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\1st semster book\\2900-urdu.pdf",
+          "size_mb": 46.66,
+          "pages_count": 200,
+          "has_selectable_text": false,
+          "is_scanned": true
+        },
+        {
+          "course_code": "2951",
+          "course_title_ur": "تاریخ حدیث و اصول حدیث",
+          "course_title_en": "History & Principles of Hadith",
+          "filename": "2951.pdf",
+          "relative_path": "1st semster book\\2951.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\1st semster book\\2951.pdf",
+          "size_mb": 15.2,
+          "pages_count": 357,
+          "has_selectable_text": true,
+          "is_scanned": false
+        },
+        {
+          "course_code": "4934",
+          "course_title_ur": "سیرت النبی ﷺ کا موضوعاتی مطالعہ",
+          "course_title_en": "Thematic Study of Seerat-un-Nabi (PBUH)",
+          "filename": "4934.pdf",
+          "relative_path": "1st semster book\\4934.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\1st semster book\\4934.pdf",
+          "size_mb": 11.85,
+          "pages_count": 201,
+          "has_selectable_text": true,
+          "is_scanned": false
+        }
+      ]
+    },
+    {
+      "semester_id": "semester_2",
+      "semester_num": "2",
+      "semester_name_ur": "سمسٹر 2 (Semester 2)",
+      "folder_name": "2nd semster book",
+      "books_count": 6,
+      "books": [
+        {
+          "course_code": "1901",
+          "course_title_ur": "تاریخ دعوت و عزیمت (1901 / 2630)",
+          "course_title_en": "History of Dawah & Azimat",
+          "filename": "1901.pdf",
+          "relative_path": "2nd semster book\\1901.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\2nd semster book\\1901.pdf",
+          "size_mb": 8.82,
+          "pages_count": 498,
+          "has_selectable_text": true,
+          "is_scanned": false
+        },
+        {
+          "course_code": "1904",
+          "course_title_ur": "تصوف اور اخلاق و تربیت",
+          "course_title_en": "Tasawwuf & Ethics",
+          "filename": "1904.pdf",
+          "relative_path": "2nd semster book\\1904.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\2nd semster book\\1904.pdf",
+          "size_mb": 7.73,
+          "pages_count": 252,
+          "has_selectable_text": true,
+          "is_scanned": false
+        },
+        {
+          "course_code": "1906",
+          "course_title_ur": "اسلامی معاشیات و فقہ المعاملات",
+          "course_title_en": "Islamic Economics & Fiqh-ul-Muamalat",
+          "filename": "1906.pdf",
+          "relative_path": "2nd semster book\\1906.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\2nd semster book\\1906.pdf",
+          "size_mb": 3.27,
+          "pages_count": 212,
+          "has_selectable_text": true,
+          "is_scanned": false
+        },
+        {
+          "course_code": "1908",
+          "course_title_ur": "مطالعہ کتب فقہ (فقہ اسلامی)",
+          "course_title_en": "Study of Fiqh Books [Scanned]",
+          "filename": "1908.pdf",
+          "relative_path": "2nd semster book\\1908.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\2nd semster book\\1908.pdf",
+          "size_mb": 121.5,
+          "pages_count": 254,
+          "has_selectable_text": false,
+          "is_scanned": true
+        },
+        {
+          "course_code": "1913",
+          "course_title_ur": "اسلام کا اقتصادی نظام",
+          "course_title_en": "Economic System of Islam",
+          "filename": "1913.pdf",
+          "relative_path": "2nd semster book\\1913.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\2nd semster book\\1913.pdf",
+          "size_mb": 9.88,
+          "pages_count": 282,
+          "has_selectable_text": true,
+          "is_scanned": false
+        },
+        {
+          "course_code": "4931",
+          "course_title_ur": "تاریخ اسلام",
+          "course_title_en": "History of Islam",
+          "filename": "4931 Urdu Version.pdf",
+          "relative_path": "2nd semster book\\4931 Urdu Version.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\2nd semster book\\4931 Urdu Version.pdf",
+          "size_mb": 12.69,
+          "pages_count": 195,
+          "has_selectable_text": true,
+          "is_scanned": false
+        }
+      ]
+    },
+    {
+      "semester_id": "semester_3",
+      "semester_num": "3",
+      "semester_name_ur": "سمسٹر 3 (Semester 3)",
+      "folder_name": "3rd semster book",
+      "books_count": 5,
+      "books": [
+        {
+          "course_code": "1907",
+          "course_title_ur": "اسلام کا سیاسی نظام",
+          "course_title_en": "Political System of Islam",
+          "filename": "1907.pdf",
+          "relative_path": "3rd semster book\\1907.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\3rd semster book\\1907.pdf",
+          "size_mb": 74.68,
+          "pages_count": 312,
+          "has_selectable_text": true,
+          "is_scanned": false
+        },
+        {
+          "course_code": "1912",
+          "course_title_ur": "تاریخ تصوف و سلوک",
+          "course_title_en": "History of Tasawwuf",
+          "filename": "1912.pdf",
+          "relative_path": "3rd semster book\\1912.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\3rd semster book\\1912.pdf",
+          "size_mb": 9.9,
+          "pages_count": 178,
+          "has_selectable_text": true,
+          "is_scanned": false
+        },
+        {
+          "course_code": "1921",
+          "course_title_ur": "فلسفہ اور علم الکلام",
+          "course_title_en": "Philosophy & Ilm-ul-Kalam",
+          "filename": "1921.pdf",
+          "relative_path": "3rd semster book\\1921.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\3rd semster book\\1921.pdf",
+          "size_mb": 7.82,
+          "pages_count": 281,
+          "has_selectable_text": true,
+          "is_scanned": false
+        },
+        {
+          "course_code": "1981",
+          "course_title_ur": "تقابل ادیان (مذاہبِ عالم)",
+          "course_title_en": "Comparative Religions",
+          "filename": "1981.pdf",
+          "relative_path": "3rd semster book\\1981.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\3rd semster book\\1981.pdf",
+          "size_mb": 11.87,
+          "pages_count": 134,
+          "has_selectable_text": true,
+          "is_scanned": false
+        },
+        {
+          "course_code": "2953",
+          "course_title_ur": "اصول فقہ (2953 / 3952)",
+          "course_title_en": "Principles of Islamic Jurisprudence",
+          "filename": "2953.pdf",
+          "relative_path": "3rd semster book\\2953.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\3rd semster book\\2953.pdf",
+          "size_mb": 59.65,
+          "pages_count": 379,
+          "has_selectable_text": true,
+          "is_scanned": false
+        }
+      ]
+    },
+    {
+      "semester_id": "semester_4",
+      "semester_num": "4",
+      "semester_name_ur": "سمسٹر 4 (Semester 4)",
+      "folder_name": "4th semster book",
+      "books_count": 3,
+      "books": [
+        {
+          "course_code": "1905",
+          "course_title_ur": "عربی ادب",
+          "course_title_en": "Arabic Literature",
+          "filename": "1905.pdf",
+          "relative_path": "4th semster book\\1905.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\4th semster book\\1905.pdf",
+          "size_mb": 2.55,
+          "pages_count": 228,
+          "has_selectable_text": true,
+          "is_scanned": false
+        },
+        {
+          "course_code": "1916",
+          "course_title_ur": "عہد جدید میں اسلامی ادارے",
+          "course_title_en": "Islamic Institutions in Modern Age",
+          "filename": "1916.pdf",
+          "relative_path": "4th semster book\\1916.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\4th semster book\\1916.pdf",
+          "size_mb": 9.28,
+          "pages_count": 143,
+          "has_selectable_text": true,
+          "is_scanned": false
+        },
+        {
+          "course_code": "4935",
+          "course_title_ur": "فہم قرآن (تجوید، ترجمہ اور تفسیر)",
+          "course_title_en": "Understanding the Quran",
+          "filename": "4935.pdf",
+          "relative_path": "4th semster book\\4935.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\4th semster book\\4935.pdf",
+          "size_mb": 2.97,
+          "pages_count": 160,
+          "has_selectable_text": true,
+          "is_scanned": false
+        }
+      ]
+    },
+    {
+      "semester_id": "semester_5",
+      "semester_num": "5",
+      "semester_name_ur": "سمسٹر 5 (Semester 5)",
+      "folder_name": "5th semster book",
+      "books_count": 7,
+      "books": [
+        {
+          "course_code": "1915",
+          "course_title_ur": "اسلامی قانون اور انسانی حقوق",
+          "course_title_en": "Islamic Law & Human Rights",
+          "filename": "1915.pdf",
+          "relative_path": "5th semster book\\1915.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\5th semster book\\1915.pdf",
+          "size_mb": 135.74,
+          "pages_count": 165,
+          "has_selectable_text": true,
+          "is_scanned": false
+        },
+        {
+          "course_code": "1918",
+          "course_title_ur": "مطالعہ نصوص (قرآن، حدیث، فقہ)",
+          "course_title_en": "Study of Islamic Texts (Quran, Hadith, Fiqh)",
+          "filename": "1918.pdf",
+          "relative_path": "5th semster book\\1918.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\5th semster book\\1918.pdf",
+          "size_mb": 9.15,
+          "pages_count": 258,
+          "has_selectable_text": true,
+          "is_scanned": false
+        },
+        {
+          "course_code": "1922",
+          "course_title_ur": "اصول تحقیق و تدوین",
+          "course_title_en": "Research Methodology & Editing",
+          "filename": "1922.pdf",
+          "relative_path": "5th semster book\\1922.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\5th semster book\\1922.pdf",
+          "size_mb": 2.18,
+          "pages_count": 208,
+          "has_selectable_text": true,
+          "is_scanned": false
+        },
+        {
+          "course_code": "1953",
+          "course_title_ur": "علوم القرآن - I",
+          "course_title_en": "Quranic Sciences - I",
+          "filename": "1953.pdf",
+          "relative_path": "5th semster book\\1953.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\5th semster book\\1953.pdf",
+          "size_mb": 2.74,
+          "pages_count": 344,
+          "has_selectable_text": true,
+          "is_scanned": false
+        },
+        {
+          "course_code": "3900",
+          "course_title_ur": "تاریخ فقہ (3900 / 9488)",
+          "course_title_en": "History of Fiqh [Scanned]",
+          "filename": "3900.pdf",
+          "relative_path": "5th semster book\\3900.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\5th semster book\\3900.pdf",
+          "size_mb": 90.86,
+          "pages_count": 431,
+          "has_selectable_text": false,
+          "is_scanned": true
+        },
+        {
+          "course_code": "3903",
+          "course_title_ur": "حقوق الرسول ﷺ",
+          "course_title_en": "Rights of the Holy Prophet (PBUH)",
+          "filename": "3903.pdf",
+          "relative_path": "5th semster book\\3903.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\5th semster book\\3903.pdf",
+          "size_mb": 71.69,
+          "pages_count": 352,
+          "has_selectable_text": true,
+          "is_scanned": false
+        },
+        {
+          "course_code": "4951",
+          "course_title_ur": "بین المذاہب و مسالک ہم آہنگی اور رواداری کے راہنما اصول",
+          "course_title_en": "Interfaith & Sectarian Harmony Principles",
+          "filename": "4951.pdf",
+          "relative_path": "5th semster book\\4951.pdf",
+          "full_path": "D:\\AIOU Help\\BS islamic study 2.5 All book\\5th semster book\\4951.pdf",
+          "size_mb": 144.26,
+          "pages_count": 250,
+          "has_selectable_text": true,
+          "is_scanned": false
+        }
+      ]
+    }
+  ]
+}

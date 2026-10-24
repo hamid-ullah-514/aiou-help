@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Vercel
+.vercel/
+
+# Large Raw PDF Folders (kept on local machine, not in Git)
+1st semster book/
+2nd semster book/
+3rd semster book/
+4th semster book/
+5th semster book/
+*.pdf
+*.docx
+*.doc
+
+# Large Local SQLite Search Database (>100MB exceeds GitHub push limit)
+data/aiou_search.db
+data/*.db-journal
+data/*.db-wal
+data/*.db-shm
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+.DS_Store
+
+# Temporary & Test files
+test_results_report.json
+extract_knowledge.py
+build_aiou_banks.py
