@@ -39,7 +39,7 @@ def get_ocr_engine_status() -> Dict[str, Any]:
         )
     }
 
-def run_ocr_on_page(page: fitz.Page, lang: str = "en-US") -> Dict[str, Any]:
+def run_ocr_on_page(page: Any, lang: str = "en-US") -> Dict[str, Any]:
     """
     Renders a PDF page to image and runs OCR via winocr if available.
     """
