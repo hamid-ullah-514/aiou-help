@@ -37,10 +37,26 @@ async function initApp() {
     }
 }
 
+const ALL_SEMESTER_IDS = [
+    "semester-select", 
+    "qa-semester-select", 
+    "image-qa-semester-select", 
+    "exam-semester-select", 
+    "mcq-semester-select", 
+    "quiz-semester-select"
+];
+
+const ALL_COURSE_IDS = [
+    "course-select", 
+    "qa-course-select", 
+    "image-qa-course-select", 
+    "exam-course-select", 
+    "mcq-course-select", 
+    "quiz-course-select"
+];
+
 function populateSemesterDropdown(catalog) {
-    const semIds = ["semester-select", "exam-semester-select", "mcq-semester-select"];
-    
-    semIds.forEach(id => {
+    ALL_SEMESTER_IDS.forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
         el.innerHTML = `<option value="">-- براہِ کرم پہلے سمسٹر منتخب کریں --</option>`;
@@ -66,34 +82,26 @@ function populateSemesterDropdown(catalog) {
 
 function onSemesterChange(source = "global") {
     let semNum = "1";
-    if (source === "mcq" && document.getElementById("mcq-semester-select")) {
-        semNum = document.getElementById("mcq-semester-select").value;
-    } else if (source === "exam" && document.getElementById("exam-semester-select")) {
-        semNum = document.getElementById("exam-semester-select").value;
-    } else if (document.getElementById("semester-select")) {
-        semNum = document.getElementById("semester-select").value;
+    const srcEl = document.getElementById(`${source}-semester-select`) || 
+                  document.getElementById("semester-select");
+    if (srcEl && srcEl.value) {
+        semNum = srcEl.value;
     }
 
     // Sync all semester selects
-    ["semester-select", "exam-semester-select", "mcq-semester-select"].forEach(id => {
+    ALL_SEMESTER_IDS.forEach(id => {
         const el = document.getElementById(id);
-        if (el) el.value = semNum;
+        if (el && el.value !== semNum) el.value = semNum;
     });
 
-    const courseIds = ["course-select", "exam-course-select", "mcq-course-select"];
-    const scopeBannerText = document.getElementById("scope-banner-text");
-    const scopeStatsPill = document.getElementById("scope-stats-pill");
-
     if (!semNum) {
-        courseIds.forEach(id => {
+        ALL_COURSE_IDS.forEach(id => {
             const el = document.getElementById(id);
             if (el) {
                 el.disabled = true;
                 el.innerHTML = `<option value="">-- پہلے سمسٹر کا انتخاب ضروری ہے --</option>`;
             }
         });
-        if (scopeBannerText) scopeBannerText.textContent = "براہِ کرم اوپر دیے گئے ڈراپ ڈاؤن سے اپنا سمسٹر منتخب کریں۔";
-        if (scopeStatsPill) scopeStatsPill.textContent = "0 کتب دستیاب";
         return;
     }
 
@@ -106,7 +114,7 @@ function onSemesterChange(source = "global") {
         }
     }
 
-    courseIds.forEach(id => {
+    ALL_COURSE_IDS.forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
         el.disabled = false;
@@ -125,74 +133,62 @@ function onSemesterChange(source = "global") {
         }
     });
 
-    if (semData) {
-        if (scopeBannerText) scopeBannerText.textContent = `فعال دائرہ کار: ${semData.semester_name_ur} | نصاب کے مطابق کتب شامل ہیں۔`;
-        if (scopeStatsPill) scopeStatsPill.textContent = `${booksInSem.length} کتب دستیاب`;
-    }
-
     onCourseChange("global");
 }
 
 function onCourseChange(source = "global") {
     let cCode = "";
-    if (source === "mcq" && document.getElementById("mcq-course-select")) {
-        cCode = document.getElementById("mcq-course-select").value;
-    } else if (source === "exam" && document.getElementById("exam-course-select")) {
-        cCode = document.getElementById("exam-course-select").value;
-    } else if (document.getElementById("course-select")) {
-        cCode = document.getElementById("course-select").value;
+    const srcEl = document.getElementById(`${source}-course-select`) || 
+                  document.getElementById("course-select");
+    if (srcEl && srcEl.value) {
+        cCode = srcEl.value;
     }
 
     // Sync all course selects
-    ["course-select", "exam-course-select", "mcq-course-select"].forEach(id => {
+    ALL_COURSE_IDS.forEach(id => {
         const el = document.getElementById(id);
         if (el && el.value !== cCode) {
             el.value = cCode;
         }
     });
-
-    const semSelect = document.getElementById("semester-select");
-    const courseSelect = document.getElementById("course-select");
-    const scopeBannerText = document.getElementById("scope-banner-text");
-    if (!scopeBannerText || !semSelect || !courseSelect) return;
-
-    const semNum = semSelect.value;
-    if (!cCode || cCode === "ALL") {
-        scopeBannerText.textContent = `فعال دائرہ کار: سمسٹر ${semNum} کی تمام متعلقہ کتب میں بیک وقت تلاش جاری ہے۔`;
-    } else {
-        const selectedOption = courseSelect.options[courseSelect.selectedIndex];
-        if (selectedOption) {
-            scopeBannerText.textContent = `منتخب شدہ کتاب: ${selectedOption.textContent} (سمسٹر ${semNum})`;
-        }
-    }
 }
 
-// Switch between the 5 primary tabs
+// Switch between tabs / features
 function switchFeature(feat, autoTriggerFile = false) {
     currentFeature = feat;
 
-    const tabs = ["qa", "image_qa", "exam", "mcq_gen", "quiz"];
+    const tabs = ["home", "qa", "image_qa", "exam", "mcq_gen", "quiz"];
     tabs.forEach(t => {
         const btn = document.getElementById(`feat-btn-${t}`);
+        const navBtn = document.getElementById(`nav-btn-${t}`);
         const sec = document.getElementById(`section-${t}`);
         const mobBtn = document.getElementById(`mob-btn-${t}`);
         if (btn) btn.classList.remove("active");
+        if (navBtn) navBtn.classList.remove("active");
         if (mobBtn) mobBtn.classList.remove("active");
         if (sec) sec.style.display = "none";
     });
 
     const activeBtn = document.getElementById(`feat-btn-${feat}`);
+    const activeNavBtn = document.getElementById(`nav-btn-${feat}`);
     const activeMobBtn = document.getElementById(`mob-btn-${feat}`);
     const activeSec = document.getElementById(`section-${feat}`);
     
     if (activeBtn) activeBtn.classList.add("active");
+    if (activeNavBtn) activeNavBtn.classList.add("active");
     if (activeMobBtn) activeMobBtn.classList.add("active");
     if (activeSec) {
         activeSec.style.display = "block";
-        activeSec.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     // Auto-open PC file picker if user clicked "تصویر سے سوال پوچھیں"
+    if (feat === "image_qa" && autoTriggerFile && !selectedImageDataUrl) {
+        setTimeout(() => {
+            triggerImageFileInput();
+        }, 100);
+    }
+}
     if (feat === "image_qa" && autoTriggerFile && !selectedImageDataUrl) {
         setTimeout(() => {
             triggerImageFileInput();
@@ -976,6 +972,14 @@ function handleQuizImageSelected(input) {
         if (nameEl) nameEl.textContent = file.name || "کوئز تصویر";
         if (sizeEl) sizeEl.textContent = `سائز: ${Math.round((file.size || 0) / 1024)} KB`;
         if (previewCard) previewCard.style.display = "flex";
+
+        // Clear textarea text so it doesn't conflict with image upload
+        const quizInput = document.getElementById("quiz-unified-input");
+        if (quizInput) {
+            quizInput.value = "";
+            quizInput.placeholder = "تصویر منتخب ہو گئی ہے۔ سسٹم تصویر سے کوئز سوال اور آپشنز خودکار حل کرے گا۔";
+        }
+
         showToast("کوئز کی تصویر منتخب ہو گئی ہے۔");
     };
     reader.readAsDataURL(file);
@@ -988,6 +992,10 @@ function removeQuizImage() {
     if (inp) inp.value = "";
     const previewCard = document.getElementById("quiz-image-preview-card");
     if (previewCard) previewCard.style.display = "none";
+    const quizInput = document.getElementById("quiz-unified-input");
+    if (quizInput) {
+        quizInput.placeholder = "یہاں پورا کوئز سوال بمع آپشنز ایک ساتھ پیسٹ کریں، یا اوپر کیمرہ بٹن سے تصویر اپلوڈ کریں:\nمثال:\nشریعت اسلامیہ میں احکام کا اولین ماخذ کون سا ہے؟\nالف) قرآن مجید\nب) قیاس\nج) عرف";
+    }
 }
 
 function fillQuizExample() {
@@ -1020,15 +1028,13 @@ function clearQuizForm() {
 }
 
 async function handleQuizSubmit() {
-    const semNum = document.getElementById("semester-select").value;
-    const courseCode = document.getElementById("course-select").value;
+    const semSelect = document.getElementById("quiz-semester-select") || document.getElementById("semester-select");
+    const courseSelect = document.getElementById("quiz-course-select") || document.getElementById("course-select");
+    const semNum = semSelect ? semSelect.value : "1";
+    const courseCode = courseSelect ? courseSelect.value : "";
     const quizInput = document.getElementById("quiz-unified-input");
     const rawText = quizInput ? quizInput.value.trim() : "";
 
-    if (!semNum) {
-        alert("براہِ کرم پہلے سمسٹر منتخب فرمائیں۔");
-        return;
-    }
     if (!rawText && !selectedQuizImageDataUrl) {
         alert("براہِ کرم کوئز کا سوال اور آپشنز درج کریں یا کوئز کی تصویر اپلوڈ فرمائیں۔");
         return;
@@ -1040,16 +1046,21 @@ async function handleQuizSubmit() {
     if (btn) btn.disabled = true;
 
     try {
+        const payload = {
+            semester_num: semNum || "1",
+            course_code: (courseCode && courseCode !== "ALL") ? courseCode : null
+        };
+        if (selectedQuizImageDataUrl) {
+            payload.image_b64 = selectedQuizImageDataUrl;
+            payload.mime_type = selectedQuizImageFile ? selectedQuizImageFile.type : "image/jpeg";
+        } else {
+            payload.raw_text = rawText;
+        }
+
         const resp = await fetch(`${API_BASE}/api/mcq`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                raw_text: rawText || null,
-                image_b64: selectedQuizImageDataUrl || null,
-                mime_type: selectedQuizImageFile ? selectedQuizImageFile.type : "image/jpeg",
-                semester_num: semNum,
-                course_code: courseCode === "ALL" ? null : courseCode
-            })
+            body: JSON.stringify(payload)
         });
 
         if (!resp.ok) {

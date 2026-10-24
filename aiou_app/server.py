@@ -248,6 +248,7 @@ def generate_chapter_mcqs_api(req: ChapterMCQRequest):
     result = generate_chapter_mcqs(course_code=req.course_code, count_per_chapter=count)
     return result
 
+@app.get("/api")
 @app.get("/api/health")
 @app.get("/health")
 def health_api():

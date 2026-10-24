@@ -17,7 +17,15 @@ ENV/
 .env.production.local
 
 # Vercel
+# Vercel
 .vercel/
+.vercel
+
+# Large Media Files
+*.mp4
+*.mov
+*.avi
+*.mkv/
 
 # Large Raw PDF Folders (kept on local machine, not in Git)
 1st semster book/
@@ -45,4 +53,12 @@ test_results_report.json
 extract_knowledge.py
 build_aiou_banks.py
 
+# Vercel
+.vercel/
 .vercel
+
+# Large Media Files
+*.mp4
+*.mov
+*.avi
+*.mkv

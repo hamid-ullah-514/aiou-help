@@ -2,8 +2,8 @@
 <html lang="ur" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIOU Help — علامہ اقبال اوپن یونیورسٹی تعلیمی و امتحانی معاون</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>AIOU Help — علامہ اقبال اوپن یونیورسٹی تعلیمی و امتحانی پورٹل</title>
     <!-- Jameel Noori Nastaleeq Official Web Font CDN -->
     <link href="https://cdn.jsdelivr.net/npm/jameel-noori@1.1.2/jameel-noori.min.css" rel="stylesheet">
     <!-- Google Fonts Fallbacks for High-Quality Urdu Typography -->
@@ -17,105 +17,157 @@
     <!-- Header Section -->
     <header class="header">
         <div class="header-container">
-            <div class="logo-area">
-                <div class="logo-badge">
-                    <span>📖</span>
-                    <span>AIOU Help</span>
-                </div>
-                <div>
-                    <h1 class="site-title">AIOU Help — تعلیمی و امتحانی پورٹل</h1>
-                    <p class="site-subtitle">علامہ اقبال اوپن یونیورسٹی • بی ایس اسلامیات (2.5 سالہ پروگرام) کا مستند کتابی معاون</p>
+            <div class="header-brand" onclick="switchFeature('home')">
+                <div class="brand-icon-circle">📖</div>
+                <div class="brand-title-wrap">
+                    <h1 class="brand-title">AIOU Help</h1>
+                    <span class="brand-subtitle">علامہ اقبال اوپن یونیورسٹی • بی ایس اسلامیات پورٹل</span>
                 </div>
             </div>
+
+            <!-- Desktop Nav Links -->
+            <nav class="header-nav-links">
+                <button class="nav-link-btn active" id="nav-btn-home" onclick="switchFeature('home')">
+                    <span>🏠</span><span>ہوم</span>
+                </button>
+                <button class="nav-link-btn" id="nav-btn-qa" onclick="switchFeature('qa')">
+                    <span>🔍</span><span>کتاب سے سوال</span>
+                </button>
+                <button class="nav-link-btn" id="nav-btn-image-qa" onclick="switchFeature('image_qa', true)">
+                    <span>📸</span><span>تصویر سے سوال</span>
+                </button>
+                <button class="nav-link-btn" id="nav-btn-exam" onclick="switchFeature('exam')">
+                    <span>📝</span><span>امتحانی تیاری</span>
+                </button>
+                <button class="nav-link-btn" id="nav-btn-mcq-gen" onclick="switchFeature('mcq_gen')">
+                    <span>📊</span><span>MCQs تیار کریں</span>
+                </button>
+                <button class="nav-link-btn" id="nav-btn-quiz" onclick="switchFeature('quiz')">
+                    <span>✅</span><span>کوئز جواب</span>
+                </button>
+            </nav>
+
             <div class="status-badge" id="system-status-badge">
                 <span class="status-dot"></span>
-                <span id="system-status-text">نصاب فعال (27 کتب محفوظ)</span>
+                <span id="system-status-text">نصاب فعال (27 کتب)</span>
             </div>
         </div>
     </header>
 
+    <!-- Hidden global elements to maintain compatibility -->
+    <input type="hidden" id="semester-select" value="1">
+    <input type="hidden" id="course-select" value="4934">
+
     <!-- Main Content Container -->
     <main class="main-content">
 
-        <!-- Universal Semester & Course Selection Card -->
-        <div class="card selector-card">
-            <div class="selector-header">
-                <span class="icon-circle">🎓</span>
-                <div>
-                    <h2 class="card-title">سمسٹر اور کورس کا انتخاب</h2>
-                    <p class="card-desc">آپ جس سمسٹر اور کورس کی تیاری کرنا چاہتے ہیں، اسے منتخب فرمائیں:</p>
+        <!-- SECTION 0: ہوم / ڈیش بورڈ (Overview Landing matching mockup) -->
+        <section id="section-home" class="feature-panel">
+            <!-- Hero Welcome Card -->
+            <div class="hero-welcome-card">
+                <div class="hero-content">
+                    <span class="hero-tag">پورٹل برائے طلبہ و طالبات</span>
+                    <h2 class="hero-title">علامہ اقبال اوپن یونیورسٹی</h2>
+                    <h3 class="hero-subtitle">بی ایس اسلامیات (2.5 سالہ پروگرام) کی مکمل تعلیمی و امتحانی معاونت</h3>
+                    <p class="hero-desc">اپنی کورس کی کتابوں سے تفصیلی سوالات کے جوابات، امتحانی تیاری، ہر باب کے MCQs اور آن لائن کوئز کے درست جوابات اب ایک ہی کلک پر حاصل کریں۔</p>
+                    <div class="hero-actions">
+                        <button class="btn btn-primary" onclick="switchFeature('mcq_gen')">
+                            <span>📊 MCQs تیار کریں</span>
+                        </button>
+                        <button class="btn btn-secondary" onclick="switchFeature('exam')">
+                            <span>📝 پیپر کی تیاری کریں</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="hero-graphic">
+                    <div class="hero-book-stack">📚</div>
                 </div>
             </div>
 
-            <div class="selection-grid">
-                <div class="form-group">
-                    <label class="form-label" for="semester-select">
-                        <span>۱۔ آپ کس سمسٹر کی تیاری کرنا چاہتے ہیں؟</span>
-                    </label>
-                    <select id="semester-select" class="form-select urdu-text" onchange="onSemesterChange()">
-                        <option value="">-- براہِ کرم پہلے سمسٹر منتخب کریں --</option>
-                    </select>
+            <!-- 5 Colorful Feature Cards matching user mockup collage -->
+            <div class="home-feature-cards-grid">
+                <!-- Card 1: کتاب سے سوال -->
+                <div class="home-feat-card feat-blue" onclick="switchFeature('qa')">
+                    <div class="home-feat-icon">🔍</div>
+                    <h3 class="home-feat-title">سوال پوچھیں</h3>
+                    <p class="home-feat-desc">کتابوں سے براہِ راست مفصل امتحانی جواب اور اصل عبارت حاصل کریں</p>
+                    <span class="home-feat-badge">کتابی معاونت ←</span>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label" for="course-select">
-                        <span>۲۔ متعلقہ کورس کوڈ اور کتاب کا انتخاب:</span>
-                    </label>
-                    <select id="course-select" class="form-select urdu-text" onchange="onCourseChange()" disabled>
-                        <option value="">-- پہلے سمسٹر کا انتخاب ضروری ہے --</option>
-                    </select>
+                <!-- Card 2: تصویر سے سوال -->
+                <div class="home-feat-card feat-sky" onclick="switchFeature('image_qa', true)">
+                    <div class="home-feat-icon">📸</div>
+                    <h3 class="home-feat-title">تصویر سے سوال</h3>
+                    <p class="home-feat-desc">امتحانی پرچے کے 1 تا 5 سوالات کی تصویر اپلوڈ کر کے مکمل حل پائیں</p>
+                    <span class="home-feat-badge">کیمرہ و گیلری ←</span>
+                </div>
+
+                <!-- Card 3: امتحانی تیاری -->
+                <div class="home-feat-card feat-green" onclick="switchFeature('exam')">
+                    <div class="home-feat-icon">📝</div>
+                    <h3 class="home-feat-title">امتحانی تیاری</h3>
+                    <p class="home-feat-desc">ہر چیپٹر سے 3، 4 یا 5 جامع امتحانی نوٹس، سرخیاں اور خلاصہ حاصل کریں</p>
+                    <span class="home-feat-badge">ماڈل پیپر نوٹس ←</span>
+                </div>
+
+                <!-- Card 4: MCQs تیار کریں -->
+                <div class="home-feat-card feat-purple" onclick="switchFeature('mcq_gen')">
+                    <div class="home-feat-icon">📊</div>
+                    <h3 class="home-feat-title">MCQs تیار کریں</h3>
+                    <p class="home-feat-desc">ہر چیپٹر سے 10، 15، 20 یا 25 معروضی سوالات مع انٹرایکٹو ٹیسٹ بنائیں</p>
+                    <span class="home-feat-badge">معروضی بینک ←</span>
+                </div>
+
+                <!-- Card 5: کوئز جواب -->
+                <div class="home-feat-card feat-teal" onclick="switchFeature('quiz')">
+                    <div class="home-feat-icon">✅</div>
+                    <h3 class="home-feat-title">کوئز جواب تلاش کریں</h3>
+                    <p class="home-feat-desc">چار یا دو آپشنز میں سے نصابی کتاب سے تصدیق شدہ درست جواب پائیں</p>
+                    <span class="home-feat-badge">فوری تصدیق ←</span>
                 </div>
             </div>
 
-            <div class="active-scope-banner" id="scope-banner">
-                <span id="scope-banner-text">براہِ کرم اوپر دیے گئے ڈراپ ڈاؤن سے اپنا سمسٹر منتخب کریں۔</span>
-                <span class="badge-line" id="scope-stats-pill">0 کتب دستیاب</span>
+            <!-- Bottom Motto Tagline -->
+            <div class="home-motto-bar">
+                <span>پڑھیں • سیکھیں • کامیاب ہوں</span>
             </div>
-        </div>
-
-        <!-- 5 Primary Features Navigation Grid -->
-        <div class="features-nav-grid">
-            <button class="feature-card-btn active" id="feat-btn-qa" onclick="switchFeature('qa')">
-                <div class="feature-icon">🔍</div>
-                <div class="feature-name">۱۔ کتاب سے سوال پوچھیں</div>
-                <div class="feature-caption">مفصل امتحانی جواب اور اصل عبارت</div>
-            </button>
-
-            <button class="feature-card-btn" id="feat-btn-image-qa" onclick="switchFeature('image_qa', true)">
-                <div class="feature-icon">📸</div>
-                <div class="feature-name">۲۔ تصویر سے سوال پوچھیں</div>
-                <div class="feature-caption">پرچے / تصویر کے 1 تا 5 سوالات کا خودکار حل</div>
-            </button>
-
-            <button class="feature-card-btn" id="feat-btn-exam" onclick="switchFeature('exam')">
-                <div class="feature-icon">📝</div>
-                <div class="feature-name">۳۔ پیپر کی تیاری کریں</div>
-                <div class="feature-caption">ہر چیپٹر سے 3، 4 یا 5 جامع امتحانی نوٹس</div>
-            </button>
-
-            <button class="feature-card-btn" id="feat-btn-mcq-gen" onclick="switchFeature('mcq_gen')">
-                <div class="feature-icon">📊</div>
-                <div class="feature-name">۴۔ MCQs تیار کریں</div>
-                <div class="feature-caption">ہر چیپٹر سے 10، 15، 20 یا 25 معروضی سوالات</div>
-            </button>
-
-            <button class="feature-card-btn" id="feat-btn-quiz" onclick="switchFeature('quiz')">
-                <div class="feature-icon">✅</div>
-                <div class="feature-name">۵۔ کوئز کے جوابات معلوم کریں</div>
-                <div class="feature-caption">4 آپشنز میں سے تصدیق شدہ درست جواب</div>
-            </button>
-        </div>
+        </section>
 
         <!-- FEATURE 1: کتاب سے سوال پوچھیں -->
-        <section id="section-qa" class="feature-panel">
+        <section id="section-qa" class="feature-panel" style="display: none;">
             <div class="card">
                 <div class="panel-header">
-                    <h2 class="panel-title">📖 فیچر نمبر ۱: کتاب سے سوال پوچھیں</h2>
+                    <h2 class="panel-title">🔍 فیچر نمبر ۱: کتاب سے سوال پوچھیں</h2>
                     <p class="panel-subtitle">کتاب کے کسی بھی موضوع، فقہی مسئلے یا امتحانی سوال کا تفصیلی جواب کتاب کے حوالے اور اصل عبارت کے ساتھ حاصل کریں۔</p>
                 </div>
 
+                <!-- Clean Integrated Selection Row -->
+                <div class="selection-row-inline">
+                    <div class="form-group">
+                        <label class="form-label" for="qa-semester-select">
+                            <span>۱۔ سمسٹر منتخب کریں:</span>
+                        </label>
+                        <select id="qa-semester-select" class="form-select urdu-text" onchange="onSemesterChange('qa')">
+                            <option value="1">سمسٹر 1 (بہار 2024)</option>
+                            <option value="2">سمسٹر 2 (خزاں 2024)</option>
+                            <option value="3">سمسٹر 3 (بہار 2025)</option>
+                            <option value="4">سمسٹر 4 (خزاں 2025)</option>
+                            <option value="5">سمسٹر 5 (تکمیلی سمسٹر)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="qa-course-select">
+                            <span>۲۔ کتاب / کورس منتخب کریں:</span>
+                        </label>
+                        <select id="qa-course-select" class="form-select urdu-text" onchange="onCourseChange('qa')">
+                            <option value="">-- کتاب منتخب کریں --</option>
+                        </select>
+                    </div>
+                </div>
+
                 <!-- Answer Mode Switcher -->
-                <div class="mode-subtabs">
+                <div class="mode-subtabs" style="margin-top: 1rem;">
                     <label class="mode-radio">
                         <input type="radio" name="qa-mode" value="explanation" checked onchange="onQAModeChange()">
                         <span>📝 تفصیلی امتحانی جواب (Detailed Exam-Style Answer)</span>
@@ -133,10 +185,10 @@
                         </label>
                         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                             <button type="button" class="btn-paste" onclick="switchFeature('image_qa', true)">
-                                <span>📷 تصویر سے سوال منتخب کریں (PC / Mobile)</span>
+                                <span>📷 تصویر سے سوال منتخب کریں</span>
                             </button>
                             <button type="button" class="btn-paste" onclick="pasteIntoInput('question-input')">
-                                <span>📋 پیسٹ کریں (Paste)</span>
+                                <span>📋 پیسٹ کریں</span>
                             </button>
                         </div>
                     </div>
@@ -159,7 +211,7 @@
                 <div class="button-row">
                     <button id="qa-submit-btn" class="btn btn-primary" onclick="handleQASubmit()">
                         <span id="qa-spinner" class="spinner" style="display: none;"></span>
-                        <span>جواب حاصل کریں (Get Answer)</span>
+                        <span>🔍 جواب حاصل کریں (Get Answer)</span>
                     </button>
                     <button class="btn btn-secondary" onclick="clearQAForm()">
                         <span>🔄 سوال صاف کریں</span>
@@ -219,18 +271,43 @@
                     <p class="panel-subtitle">امتحانی پرچے، اسائنمنٹ یا ہاتھ سے لکھے گئے 1 تا 5 سوالات کی تصویر اپلوڈ کریں، ہمارا سسٹم تمام سوالات پڑھ کر کتاب سے مفصل امتحانی جوابات فراہم کرے گا۔</p>
                 </div>
 
-                <!-- Drag & Drop Zone (Direct Browser / Windows File Dialog Trigger) -->
-                <div class="image-dropzone" id="image-dropzone" onclick="triggerImageFileInput()" style="cursor: pointer;">
+                <!-- Clean Integrated Selection Row -->
+                <div class="selection-row-inline">
+                    <div class="form-group">
+                        <label class="form-label" for="image-qa-semester-select">
+                            <span>۱۔ سمسٹر منتخب کریں:</span>
+                        </label>
+                        <select id="image-qa-semester-select" class="form-select urdu-text" onchange="onSemesterChange('image-qa')">
+                            <option value="1">سمسٹر 1 (بہار 2024)</option>
+                            <option value="2">سمسٹر 2 (خزاں 2024)</option>
+                            <option value="3">سمسٹر 3 (بہار 2025)</option>
+                            <option value="4">سمسٹر 4 (خزاں 2025)</option>
+                            <option value="5">سمسٹر 5 (تکمیلی سمسٹر)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="image-qa-course-select">
+                            <span>۲۔ کتاب / کورس منتخب کریں:</span>
+                        </label>
+                        <select id="image-qa-course-select" class="form-select urdu-text" onchange="onCourseChange('image-qa')">
+                            <option value="">-- کتاب منتخب کریں --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Drag & Drop Zone -->
+                <div class="image-dropzone" id="image-dropzone" onclick="triggerImageFileInput()" style="cursor: pointer; margin-top: 1.25rem;">
                     <div class="dropzone-icon">📁</div>
                     <div class="dropzone-title">اپنے کمپیوٹر یا موبائل سے سوالیہ تصویر منتخب کرنے کے لیے یہاں کلک کریں</div>
                     <div class="dropzone-desc">JPG, PNG, WEBP تصاویر اور موبائل کیمرہ فوٹوز (1 تا 5 یا اس سے زائد امتحانی سوالات)</div>
                     
                     <div class="dropzone-actions" onclick="event.stopPropagation();">
                         <button type="button" class="btn btn-primary" onclick="triggerImageFileInput()">
-                            <span>📁 اپنے PC / گیلری سے تصویر منتخب کریں</span>
+                            <span>📁 گیلری / PC سے تصویر منتخب کریں</span>
                         </button>
                         <button type="button" class="btn btn-secondary" onclick="triggerCameraInput()">
-                            <span>📷 موبائل کیمرہ سے فوٹو لیں</span>
+                            <span>📷 کیمرہ سے فوٹو لیں</span>
                         </button>
                     </div>
                 </div>
@@ -292,7 +369,7 @@
                 </div>
 
                 <div class="feature-layout-3col">
-                    <!-- Right side (in RTL): مرحلہ وار ہدایات -->
+                    <!-- Right side (Desktop): مرحلہ وار ہدایات -->
                     <div class="steps-guide-card">
                         <div class="guide-title">
                             <span>📋</span>
@@ -322,24 +399,30 @@
                         </div>
                     </div>
 
-                    <!-- Center Form: Form controls -->
+                    <!-- Center Form: Form controls (First on Mobile!) -->
                     <div class="center-feature-card">
-                        <div class="form-group">
-                            <label class="form-label" for="exam-semester-select">
-                                <span>۱۔ سمسٹر منتخب کریں:</span>
-                            </label>
-                            <select id="exam-semester-select" class="form-select urdu-text" onchange="onSemesterChange('exam')">
-                                <option value="">-- پہلے سمسٹر کا انتخاب کریں --</option>
-                            </select>
-                        </div>
+                        <div class="selection-row-inline">
+                            <div class="form-group">
+                                <label class="form-label" for="exam-semester-select">
+                                    <span>۱۔ سمسٹر منتخب کریں:</span>
+                                </label>
+                                <select id="exam-semester-select" class="form-select urdu-text" onchange="onSemesterChange('exam')">
+                                    <option value="1">سمسٹر 1 (بہار 2024)</option>
+                                    <option value="2">سمسٹر 2 (خزاں 2024)</option>
+                                    <option value="3">سمسٹر 3 (بہار 2025)</option>
+                                    <option value="4">سمسٹر 4 (خزاں 2025)</option>
+                                    <option value="5">سمسٹر 5 (تکمیلی سمسٹر)</option>
+                                </select>
+                            </div>
 
-                        <div class="form-group" style="margin-top: 1rem;">
-                            <label class="form-label" for="exam-course-select">
-                                <span>۲۔ کتاب / کورس منتخب کریں:</span>
-                            </label>
-                            <select id="exam-course-select" class="form-select urdu-text" onchange="onCourseChange('exam')">
-                                <option value="">-- پہلے سمسٹر کا انتخاب ضروری ہے --</option>
-                            </select>
+                            <div class="form-group">
+                                <label class="form-label" for="exam-course-select">
+                                    <span>۲۔ کتاب / کورس منتخب کریں:</span>
+                                </label>
+                                <select id="exam-course-select" class="form-select urdu-text" onchange="onCourseChange('exam')">
+                                    <option value="">-- کتاب منتخب کریں --</option>
+                                </select>
+                            </div>
                         </div>
 
                         <!-- Question Count Selection -->
@@ -369,7 +452,7 @@
                         </div>
                     </div>
 
-                    <!-- Left side (in RTL): خصوصیات -->
+                    <!-- Left side (Desktop): خصوصیات -->
                     <div class="features-summary-card">
                         <div class="guide-title">
                             <span>✨</span>
@@ -412,7 +495,7 @@
                 </div>
 
                 <div class="feature-layout-3col">
-                    <!-- Right side (in RTL): مرحلہ وار ہدایات -->
+                    <!-- Right side (Desktop): مرحلہ وار ہدایات -->
                     <div class="steps-guide-card">
                         <div class="guide-title">
                             <span>📋</span>
@@ -442,24 +525,30 @@
                         </div>
                     </div>
 
-                    <!-- Center Form: Form controls -->
+                    <!-- Center Form: Form controls (First on Mobile!) -->
                     <div class="center-feature-card">
-                        <div class="form-group">
-                            <label class="form-label" for="mcq-semester-select">
-                                <span>۱۔ سمسٹر منتخب کریں:</span>
-                            </label>
-                            <select id="mcq-semester-select" class="form-select urdu-text" onchange="onSemesterChange('mcq')">
-                                <option value="">-- پہلے سمسٹر کا انتخاب کریں --</option>
-                            </select>
-                        </div>
+                        <div class="selection-row-inline">
+                            <div class="form-group">
+                                <label class="form-label" for="mcq-semester-select">
+                                    <span>۱۔ سمسٹر منتخب کریں:</span>
+                                </label>
+                                <select id="mcq-semester-select" class="form-select urdu-text" onchange="onSemesterChange('mcq')">
+                                    <option value="1">سمسٹر 1 (بہار 2024)</option>
+                                    <option value="2">سمسٹر 2 (خزاں 2024)</option>
+                                    <option value="3">سمسٹر 3 (بہار 2025)</option>
+                                    <option value="4">سمسٹر 4 (خزاں 2025)</option>
+                                    <option value="5">سمسٹر 5 (تکمیلی سمسٹر)</option>
+                                </select>
+                            </div>
 
-                        <div class="form-group" style="margin-top: 1rem;">
-                            <label class="form-label" for="mcq-course-select">
-                                <span>۲۔ کتاب / کورس کا انتخاب کریں:</span>
-                            </label>
-                            <select id="mcq-course-select" class="form-select urdu-text" onchange="onCourseChange('mcq')">
-                                <option value="">-- پہلے سمسٹر کا انتخاب ضروری ہے --</option>
-                            </select>
+                            <div class="form-group">
+                                <label class="form-label" for="mcq-course-select">
+                                    <span>۲۔ کتاب / کورس کا انتخاب کریں:</span>
+                                </label>
+                                <select id="mcq-course-select" class="form-select urdu-text" onchange="onCourseChange('mcq')">
+                                    <option value="">-- کتاب منتخب کریں --</option>
+                                </select>
+                            </div>
                         </div>
 
                         <!-- MCQ Count Selection -->
@@ -486,14 +575,14 @@
                         </div>
 
                         <div class="button-row" style="margin-top: 1.25rem;">
-                            <button id="mcq-gen-btn" class="btn btn-primary" style="width: 100%; font-size: 1.05rem; padding: 0.85rem;" onclick="handleMCQGenerate()">
+                            <button id="mcq-gen-btn" class="btn btn-primary btn-purple" style="width: 100%; font-size: 1.05rem; padding: 0.85rem;" onclick="handleMCQGenerate()">
                                 <span id="mcq-gen-spinner" class="spinner" style="display: none;"></span>
                                 <span>📊 MCQs تیار کریں (Generate Chapter MCQs)</span>
                             </button>
                         </div>
                     </div>
 
-                    <!-- Left side (in RTL): خصوصیات -->
+                    <!-- Left side (Desktop): خصوصیات -->
                     <div class="features-summary-card">
                         <div class="guide-title">
                             <span>✨</span>
@@ -520,7 +609,7 @@
                             <button class="btn btn-secondary" onclick="toggleAllMCQAnswers()">
                                 <span id="mcq-toggle-text">👁️ تمام درست جوابات دکھائیں</span>
                             </button>
-                            <button class="btn btn-primary" onclick="copyEntireBookMCQs(this)">
+                            <button class="btn btn-primary btn-purple" onclick="copyEntireBookMCQs(this)">
                                 <span>💾 تمام چیپٹرز کے MCQs کاپی کریں (برائے MS Word)</span>
                             </button>
                         </div>
@@ -538,10 +627,35 @@
             <div class="card">
                 <div class="panel-header">
                     <h2 class="panel-title">✅ فیچر نمبر ۵: کوئز کے درست جوابات معلوم کریں</h2>
-                    <p class="panel-subtitle">کوئز کا سوال اور آپشنز ایک ساتھ پیسٹ کریں یا موبائل/پی سی سے کوئز کی تصویر اپلوڈ کریں۔ چاہے 2 آپشن ہوں، 3 ہوں یا 4 ہوں، سسٹم کتاب سے موازنہ کر کے صفحہ نمبر اور سطر کے ساتھ تصدیق شدہ جواب بتائے گا۔</p>
+                    <p class="panel-subtitle">کوئز کا سوال اور آپشنز درج کریں یا موبائل/پی سی سے کوئز کی تصویر اپلوڈ کریں۔ سسٹم کتاب اور نصابی قواعد کی روشنی میں تصدیق شدہ درست جواب اور علمی وجہ بتائے گا۔</p>
                 </div>
 
-                <div class="mcq-container">
+                <!-- Clean Integrated Selection Row -->
+                <div class="selection-row-inline">
+                    <div class="form-group">
+                        <label class="form-label" for="quiz-semester-select">
+                            <span>۱۔ سمسٹر منتخب کریں:</span>
+                        </label>
+                        <select id="quiz-semester-select" class="form-select urdu-text" onchange="onSemesterChange('quiz')">
+                            <option value="1">سمسٹر 1 (بہار 2024)</option>
+                            <option value="2">سمسٹر 2 (خزاں 2024)</option>
+                            <option value="3">سمسٹر 3 (بہار 2025)</option>
+                            <option value="4">سمسٹر 4 (خزاں 2025)</option>
+                            <option value="5">سمسٹر 5 (تکمیلی سمسٹر)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="quiz-course-select">
+                            <span>۲۔ کتاب / کورس کا انتخاب کریں:</span>
+                        </label>
+                        <select id="quiz-course-select" class="form-select urdu-text" onchange="onCourseChange('quiz')">
+                            <option value="">-- کتاب منتخب کریں --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mcq-container" style="margin-top: 1.25rem;">
                     <!-- Unified Quiz Text Input & Image Option -->
                     <div class="form-group">
                         <div class="form-label-row">
@@ -562,7 +676,7 @@
                             id="quiz-unified-input" 
                             class="form-textarea urdu-text" 
                             rows="4" 
-                            placeholder="یہاں پورا کوئز سوال بمع آپشنز ایک ساتھ پیسٹ کریں (اگر صرف 2 یا 3 آپشنز ہوں، یا D نہ ہو، تب بھی سسٹم کتاب سے درست آپشن تلاش کرے گا):&#10;مثال:&#10;شریعت اسلامیہ میں احکام کا اولین ماخذ کون سا ہے؟&#10;الف) قرآن مجید&#10;ب) قیاس&#10;ج) عرف"
+                            placeholder="یہاں پورا کوئز سوال بمع آپشنز ایک ساتھ پیسٹ کریں، یا اوپر کیمرہ بٹن سے تصویر اپلوڈ کریں:&#10;مثال:&#10;شریعت اسلامیہ میں احکام کا اولین ماخذ کون سا ہے؟&#10;الف) قرآن مجید&#10;ب) قیاس&#10;ج) عرف"
                         ></textarea>
                     </div>
 
@@ -572,7 +686,7 @@
                         <div class="image-preview-info">
                             <div style="font-weight: 700; color: #0f172a;" id="quiz-image-filename">quiz.jpg</div>
                             <div class="image-meta-pill" id="quiz-image-filesize">کوئز تصویر منتخب ہو گئی</div>
-                            <p style="margin-top: 0.5rem; font-size: 0.88rem; color: #64748b;">اب 'درست جواب تلاش کریں' پر کلک کریں۔ سسٹم تصویر سے سوال و آپشنز پڑھ کر کتاب سے تصدیق شدہ جواب بتائے گا۔</p>
+                            <p style="margin-top: 0.5rem; font-size: 0.88rem; color: #64748b;">اب 'درست جواب تلاش کریں' پر کلک کریں۔ سسٹم تصویر سے سوال و آپشنز پڑھ کر درست جواب بتائے گا۔</p>
                         </div>
                         <div>
                             <button type="button" class="btn btn-secondary" onclick="removeQuizImage()" style="color: #dc2626; border-color: #fca5a5;">
@@ -590,7 +704,7 @@
                     <div class="button-row">
                         <button id="quiz-submit-btn" class="btn btn-primary" onclick="handleQuizSubmit()">
                             <span id="quiz-spinner" class="spinner" style="display: none;"></span>
-                            <span>درست جواب تلاش کریں (Find Correct Answer)</span>
+                            <span>✅ درست جواب تلاش کریں (Find Correct Answer)</span>
                         </button>
                         <button class="btn btn-secondary" onclick="clearQuizForm()">
                             <span>🔄 صاف کریں</span>
@@ -616,13 +730,13 @@
 
     <!-- Mobile Bottom Navigation Bar (Fixed for Mobile Screens) -->
     <nav class="mobile-bottom-nav">
-        <button class="mobile-nav-item active" id="mob-btn-qa" onclick="switchFeature('qa')">
-            <span class="mobile-nav-icon">🔍</span>
-            <span class="mobile-nav-label">سوال پوچھیں</span>
+        <button class="mobile-nav-item active" id="mob-btn-home" onclick="switchFeature('home')">
+            <span class="mobile-nav-icon">🏠</span>
+            <span class="mobile-nav-label">ہوم</span>
         </button>
-        <button class="mobile-nav-item" id="mob-btn-image_qa" onclick="switchFeature('image_qa', true)">
-            <span class="mobile-nav-icon">📸</span>
-            <span class="mobile-nav-label">تصویر سے سوال</span>
+        <button class="mobile-nav-item" id="mob-btn-qa" onclick="switchFeature('qa')">
+            <span class="mobile-nav-icon">🔍</span>
+            <span class="mobile-nav-label">سوال</span>
         </button>
         <button class="mobile-nav-item" id="mob-btn-exam" onclick="switchFeature('exam')">
             <span class="mobile-nav-icon">🎓</span>
@@ -630,11 +744,11 @@
         </button>
         <button class="mobile-nav-item" id="mob-btn-mcq_gen" onclick="switchFeature('mcq_gen')">
             <span class="mobile-nav-icon">📊</span>
-            <span class="mobile-nav-label">MCQs بنائیں</span>
+            <span class="mobile-nav-label">MCQs</span>
         </button>
         <button class="mobile-nav-item" id="mob-btn-quiz" onclick="switchFeature('quiz')">
             <span class="mobile-nav-icon">✅</span>
-            <span class="mobile-nav-label">کوئز جواب</span>
+            <span class="mobile-nav-label">کوئز</span>
         </button>
     </nav>
 

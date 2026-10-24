@@ -280,6 +280,80 @@ def extract_quiz_mcq_from_image_groq(
         print("Quiz Vision OCR Error:", e)
     return {}
 
+def solve_mcq_ai_fallback(
+    question: str,
+    options: Dict[str, str],
+    semester_num: str = "1",
+    course_code: Optional[str] = None
+) -> Optional[Dict[str, Any]]:
+    """
+    Expert AI Fallback for Multiple Choice Questions:
+    Uses Groq LLM with authoritative grounding on AIOU BS Islamic Studies syllabus,
+    including Tajweed (Course 4935), Hadith, Fiqh, Seerat, and Islamic Thought.
+    Accurately identifies the verified option, course code, book title, and academic reason.
+    """
+    if not GROQ_API_KEY:
+        return None
+
+    options_formatted = "\n".join([f"{k}: {v}" for k, v in options.items()])
+
+    prompt = (
+        "آپ علامہ اقبال اوپن یونیورسٹی (AIOU) بی ایس اسلامیات (2.5 سالہ پروگرام) کے سینئر پروفیسر اور امتحانی ماہر ہیں۔\n"
+        "آپ کے سامنے طالب علم کا ایک معروضی (MCQ / کوئز) سوال اور اس کے ممکنہ آپشنز پیش ہیں۔\n\n"
+        f"سوال: {question}\n"
+        f"آپشنز:\n{options_formatted}\n\n"
+        "نصابی رہنمائی و مستند اصول:\n"
+        "- اگر سوال علم التجوید و قرأت (کورس کوڈ 4935: قرآن حکیم تجوید و قرأت) سے ہو:\n"
+        "  * صفاتِ متضادہ کے پانچ جوڑے: ہمس (حروف: فحثه شخص سكت) کی ضد 'جہر'؛ شدت (أجد قط بكت) اور توسط (لن عمر) کی ضد 'رخاوت'؛ استعلاء (خص ضغط قظ) کی ضد 'استفال'؛ اطباق (ص ض ط ظ) کی ضد 'انفتاح'؛ اذلاق (فر من لب) کی ضد 'اصمات' ہے۔\n"
+        "  * صفاتِ غیر متضادہ: قلقلہ (قطب جد)، صفیر (ص ز س)، لین، انحراف، تفشی، استطالت، غنہ۔\n"
+        "  * احکام نون ساکن و تنوین: اظہار، ادغام، اقلاب، اخفاء۔\n"
+        "- اگر سوال سیرت النبی ﷺ (4934) سے ہو، تو غزوات، سرایا اور مکی و مدنی ادوار کے مطابق ہو۔\n"
+        "- اگر سوال تاریخ، اصول فقہ (2953)، مذاہبِ عالم (1902) یا حدیث (2955) سے ہو، تو مستند اسلامی نصاب کے مطابق ہو۔\n\n"
+        "صرف اور صرف خالص JSON فارمیٹ میں جواب دیں:\n"
+        "{\n"
+        "  \"correct_key\": \"A\",\n"
+        "  \"correct_text\": \"درست آپشن کا متن\",\n"
+        "  \"explanation\": \"تجوید یا اسلامی نصاب کے قواعد کے مطابق مدلل علمی وضاحت\",\n"
+        "  \"course_code\": \"4935\",\n"
+        "  \"book_title\": \"قرآن حکیم (تجوید و قرأت)\"\n"
+        "}\n"
+        "سخت ہدایت: صرف خالص JSON آبجیکٹ دیں، کوئی اضافی مارک ڈاؤن بیک ٹکس یا فالتو الفاظ نہ لکھیں۔"
+    )
+
+    url = "https://api.groq.com/openai/v1/chat/completions"
+    payload = {
+        "model": "openai/gpt-oss-120b",
+        "messages": [
+            {"role": "system", "content": "You are a distinguished professor of Islamic Studies at Allama Iqbal Open University."},
+            {"role": "user", "content": prompt}
+        ],
+        "temperature": 0.1,
+        "max_tokens": 512
+    }
+
+    try:
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={
+                "Authorization": f"Bearer {GROQ_API_KEY}",
+                "Content-Type": "application/json",
+                "User-Agent": "AIOU-Help-Assistant/1.0"
+            }
+        )
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            raw = data.get("choices", [{}])[0].get("message", {}).get("content", "").strip()
+            cleaned = re.sub(r"^```(?:json)?", "", raw, flags=re.MULTILINE)
+            cleaned = re.sub(r"```$", "", cleaned, flags=re.MULTILINE).strip()
+            s = cleaned.find("{")
+            e = cleaned.rfind("}")
+            if s != -1 and e != -1:
+                return json.loads(cleaned[s:e+1])
+    except Exception as e:
+        print("Groq solve_mcq_ai_fallback error:", e)
+    return None
+
 def call_gemini_grounded(
     prompt: str,
     passages: List[Dict[str, Any]],
