@@ -12,7 +12,7 @@ from aiou_app.indexer import get_indexing_stats, index_all_books
 from aiou_app.ocr_engine import get_ocr_engine_status
 from aiou_app.ai_service import get_ai_service_status
 from aiou_app.retriever import search_passages, get_page_full_text
-from aiou_app.qa_engine import answer_question, solve_mcq, format_clipboard_text, solve_image_questions
+from aiou_app.qa_engine import answer_question, solve_mcq, format_clipboard_text, solve_image_questions, solve_unified_mcq
 from aiou_app.exam_engine import get_course_units, generate_exam_questions, generate_chapter_mcqs
 
 app = FastAPI(
@@ -65,11 +65,15 @@ class AskRequest(BaseModel):
     mode: str = "explanation"  # "exact" or "explanation"
 
 class MCQRequest(BaseModel):
-    question: str
-    option_a: str
-    option_b: str
-    option_c: str
-    option_d: str
+    question: Optional[str] = None
+    option_a: Optional[str] = None
+    option_b: Optional[str] = None
+    option_c: Optional[str] = None
+    option_d: Optional[str] = None
+    options: Optional[Dict[str, str]] = None
+    raw_text: Optional[str] = None
+    image_b64: Optional[str] = None
+    mime_type: str = "image/jpeg"
     semester_num: str
     course_code: Optional[str] = None
 
@@ -179,22 +183,34 @@ def ask_image_api(req: ImageAskRequest):
 @app.post("/api/mcq")
 @app.post("/mcq")
 def solve_mcq_api(req: MCQRequest):
-    """Answers Multiple-Choice Questions strictly verified against book evidence."""
+    """
+    Answers Multiple-Choice Questions strictly verified against book evidence.
+    Accepts:
+    1. Single text containing question and options (whether 2, 3, or 4 options), OR
+    2. Image photo of the quiz question, OR
+    3. Separate fields (option_a, option_b, etc.). Never fails if D or C is missing!
+    """
     if not req.semester_num:
         raise HTTPException(status_code=400, detail="براہِ کرم پہلے سمسٹر کا انتخاب کریں۔")
 
-    options = {
-        "A": req.option_a,
-        "B": req.option_b,
-        "C": req.option_c,
-        "D": req.option_d
-    }
+    opts = dict(req.options) if req.options else {}
+    if req.option_a:
+        opts["A"] = req.option_a
+    if req.option_b:
+        opts["B"] = req.option_b
+    if req.option_c:
+        opts["C"] = req.option_c
+    if req.option_d:
+        opts["D"] = req.option_d
 
-    result = solve_mcq(
+    result = solve_unified_mcq(
+        raw_text=req.raw_text,
         question=req.question,
-        options=options,
+        options=opts,
+        image_b64=req.image_b64,
         semester_num=req.semester_num,
-        course_code=req.course_code
+        course_code=req.course_code,
+        mime_type=req.mime_type
     )
     return result
 

@@ -203,6 +203,83 @@ def extract_questions_from_image_groq(
         print("Groq Vision OCR Error:", e)
         return []
 
+def extract_quiz_mcq_from_image_groq(
+    image_b64: str,
+    mime_type: str = "image/jpeg"
+) -> Dict[str, Any]:
+    """
+    Extracts a quiz question and its available options (whether 2, 3, or 4 options) from an image.
+    Returns: {'question': '...', 'options': {'A': '...', 'B': '...'}}
+    """
+    if not GROQ_API_KEY:
+        return {}
+
+    clean_b64 = image_b64
+    if "," in image_b64:
+        header, clean_b64 = image_b64.split(",", 1)
+        if "png" in header:
+            mime_type = "image/png"
+        elif "webp" in header:
+            mime_type = "image/webp"
+
+    url = "https://api.groq.com/openai/v1/chat/completions"
+    prompt = (
+        "آپ امتحانی کوئز اور معروضی سوالات (MCQs) کے ماہر OCR ریڈر ہیں۔\n"
+        "اس تصویر میں موجود کوئز کا سوال اور اس کے تمام آپشنز (چاہے 2 آپشن ہوں، 3 ہوں یا 4 ہوں) کو درست شناخت کریں۔\n"
+        "صرف اور صرف درست JSON کی شکل میں جواب دیں:\n"
+        "{\n"
+        "  \"question\": \"سوال کا مکمل متن\",\n"
+        "  \"options\": {\n"
+        "    \"A\": \"پہلا آپشن\",\n"
+        "    \"B\": \"دوسرا آپشن\"\n"
+        "  }\n"
+        "}\n"
+        "سخت ہدایت: صرف خالص JSON واپس کریں، کوئی فالتو بیک ٹکس یا جملے نہ لکھیں۔"
+    )
+
+    payload = {
+        "model": GROQ_MODEL,
+        "messages": [
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": prompt},
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:{mime_type};base64,{clean_b64}"
+                        }
+                    }
+                ]
+            }
+        ],
+        "temperature": 0.1,
+        "max_tokens": 512
+    }
+
+    try:
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={
+                "Authorization": f"Bearer {GROQ_API_KEY}",
+                "Content-Type": "application/json",
+                "User-Agent": "AIOU-Help-Assistant/1.0"
+            }
+        )
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            raw_text = data.get("choices", [{}])[0].get("message", {}).get("content", "").strip()
+            cleaned = re.sub(r"^```(?:json)?", "", raw_text, flags=re.MULTILINE)
+            cleaned = re.sub(r"```$", "", cleaned, flags=re.MULTILINE).strip()
+            s = cleaned.find("{")
+            e = cleaned.rfind("}")
+            if s != -1 and e != -1:
+                return json.loads(cleaned[s:e+1])
+    except Exception as e:
+        print("Quiz Vision OCR Error:", e)
+    return {}
+
 def call_gemini_grounded(
     prompt: str,
     passages: List[Dict[str, Any]],

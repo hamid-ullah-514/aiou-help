@@ -224,6 +224,53 @@ def answer_question(
         "engine_used": "Local Source Grounded Synthesizer (مقامی سورس انجن)"
     }
 
+def parse_mcq_text(raw_text: str) -> tuple[str, Dict[str, str]]:
+    """
+    Parses a single unified quiz text containing a question and arbitrary options (2, 3, or 4 options).
+    Handles:
+    - Urdu labels: الف، ب، ج، د
+    - English labels: A, B, C, D
+    - Numbers: 1, 2, 3, 4
+    - Unlabeled lines following the question.
+    """
+    lines = [l.strip() for l in raw_text.strip().splitlines() if l.strip()]
+    if not lines:
+        return "", {}
+    if len(lines) == 1:
+        return lines[0], {}
+
+    opt_pat = re.compile(r'^(?:[اابجدABCD1234]|\([اابجد]\)|\([ABCD]\)|\([1234]\)|الف|ب|ج|د)[-۔:\.)\s]+', re.IGNORECASE)
+    q_lines = []
+    options = {}
+    k_map = {
+        'ا': 'A', 'الف': 'A', '1': 'A', 'a': 'A', 'A': 'A',
+        'ب': 'B', '2': 'B', 'b': 'B', 'B': 'B',
+        'ج': 'C', '3': 'C', 'c': 'C', 'C': 'C',
+        'د': 'D', '4': 'D', 'd': 'D', 'D': 'D'
+    }
+    keys_order = ['A', 'B', 'C', 'D']
+
+    for line in lines:
+        m = opt_pat.match(line)
+        if m:
+            prefix = m.group(0).strip(' -۔:.)(')
+            k = k_map.get(prefix, keys_order[len(options)] if len(options) < 4 else 'D')
+            options[k] = line[m.end():].strip()
+        else:
+            if not options:
+                q_lines.append(line)
+            else:
+                k = keys_order[len(options)] if len(options) < 4 else 'D'
+                options[k] = line
+
+    # If no options matched with regex, but we have multiple lines:
+    if not options and len(lines) >= 3:
+        q_lines = [lines[0]]
+        for idx, l in enumerate(lines[1:5]):
+            options[keys_order[idx]] = l
+
+    return " ".join(q_lines), options
+
 def solve_mcq(
     question: str,
     options: Dict[str, str],
@@ -343,6 +390,62 @@ def solve_mcq(
         "supporting_line": best_matched_line,
         "references": build_references_list([best_passage] + [p for p in passages if p != best_passage][:2])
     }
+
+def solve_unified_mcq(
+    raw_text: Optional[str] = None,
+    question: Optional[str] = None,
+    options: Optional[Dict[str, str]] = None,
+    image_b64: Optional[str] = None,
+    semester_num: str = "1",
+    course_code: Optional[str] = None,
+    mime_type: str = "image/jpeg"
+) -> Dict[str, Any]:
+    """
+    Unified MCQ Solver:
+    Accepts:
+    1. Single text containing question and arbitrary options (2, 3, or 4 options), OR
+    2. Image of the quiz from mobile/PC gallery, OR
+    3. Separate question & options.
+    Never fails if Option D or C is missing!
+    """
+    # 1. If image provided, extract question and options via Vision
+    if image_b64:
+        from aiou_app.ai_service import extract_quiz_mcq_from_image_groq
+        extracted = extract_quiz_mcq_from_image_groq(image_b64, mime_type)
+        if extracted and extracted.get("question"):
+            question = extracted.get("question", "")
+            options = extracted.get("options", {})
+
+    # 2. If raw text provided and no options yet, parse it
+    if raw_text and not options:
+        parsed_q, parsed_opts = parse_mcq_text(raw_text)
+        if parsed_q:
+            question = parsed_q
+        if parsed_opts:
+            options = parsed_opts
+
+    # 3. Clean options (remove empty ones)
+    clean_opts = {}
+    if options:
+        for k, v in options.items():
+            if v and str(v).strip():
+                clean_opts[k] = str(v).strip()
+
+    if not question:
+        return {"success": False, "error": "براہِ کرم کوئز کا سوال اور آپشنز درج فرمائیں یا تصویر اپلوڈ کریں۔"}
+    if len(clean_opts) < 2:
+        return {"success": False, "error": "براہِ کرم کم از کم 2 ممکنہ آپشنز ضرور فراہم کریں۔"}
+
+    # Solve via solve_mcq
+    res = solve_mcq(
+        question=question,
+        options=clean_opts,
+        semester_num=semester_num,
+        course_code=course_code
+    )
+    res["question"] = question
+    res["options"] = clean_opts
+    return res
 
 def format_clipboard_text(data: Dict[str, Any], include_references: bool = True) -> str:
     """Formats answer for clean clipboard copying into MS Word or WhatsApp."""

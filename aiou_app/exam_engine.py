@@ -152,16 +152,27 @@ def generate_chapter_mcqs(course_code: str, count_per_chapter: int = 10) -> Dict
         unit_title = f"یونٹ نمبر {u_num}: نصابی باب و متعلقہ مباحث"
         mcqs = []
         for i in range(1, count + 1):
+            target_opts = [
+                "شریعتِ اسلامیہ اور قرآنی و نبوی اصول",
+                "صرف روایتی قصے کہانیاں",
+                "مغربی نظریات کی تائید",
+                "غیر مستند رسومات"
+            ]
+            rot = (i + u_num) % 4
+            rotated_opts = target_opts[rot:] + target_opts[:rot]
+            k_list = ["A", "B", "C", "D"]
+            correct_k = k_list[(4 - rot) % 4]
+
             mcqs.append({
                 "q_num": i,
                 "question": f"سوال نمبر {i}: کتاب '{book_title}' کے یونٹ {u_num} کی بنیادی اساس کیا ہے؟",
                 "options": {
-                    "A": "شریعتِ اسلامیہ اور قرآنی و نبوی اصول",
-                    "B": "صرف روایتی قصے کہانیاں",
-                    "C": "مغربی نظریات کی تائید",
-                    "D": "غیر مستند رسومات"
+                    "A": rotated_opts[0],
+                    "B": rotated_opts[1],
+                    "C": rotated_opts[2],
+                    "D": rotated_opts[3]
                 },
-                "correct_option": "A",
+                "correct_option": correct_k,
                 "correct_text": "شریعتِ اسلامیہ اور قرآنی و نبوی اصول",
                 "explanation": f"کتاب کے مطابق یونٹ {u_num} کا بنیادی تعلق اسلامی شریعت اور دینی تعلیمات سے ہے۔",
                 "book_title": book_title,

@@ -1,8 +1,12 @@
 // AIOU Help — Professional Urdu Educational & Exam Assistant Client
-// Fully compatible with both local testing and Vercel Serverless deployments.
+// Fully compatible with local testing, direct file:// opening, and Vercel Serverless deployments.
+
+const API_BASE = (window.location.protocol === "file:" || (window.location.hostname === "localhost" && window.location.port === ""))
+    ? "https://aiou-help.vercel.app"
+    : "";
 
 let currentCatalog = null;
-let currentFeature = "qa"; // "qa", "exam", "mcq_gen", "quiz"
+let currentFeature = "qa"; // "qa", "image_qa", "exam", "mcq_gen", "quiz"
 let currentQAMode = "explanation"; // "explanation", "exact"
 
 let lastQAResult = null;
@@ -21,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function initApp() {
     try {
         setupImageDropzone();
-        const resp = await fetch("/api/catalog");
+        const resp = await fetch(`${API_BASE}/api/catalog`);
         if (!resp.ok) {
             throw new Error(`Catalog request failed: ${resp.status}`);
         }
@@ -115,7 +119,7 @@ function onCourseChange() {
 }
 
 // Switch between the 5 primary tabs
-function switchFeature(feat) {
+function switchFeature(feat, autoTriggerFile = false) {
     currentFeature = feat;
 
     const tabs = ["qa", "image_qa", "exam", "mcq_gen", "quiz"];
@@ -132,6 +136,13 @@ function switchFeature(feat) {
     if (activeSec) {
         activeSec.style.display = "block";
         activeSec.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    // Auto-open PC file picker if user clicked "تصویر سے سوال پوچھیں"
+    if (feat === "image_qa" && autoTriggerFile && !selectedImageDataUrl) {
+        setTimeout(() => {
+            triggerImageFileInput();
+        }, 100);
     }
 }
 
@@ -183,7 +194,7 @@ async function handleQASubmit() {
     submitBtn.disabled = true;
 
     try {
-        const resp = await fetch("/api/ask", {
+        const resp = await fetch(`${API_BASE}/api/ask`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -271,46 +282,55 @@ function renderQAResult(data, originalQuestion) {
 }
 
 // QA Copy Actions
-async function copyQAAnswerOnly() {
+async function copyQAAnswerOnly(btn = null) {
     if (!lastQAResult) return;
-    await copyToClipboard(lastQAResult.answer, "صرف جواب کاپی ہو گیا ہے۔");
+    await copyToClipboard(lastQAResult.answer, "صرف جواب کاپی ہو گیا ہے۔", btn);
 }
 
-async function copyQAFullWithRefs() {
+async function copyQAFullWithRefs(btn = null) {
     if (!lastQAResult) return;
-    let fullText = lastQAResult.answer + "\n\n";
-    fullText += "============================================================\n";
-    fullText += `کتابی حوالہ جات (AIOU Help):\n`;
-    fullText += `کتاب: ${lastQAResult.book_title} (کورس: ${lastQAResult.course_code})\n`;
-    fullText += `صفحہ نمبر: ${lastQAResult.printed_page || lastQAResult.pdf_page}\n`;
+    let fullText = lastQAResult.answer + "\r\n\r\n";
+    fullText += "============================================================\r\n";
+    fullText += `کتابی حوالہ جات (AIOU Help):\r\n`;
+    fullText += `کتاب: ${lastQAResult.book_title} (کورس: ${lastQAResult.course_code})\r\n`;
+    fullText += `صفحہ نمبر: ${lastQAResult.printed_page || lastQAResult.pdf_page}\r\n`;
     if (lastQAResult.references && lastQAResult.references.length > 0) {
         lastQAResult.references.forEach((r, i) => {
-            fullText += `\n[حوالہ ${i+1}] ${r.page_display}:\n« ${r.quotation} »\n`;
+            fullText += `\r\n[حوالہ ${i+1}] ${r.page_display}:\r\n« ${r.quotation} »\r\n`;
         });
     }
     fullText += "============================================================";
-    await copyToClipboard(fullText, "مکمل جواب بمعہ حوالہ جات کاپی ہو گیا ہے۔");
+    await copyToClipboard(fullText, "مکمل جواب بمعہ حوالہ جات کاپی ہو گیا ہے۔", btn);
 }
 
-async function copyQAOriginalQuote() {
+async function copyQAOriginalQuote(btn = null) {
     if (!lastQAResult) return;
     const quote = lastQAResult.primary_quote || (lastQAResult.references && lastQAResult.references[0] ? lastQAResult.references[0].quotation : lastQAResult.answer);
-    await copyToClipboard(`« ${quote} »\n(بحوالہ: ${lastQAResult.book_title}، صفحہ ${lastQAResult.printed_page})`, "کتاب کی اصل عبارت کاپی ہو گئی۔");
+    await copyToClipboard(`« ${quote} »\r\n(بحوالہ: ${lastQAResult.book_title}، صفحہ ${lastQAResult.printed_page})`, "کتاب کی اصل عبارت کاپی ہو گئی۔", btn);
 }
 
-async function copyQAQuestion() {
+async function copyQAQuestion(btn = null) {
     const q = document.getElementById("question-input").value.trim();
-    if (q) await copyToClipboard(q, "سوال کاپی ہو گیا۔");
+    if (q) await copyToClipboard(q, "سوال کاپی ہو گیا۔", btn);
 }
 
 // ==========================================
 // FEATURE 2: پیپر کی تیاری (Exam Preparation)
 // ==========================================
 async function handleExamGenerate() {
-    const courseCode = document.getElementById("course-select").value;
+    let courseCode = document.getElementById("course-select").value;
+    const courseSelect = document.getElementById("course-select");
+
+    // Automatically select the first real course if "ALL" or empty
     if (!courseCode || courseCode === "ALL") {
-        alert("پیپر کی تیاری کے لیے براہِ کرم اوپر دی گئی لسٹ میں سے کسی ایک کتاب / کورس کا انتخاب کریں۔");
-        return;
+        if (courseSelect && courseSelect.options.length > 1) {
+            courseSelect.selectedIndex = 1;
+            courseCode = courseSelect.value;
+            onCourseChange();
+        } else {
+            alert("براہِ کرم پہلے سمسٹر منتخب فرمائیں تاکہ کتب لوڈ ہو سکیں۔");
+            return;
+        }
     }
 
     let count = 3;
@@ -325,7 +345,7 @@ async function handleExamGenerate() {
     btn.disabled = true;
 
     try {
-        const resp = await fetch("/api/exam/questions", {
+        const resp = await fetch(`${API_BASE}/api/exam/questions`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -598,10 +618,19 @@ async function copyEntireBookExamPrep() {
 // FEATURE 3: MCQs تیار کریں (Chapter MCQs)
 // ==========================================
 async function handleMCQGenerate() {
-    const courseCode = document.getElementById("course-select").value;
+    let courseCode = document.getElementById("course-select").value;
+    const courseSelect = document.getElementById("course-select");
+
+    // Automatically select the first real course if "ALL" or empty
     if (!courseCode || courseCode === "ALL") {
-        alert("MCQs تیار کرنے کے لیے براہِ کرم اوپر دی گئی لسٹ میں سے کسی ایک کتاب کا انتخاب کریں۔");
-        return;
+        if (courseSelect && courseSelect.options.length > 1) {
+            courseSelect.selectedIndex = 1;
+            courseCode = courseSelect.value;
+            onCourseChange();
+        } else {
+            alert("براہِ کرم پہلے سمسٹر منتخب فرمائیں تاکہ کتب لوڈ ہو سکیں۔");
+            return;
+        }
     }
 
     let count = 10;
@@ -616,7 +645,7 @@ async function handleMCQGenerate() {
     btn.disabled = true;
 
     try {
-        const resp = await fetch("/api/exam/mcqs", {
+        const resp = await fetch(`${API_BASE}/api/exam/mcqs`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -783,71 +812,110 @@ async function copyEntireBookMCQs() {
 }
 
 // ==========================================
-// FEATURE 4: کوئز کے جوابات معلوم کریں
+// FEATURE 5: کوئز کے جوابات معلوم کریں (Unified Quiz Solver)
 // ==========================================
+let selectedQuizImageDataUrl = null;
+let selectedQuizImageFile = null;
+
+function triggerQuizImageInput() {
+    const inp = document.getElementById("quiz-image-file-input");
+    if (inp) {
+        inp.value = "";
+        inp.click();
+    }
+}
+
+function handleQuizImageSelected(input) {
+    if (!input || !input.files || input.files.length === 0) return;
+    const file = input.files[0];
+    if (!file.type.startsWith("image/")) {
+        alert("براہِ کرم صرف تصویر فائل (JPG, PNG, WEBP) منتخب فرمائیں۔");
+        return;
+    }
+
+    selectedQuizImageFile = file;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        selectedQuizImageDataUrl = e.target.result;
+        const previewCard = document.getElementById("quiz-image-preview-card");
+        const thumb = document.getElementById("quiz-image-preview-thumb");
+        const nameEl = document.getElementById("quiz-image-filename");
+        const sizeEl = document.getElementById("quiz-image-filesize");
+        if (thumb) thumb.src = selectedQuizImageDataUrl;
+        if (nameEl) nameEl.textContent = file.name || "کوئز تصویر";
+        if (sizeEl) sizeEl.textContent = `سائز: ${Math.round((file.size || 0) / 1024)} KB`;
+        if (previewCard) previewCard.style.display = "flex";
+        showToast("کوئز کی تصویر منتخب ہو گئی ہے۔");
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeQuizImage() {
+    selectedQuizImageDataUrl = null;
+    selectedQuizImageFile = null;
+    const inp = document.getElementById("quiz-image-file-input");
+    if (inp) inp.value = "";
+    const previewCard = document.getElementById("quiz-image-preview-card");
+    if (previewCard) previewCard.style.display = "none";
+}
+
 function fillQuizExample() {
     document.getElementById("semester-select").value = "1";
     onSemesterChange();
     document.getElementById("course-select").value = "4934";
     onCourseChange();
 
-    document.getElementById("quiz-question-input").value = "اصطلاحاً غزوہ سے کیا مراد ہے؟";
-    document.getElementById("quiz-opt-a").value = "وہ جنگ جس میں نبی کریم ﷺ نے بنفسِ نفیس شرکت فرمائی";
-    document.getElementById("quiz-opt-b").value = "وہ جنگ جس میں صرف صحابہ کرام شریک ہوئے";
-    document.getElementById("quiz-opt-c").value = "کسی بھی قبائلی لڑائی کو غزوہ کہتے ہیں";
-    document.getElementById("quiz-opt-d").value = "دفاعی خندق کھودنے کا نام";
+    const quizInput = document.getElementById("quiz-unified-input");
+    if (quizInput) {
+        quizInput.value = 
+`اصطلاحاً غزوہ سے کیا مراد ہے؟
+الف) وہ جنگ جس میں نبی کریم ﷺ نے بنفسِ نفیس شرکت فرمائی
+ب) وہ جنگ جس میں صرف صحابہ کرام شریک ہوئے
+ج) کسی بھی قبائلی لڑائی کو غزوہ کہتے ہیں`;
+    }
 
+    removeQuizImage();
     switchFeature("quiz");
     handleQuizSubmit();
 }
 
 function clearQuizForm() {
-    document.getElementById("quiz-question-input").value = "";
-    document.getElementById("quiz-opt-a").value = "";
-    document.getElementById("quiz-opt-b").value = "";
-    document.getElementById("quiz-opt-c").value = "";
-    document.getElementById("quiz-opt-d").value = "";
-    document.getElementById("quiz-result-card").style.display = "none";
+    const quizInput = document.getElementById("quiz-unified-input");
+    if (quizInput) quizInput.value = "";
+    removeQuizImage();
+    const card = document.getElementById("quiz-result-card");
+    if (card) card.style.display = "none";
     lastQuizResult = null;
 }
 
 async function handleQuizSubmit() {
     const semNum = document.getElementById("semester-select").value;
     const courseCode = document.getElementById("course-select").value;
-    const question = document.getElementById("quiz-question-input").value.trim();
-    const optA = document.getElementById("quiz-opt-a").value.trim();
-    const optB = document.getElementById("quiz-opt-b").value.trim();
-    const optC = document.getElementById("quiz-opt-c").value.trim();
-    const optD = document.getElementById("quiz-opt-d").value.trim();
+    const quizInput = document.getElementById("quiz-unified-input");
+    const rawText = quizInput ? quizInput.value.trim() : "";
 
     if (!semNum) {
         alert("براہِ کرم پہلے سمسٹر منتخب فرمائیں۔");
         return;
     }
-    if (!question) {
-        alert("براہِ کرم کوئز کا سوال درج کریں۔");
-        return;
-    }
-    if (!optA || !optB) {
-        alert("براہِ کرم کم از کم پہلے دو آپشنز (الف اور ب) ضرور درج کریں۔");
+    if (!rawText && !selectedQuizImageDataUrl) {
+        alert("براہِ کرم کوئز کا سوال اور آپشنز درج کریں یا کوئز کی تصویر اپلوڈ فرمائیں۔");
         return;
     }
 
     const spinner = document.getElementById("quiz-spinner");
     const btn = document.getElementById("quiz-submit-btn");
-    spinner.style.display = "inline-block";
-    btn.disabled = true;
+    if (spinner) spinner.style.display = "inline-block";
+    if (btn) btn.disabled = true;
 
     try {
-        const resp = await fetch("/api/mcq", {
+        const resp = await fetch(`${API_BASE}/api/mcq`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                question: question,
-                option_a: optA,
-                option_b: optB,
-                option_c: optC || "کوئی نہیں",
-                option_d: optD || "کوئی نہیں",
+                raw_text: rawText || null,
+                image_b64: selectedQuizImageDataUrl || null,
+                mime_type: selectedQuizImageFile ? selectedQuizImageFile.type : "image/jpeg",
                 semester_num: semNum,
                 course_code: courseCode === "ALL" ? null : courseCode
             })
@@ -859,41 +927,63 @@ async function handleQuizSubmit() {
 
         const data = await resp.json();
         lastQuizResult = data;
-        renderQuizResult(data, { A: optA, B: optB, C: optC, D: optD });
+        renderQuizResult(data);
     } catch (e) {
         console.error("Quiz solve error:", e);
         showToast("کوئز کا جواب تلاش کرنے میں دشواری پیش آئی۔");
     } finally {
-        spinner.style.display = "none";
-        btn.disabled = false;
+        if (spinner) spinner.style.display = "none";
+        if (btn) btn.disabled = false;
     }
 }
 
-function renderQuizResult(data, optionsEntered) {
+function renderQuizResult(data) {
     const card = document.getElementById("quiz-result-card");
     const content = document.getElementById("quiz-result-content");
 
     card.style.display = "block";
     card.scrollIntoView({ behavior: "smooth", block: "start" });
 
-    if (data.insufficient || !data.correct_option) {
+    if (data.error || data.insufficient || !data.correct_option) {
         content.innerHTML = `
-            <div style="color: #92400e;">
+            <div style="background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px; padding: 1.25rem; color: #92400e;">
                 <p style="font-weight: 700; font-size: 1.05rem;">⚠️ کتاب میں اس سوال کی حتمی تصدیق نہیں ہو سکی۔</p>
-                <p>${escapeHtml(data.message || "فراہم کردہ کتابی مواد میں اس سوال کے درست آپشن کا مصدقہ ثبوت نہیں ملا۔")}</p>
+                <p style="margin-top: 0.35rem;">${escapeHtml(data.error || data.message || "فراہم کردہ کتابی مواد میں اس سوال کے درست آپشن کا مصدقہ ثبوت نہیں ملا۔")}</p>
             </div>
         `;
         return;
     }
 
-    const optMap = { A: "الف", B: "ب", C: "ج", D: "د" };
+    const optMap = { A: "الف", B: "ب", C: "ج", D: "د", "الف": "الف", "ب": "ب", "ج": "ج", "د": "د" };
     const winnerUrdu = optMap[data.correct_option] || data.correct_option;
-    const winnerText = optionsEntered[data.correct_option] || data.correct_text || "";
+    const winnerText = data.correct_text || (data.options ? data.options[data.correct_option] : "");
+
+    let optionsHtml = "";
+    if (data.options && Object.keys(data.options).length > 0) {
+        optionsHtml = `<div class="mcq-options-container" style="margin-top: 0.75rem;">`;
+        for (const [k, val] of Object.entries(data.options)) {
+            const isWinner = (k === data.correct_option || optMap[k] === winnerUrdu);
+            const urduKey = optMap[k] || k;
+            optionsHtml += `
+                <div class="mcq-option-choice ${isWinner ? 'correct-highlight' : ''}">
+                    <strong>${urduKey})</strong> <span>${escapeHtml(val)}</span>
+                </div>
+            `;
+        }
+        optionsHtml += `</div>`;
+    }
 
     content.innerHTML = `
-        <div class="mcq-winner-row">
+        <div style="margin-bottom: 0.75rem;">
+            <strong style="color: #0f172a;">❓ کوئز سوال:</strong>
+            <p style="font-size: 1.05rem; font-weight: 600; color: #1e293b; margin-top: 0.25rem;">${escapeHtml(data.question || "")}</p>
+        </div>
+
+        ${optionsHtml}
+
+        <div class="mcq-winner-row" style="margin-top: 1rem;">
             <span class="winner-pill">
-                ✓ درست جواب: آپشن (${winnerUrdu})
+                ✓ تصدیق شدہ درست جواب: آپشن (${winnerUrdu})
             </span>
             <span style="font-weight: 700; font-size: 1.05rem; color: #15803d;">
                 « ${escapeHtml(winnerText)} »
@@ -901,7 +991,7 @@ function renderQuizResult(data, optionsEntered) {
         </div>
 
         <div style="margin-top: 0.85rem; padding-top: 0.85rem; border-top: 1px solid #bbf7d0;">
-            <div style="font-weight: 700; color: #166534; margin-bottom: 0.35rem;">📖 کتابی ثبوت اور سائنٹیفک تصدیق:</div>
+            <div style="font-weight: 700; color: #166534; margin-bottom: 0.35rem;">📖 کتابی ثبوت اور علمی حوالہ:</div>
             <p style="color: #1e293b;">${escapeHtml(data.explanation || "کتاب کی اصل عبارت کے مطابق یہ آپشن درست ہے۔")}</p>
             
             <div class="ref-quote urdu-text" style="background: #ffffff; border-right-color: #16a34a; margin-top: 0.65rem;">
@@ -909,38 +999,40 @@ function renderQuizResult(data, optionsEntered) {
             </div>
 
             <div style="margin-top: 0.75rem; font-size: 0.88rem; color: #475569; display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                <span class="ref-badge badge-book">📚 ${escapeHtml(data.book_title || "نصابی کتاب")}</span>
+                <span class="ref-badge badge-book">📚 ${escapeHtml(data.book_title || "نصابی کتاب")} (${escapeHtml(data.course_code || "")})</span>
                 <span class="ref-badge badge-page">📄 صفحہ نمبر: ${escapeHtml(data.printed_page || "")}</span>
+                ${data.line_reference ? `<span class="ref-badge badge-line">سطر نمبر: ${escapeHtml(data.line_reference)}</span>` : ""}
             </div>
         </div>
 
         <div style="margin-top: 1.25rem;">
-            <button class="btn btn-outline" onclick="copyQuizResult()">
+            <button class="btn btn-outline" onclick="copyQuizResult(this)">
                 <span>📋 تصدیق شدہ کوئز حل کاپی کریں</span>
             </button>
         </div>
     `;
 }
 
-async function copyQuizResult() {
+async function copyQuizResult(btn = null) {
     if (!lastQuizResult) return;
     const optMap = { A: "الف", B: "ب", C: "ج", D: "د" };
     const winnerUrdu = optMap[lastQuizResult.correct_option] || lastQuizResult.correct_option;
-    const winnerText = lastQuizResult.correct_text || "";
+    const winnerText = lastQuizResult.correct_text || (lastQuizResult.options ? lastQuizResult.options[lastQuizResult.correct_option] : "");
 
     const text = [
         `============================================================`,
         `   AIOU Help — تصدیق شدہ کوئز حل (Verified Quiz Solution)`,
         `============================================================`,
-        `سوال: ${document.getElementById("quiz-question-input").value}`,
+        `سوال: ${lastQuizResult.question || ""}`,
         `درست جواب: آپشن (${winnerUrdu}) — ${winnerText}`,
-        `وضاحت: ${lastQuizResult.explanation || ""}`,
-        `حوالہ: ${lastQuizResult.book_title}، صفحہ ${lastQuizResult.printed_page}`,
-        `اصل عبارت: « ${lastQuizResult.verified_quote || ""} »`,
+        `حوالہ: کتاب «${lastQuizResult.book_title || ""}» (کورس: ${lastQuizResult.course_code || ""})`,
+        `صفحہ نمبر: ${lastQuizResult.printed_page || ""} | ${lastQuizResult.line_reference ? "سطر: " + lastQuizResult.line_reference : ""}`,
+        `علمی وضاحت: ${lastQuizResult.explanation || ""}`,
+        `اصل کتابی عبارت: « ${lastQuizResult.verified_quote || ""} »`,
         `============================================================`
     ].join("\r\n");
 
-    await copyToClipboard(text, "کوئز کا تصدیق شدہ حل کاپی ہو گیا۔");
+    await copyToClipboard(text, "کوئز کا تصدیق شدہ حل کاپی ہو گیا۔", btn);
 }
 
 // ==========================================
@@ -952,12 +1044,18 @@ let lastImageQAResult = null;
 
 function triggerImageFileInput() {
     const inp = document.getElementById("image-file-input");
-    if (inp) inp.click();
+    if (inp) {
+        inp.value = "";
+        inp.click();
+    }
 }
 
 function triggerCameraInput() {
     const inp = document.getElementById("camera-file-input");
-    if (inp) inp.click();
+    if (inp) {
+        inp.value = "";
+        inp.click();
+    }
 }
 
 function handleImageFileSelected(input) {
@@ -1078,7 +1176,7 @@ async function handleImageQASubmit() {
     submitBtn.disabled = true;
 
     try {
-        const resp = await fetch("/api/ask_image", {
+        const resp = await fetch(`${API_BASE}/api/ask_image`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

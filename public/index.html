@@ -81,7 +81,7 @@
                 <div class="feature-caption">مفصل امتحانی جواب اور اصل عبارت</div>
             </button>
 
-            <button class="feature-card-btn" id="feat-btn-image-qa" onclick="switchFeature('image_qa')">
+            <button class="feature-card-btn" id="feat-btn-image-qa" onclick="switchFeature('image_qa', true)">
                 <div class="feature-icon">📸</div>
                 <div class="feature-name">۲۔ تصویر سے سوال پوچھیں</div>
                 <div class="feature-caption">پرچے / تصویر کے 1 تا 5 سوالات کا خودکار حل</div>
@@ -131,9 +131,14 @@
                         <label class="form-label" for="question-input" style="margin-bottom: 0;">
                             <span>✍️ اپنا سوال درج کریں:</span>
                         </label>
-                        <button type="button" class="btn-paste" onclick="pasteIntoInput('question-input')">
-                            <span>📋 پیسٹ کریں (Paste)</span>
-                        </button>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <button type="button" class="btn-paste" onclick="switchFeature('image_qa', true)">
+                                <span>📷 تصویر سے سوال منتخب کریں (PC / Mobile)</span>
+                            </button>
+                            <button type="button" class="btn-paste" onclick="pasteIntoInput('question-input')">
+                                <span>📋 پیسٹ کریں (Paste)</span>
+                            </button>
+                        </div>
                     </div>
                     <textarea 
                         id="question-input" 
@@ -187,16 +192,16 @@
                         </div>
 
                         <div class="copy-actions-bar">
-                            <button class="btn btn-outline" onclick="copyQAAnswerOnly()">
+                            <button class="btn btn-outline" onclick="copyQAAnswerOnly(this)">
                                 <span>📋 جواب کاپی کریں</span>
                             </button>
-                            <button class="btn btn-outline" onclick="copyQAFullWithRefs()">
+                            <button class="btn btn-outline" onclick="copyQAFullWithRefs(this)">
                                 <span>📜 جواب بمع حوالہ کاپی کریں</span>
                             </button>
-                            <button class="btn btn-outline" onclick="copyQAOriginalQuote()">
+                            <button class="btn btn-outline" onclick="copyQAOriginalQuote(this)">
                                 <span>📖 اصل عبارت کاپی کریں</span>
                             </button>
-                            <button class="btn btn-outline" onclick="copyQAQuestion()">
+                            <button class="btn btn-outline" onclick="copyQAQuestion(this)">
                                 <span>❓ سوال کاپی کریں</span>
                             </button>
                         </div>
@@ -214,24 +219,24 @@
                     <p class="panel-subtitle">امتحانی پرچے، اسائنمنٹ یا ہاتھ سے لکھے گئے 1 تا 5 سوالات کی تصویر اپلوڈ کریں، ہمارا سسٹم تمام سوالات پڑھ کر کتاب سے مفصل امتحانی جوابات فراہم کرے گا۔</p>
                 </div>
 
-                <!-- Drag & Drop Zone -->
-                <div class="image-dropzone" id="image-dropzone" onclick="triggerImageFileInput()">
-                    <div class="dropzone-icon">📷</div>
-                    <div class="dropzone-title">تصویر یہاں ڈریگ کر کے چھوڑیں یا کلک کریں</div>
-                    <div class="dropzone-desc">JPG, PNG, WEBP تصاویر اور موبائل کیمرہ اسنیپ شاٹس سپورٹڈ ہیں (آپ کی بورڈ سے Ctrl+V دبا کر بھی تصویر پیسٹ کر سکتے ہیں)</div>
+                <!-- Drag & Drop Zone (Direct Browser / Windows File Dialog Trigger) -->
+                <div class="image-dropzone" id="image-dropzone" onclick="triggerImageFileInput()" style="cursor: pointer;">
+                    <div class="dropzone-icon">📁</div>
+                    <div class="dropzone-title">اپنے کمپیوٹر یا موبائل سے سوالیہ تصویر منتخب کرنے کے لیے یہاں کلک کریں</div>
+                    <div class="dropzone-desc">JPG, PNG, WEBP تصاویر اور موبائل کیمرہ فوٹوز (1 تا 5 یا اس سے زائد امتحانی سوالات)</div>
                     
                     <div class="dropzone-actions" onclick="event.stopPropagation();">
                         <button type="button" class="btn btn-primary" onclick="triggerImageFileInput()">
-                            <span>📁 تصویر اپلوڈ کریں</span>
+                            <span>📁 اپنے PC / گیلری سے تصویر منتخب کریں</span>
                         </button>
                         <button type="button" class="btn btn-secondary" onclick="triggerCameraInput()">
-                            <span>📷 کیمرہ سے تصویر لیں</span>
+                            <span>📷 موبائل کیمرہ سے فوٹو لیں</span>
                         </button>
                     </div>
-
-                    <input type="file" id="image-file-input" accept="image/*" style="display: none;" onchange="handleImageFileSelected(this)">
-                    <input type="file" id="camera-file-input" accept="image/*" capture="environment" style="display: none;" onchange="handleImageFileSelected(this)">
                 </div>
+
+                <input type="file" id="image-file-input" accept="image/*" style="display: none;" onchange="handleImageFileSelected(this)">
+                <input type="file" id="camera-file-input" accept="image/*" capture="environment" style="display: none;" onchange="handleImageFileSelected(this)">
 
                 <!-- Image Preview Card -->
                 <div id="image-preview-card" class="image-preview-card" style="display: none;">
@@ -398,43 +403,46 @@
             <div class="card">
                 <div class="panel-header">
                     <h2 class="panel-title">✅ فیچر نمبر ۵: کوئز کے درست جوابات معلوم کریں</h2>
-                    <p class="panel-subtitle">کوئز کا سوال اور چاروں آپشنز درج کریں، سسٹم کتاب سے موازنہ کر کے صفحہ نمبر اور حوالہ کے ساتھ تصدیق شدہ جواب بتائے گا۔</p>
+                    <p class="panel-subtitle">کوئز کا سوال اور آپشنز ایک ساتھ پیسٹ کریں یا موبائل/پی سی سے کوئز کی تصویر اپلوڈ کریں۔ چاہے 2 آپشن ہوں، 3 ہوں یا 4 ہوں، سسٹم کتاب سے موازنہ کر کے صفحہ نمبر اور سطر کے ساتھ تصدیق شدہ جواب بتائے گا۔</p>
                 </div>
 
                 <div class="mcq-container">
+                    <!-- Unified Quiz Text Input & Image Option -->
                     <div class="form-group">
                         <div class="form-label-row">
-                            <label class="form-label" for="quiz-question-input" style="margin-bottom: 0;">
-                                <span>❓ کوئز کا سوال:</span>
+                            <label class="form-label" for="quiz-unified-input" style="margin-bottom: 0;">
+                                <span>❓ کوئز کا سوال اور آپشنز درج یا پیسٹ کریں:</span>
                             </label>
-                            <button type="button" class="btn-paste" onclick="pasteIntoInput('quiz-question-input')">
-                                <span>📋 پیسٹ کریں</span>
-                            </button>
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <button type="button" class="btn-paste" onclick="triggerQuizImageInput()">
+                                    <span>📷 کوئز کی تصویر اپلوڈ کریں (PC / Mobile)</span>
+                                </button>
+                                <button type="button" class="btn-paste" onclick="pasteIntoInput('quiz-unified-input')">
+                                    <span>📋 پیسٹ کریں (Paste)</span>
+                                </button>
+                            </div>
                         </div>
-                        <input 
-                            type="text" 
-                            id="quiz-question-input" 
-                            class="form-input urdu-text" 
-                            placeholder="مثال: اصطلاحاً غزوہ سے کیا مراد ہے؟"
-                        >
+                        <input type="file" id="quiz-image-file-input" accept="image/*" style="display: none;" onchange="handleQuizImageSelected(this)">
+                        <textarea 
+                            id="quiz-unified-input" 
+                            class="form-textarea urdu-text" 
+                            rows="4" 
+                            placeholder="یہاں پورا کوئز سوال بمع آپشنز ایک ساتھ پیسٹ کریں (اگر صرف 2 یا 3 آپشنز ہوں، یا D نہ ہو، تب بھی سسٹم کتاب سے درست آپشن تلاش کرے گا):&#10;مثال:&#10;شریعت اسلامیہ میں احکام کا اولین ماخذ کون سا ہے؟&#10;الف) قرآن مجید&#10;ب) قیاس&#10;ج) عرف"
+                        ></textarea>
                     </div>
 
-                    <div class="mcq-options-grid">
-                        <div class="option-field">
-                            <span class="option-badge">الف</span>
-                            <input type="text" id="quiz-opt-a" class="urdu-text" placeholder="پہلا آپشن (الف)">
+                    <!-- Quiz Image Preview (if image uploaded) -->
+                    <div id="quiz-image-preview-card" class="image-preview-card" style="display: none; margin-bottom: 1rem;">
+                        <img id="quiz-image-preview-thumb" class="image-preview-thumb" src="" alt="کوئز تصویر">
+                        <div class="image-preview-info">
+                            <div style="font-weight: 700; color: #0f172a;" id="quiz-image-filename">quiz.jpg</div>
+                            <div class="image-meta-pill" id="quiz-image-filesize">کوئز تصویر منتخب ہو گئی</div>
+                            <p style="margin-top: 0.5rem; font-size: 0.88rem; color: #64748b;">اب 'درست جواب تلاش کریں' پر کلک کریں۔ سسٹم تصویر سے سوال و آپشنز پڑھ کر کتاب سے تصدیق شدہ جواب بتائے گا۔</p>
                         </div>
-                        <div class="option-field">
-                            <span class="option-badge">ب</span>
-                            <input type="text" id="quiz-opt-b" class="urdu-text" placeholder="دوسرا آپشن (ب)">
-                        </div>
-                        <div class="option-field">
-                            <span class="option-badge">ج</span>
-                            <input type="text" id="quiz-opt-c" class="urdu-text" placeholder="تیسرا آپشن (ج)">
-                        </div>
-                        <div class="option-field">
-                            <span class="option-badge">د</span>
-                            <input type="text" id="quiz-opt-d" class="urdu-text" placeholder="چوتھا آپشن (د)">
+                        <div>
+                            <button type="button" class="btn btn-secondary" onclick="removeQuizImage()" style="color: #dc2626; border-color: #fca5a5;">
+                                <span>❌ تصویر ہٹائیں</span>
+                            </button>
                         </div>
                     </div>
 

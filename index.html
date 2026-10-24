@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIOU Help — علامہ اقبال اوپن یونیورسٹی تعلیمی و امتحانی معاون</title>
+    <!-- Jameel Noori Nastaleeq Official Web Font CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/jameel-noori@1.1.2/jameel-noori.min.css" rel="stylesheet">
+    <!-- Google Fonts Fallbacks for High-Quality Urdu Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gulzar&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo-area">
+                <div class="logo-badge">
+                    <span>📖</span>
+                    <span>AIOU Help</span>
+                </div>
+                <div>
+                    <h1 class="site-title">AIOU Help — تعلیمی و امتحانی پورٹل</h1>
+                    <p class="site-subtitle">علامہ اقبال اوپن یونیورسٹی • بی ایس اسلامیات (2.5 سالہ پروگرام) کا مستند کتابی معاون</p>
+                </div>
+            </div>
+            <div class="status-badge" id="system-status-badge">
+                <span class="status-dot"></span>
+                <span id="system-status-text">نصاب فعال (27 کتب محفوظ)</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="main-content">
+
+        <!-- Universal Semester & Course Selection Card -->
+        <div class="card selector-card">
+            <div class="selector-header">
+                <span class="icon-circle">🎓</span>
+                <div>
+                    <h2 class="card-title">سمسٹر اور کورس کا انتخاب</h2>
+                    <p class="card-desc">آپ جس سمسٹر اور کورس کی تیاری کرنا چاہتے ہیں، اسے منتخب فرمائیں:</p>
+                </div>
+            </div>
+
+            <div class="selection-grid">
+                <div class="form-group">
+                    <label class="form-label" for="semester-select">
+                        <span>۱۔ آپ کس سمسٹر کی تیاری کرنا چاہتے ہیں؟</span>
+                    </label>
+                    <select id="semester-select" class="form-select urdu-text" onchange="onSemesterChange()">
+                        <option value="">-- براہِ کرم پہلے سمسٹر منتخب کریں --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="course-select">
+                        <span>۲۔ متعلقہ کورس کوڈ اور کتاب کا انتخاب:</span>
+                    </label>
+                    <select id="course-select" class="form-select urdu-text" onchange="onCourseChange()" disabled>
+                        <option value="">-- پہلے سمسٹر کا انتخاب ضروری ہے --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="active-scope-banner" id="scope-banner">
+                <span id="scope-banner-text">براہِ کرم اوپر دیے گئے ڈراپ ڈاؤن سے اپنا سمسٹر منتخب کریں۔</span>
+                <span class="badge-line" id="scope-stats-pill">0 کتب دستیاب</span>
+            </div>
+        </div>
+
+        <!-- 5 Primary Features Navigation Grid -->
+        <div class="features-nav-grid">
+            <button class="feature-card-btn active" id="feat-btn-qa" onclick="switchFeature('qa')">
+                <div class="feature-icon">🔍</div>
+                <div class="feature-name">۱۔ کتاب سے سوال پوچھیں</div>
+                <div class="feature-caption">مفصل امتحانی جواب اور اصل عبارت</div>
+            </button>
+
+            <button class="feature-card-btn" id="feat-btn-image-qa" onclick="switchFeature('image_qa', true)">
+                <div class="feature-icon">📸</div>
+                <div class="feature-name">۲۔ تصویر سے سوال پوچھیں</div>
+                <div class="feature-caption">پرچے / تصویر کے 1 تا 5 سوالات کا خودکار حل</div>
+            </button>
+
+            <button class="feature-card-btn" id="feat-btn-exam" onclick="switchFeature('exam')">
+                <div class="feature-icon">📝</div>
+                <div class="feature-name">۳۔ پیپر کی تیاری کریں</div>
+                <div class="feature-caption">ہر چیپٹر سے 3، 4 یا 5 جامع امتحانی نوٹس</div>
+            </button>
+
+            <button class="feature-card-btn" id="feat-btn-mcq-gen" onclick="switchFeature('mcq_gen')">
+                <div class="feature-icon">📊</div>
+                <div class="feature-name">۴۔ MCQs تیار کریں</div>
+                <div class="feature-caption">ہر چیپٹر سے 10، 15، 20 یا 25 معروضی سوالات</div>
+            </button>
+
+            <button class="feature-card-btn" id="feat-btn-quiz" onclick="switchFeature('quiz')">
+                <div class="feature-icon">✅</div>
+                <div class="feature-name">۵۔ کوئز کے جوابات معلوم کریں</div>
+                <div class="feature-caption">4 آپشنز میں سے تصدیق شدہ درست جواب</div>
+            </button>
+        </div>
+
+        <!-- FEATURE 1: کتاب سے سوال پوچھیں -->
+        <section id="section-qa" class="feature-panel">
+            <div class="card">
+                <div class="panel-header">
+                    <h2 class="panel-title">📖 فیچر نمبر ۱: کتاب سے سوال پوچھیں</h2>
+                    <p class="panel-subtitle">کتاب کے کسی بھی موضوع، فقہی مسئلے یا امتحانی سوال کا تفصیلی جواب کتاب کے حوالے اور اصل عبارت کے ساتھ حاصل کریں۔</p>
+                </div>
+
+                <!-- Answer Mode Switcher -->
+                <div class="mode-subtabs">
+                    <label class="mode-radio">
+                        <input type="radio" name="qa-mode" value="explanation" checked onchange="onQAModeChange()">
+                        <span>📝 تفصیلی امتحانی جواب (Detailed Exam-Style Answer)</span>
+                    </label>
+                    <label class="mode-radio">
+                        <input type="radio" name="qa-mode" value="exact" onchange="onQAModeChange()">
+                        <span>📖 کتاب کی من و عن اصل عبارت (Exact Book Quotation)</span>
+                    </label>
+                </div>
+
+                <div class="form-group" style="margin-top: 1rem;">
+                    <div class="form-label-row">
+                        <label class="form-label" for="question-input" style="margin-bottom: 0;">
+                            <span>✍️ اپنا سوال درج کریں:</span>
+                        </label>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <button type="button" class="btn-paste" onclick="switchFeature('image_qa', true)">
+                                <span>📷 تصویر سے سوال منتخب کریں (PC / Mobile)</span>
+                            </button>
+                            <button type="button" class="btn-paste" onclick="pasteIntoInput('question-input')">
+                                <span>📋 پیسٹ کریں (Paste)</span>
+                            </button>
+                        </div>
+                    </div>
+                    <textarea 
+                        id="question-input" 
+                        class="form-textarea urdu-text" 
+                        placeholder="مثال: شریعت اسلامیہ سے کیا مراد ہے؟ یا سیرت النبی ﷺ کا مفہوم بیان کریں... (آپ کی بورڈ سے Ctrl+V دبا کر یا اوپر 'پیسٹ کریں' بٹن سے بھی سوال پیسٹ کر سکتے ہیں)"
+                    ></textarea>
+                </div>
+
+                <!-- Example Chips -->
+                <div class="example-chips">
+                    <span class="chip-label">فوری امتحانی سوالات:</span>
+                    <button class="chip-btn urdu-text" onclick="fillExample('شریعت اسلامیہ سے کیا مراد ہے؟', '3', '2953')">شریعت اسلامیہ کی تعریف (2953)</button>
+                    <button class="chip-btn urdu-text" onclick="fillExample('اصطلاحاً غزوہ سے کیا مراد ہے؟', '1', '4934')">غزوہ کی تعریف (4934)</button>
+                    <button class="chip-btn urdu-text" onclick="fillExample('مذاہبِ عالم کی تاریخ اور ضرورت و اہمیت بیان کریں۔', '1', '1902')">مطالعہ مذاہبِ عالم (1902)</button>
+                    <button class="chip-btn urdu-text" onclick="fillExample('اسلام کا اقتصادی نظام اور اس کی خصوصیات کیا ہیں؟', '2', '1913')">اسلام کا اقتصادی نظام (1913)</button>
+                </div>
+
+                <div class="button-row">
+                    <button id="qa-submit-btn" class="btn btn-primary" onclick="handleQASubmit()">
+                        <span id="qa-spinner" class="spinner" style="display: none;"></span>
+                        <span>جواب حاصل کریں (Get Answer)</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearQAForm()">
+                        <span>🔄 سوال صاف کریں</span>
+                    </button>
+                </div>
+
+                <!-- QA Answer Result Card -->
+                <div id="qa-result-area" class="answer-section" style="display: none;">
+                    <div class="answer-card">
+                        <div class="answer-header">
+                            <div class="answer-title">
+                                <span>📑</span>
+                                <span id="qa-header-title">مستند کتابی جواب</span>
+                            </div>
+                            <div class="ref-badges">
+                                <span class="ref-badge badge-book" id="qa-badge-book">کتاب</span>
+                                <span class="ref-badge badge-page" id="qa-badge-page">صفحہ</span>
+                            </div>
+                        </div>
+
+                        <div class="answer-body urdu-text" id="qa-body-content"></div>
+
+                        <!-- References -->
+                        <div class="references-wrapper" id="qa-references-container">
+                            <h3 class="references-title">
+                                <span>📚</span>
+                                <span>جواب کا حوالہ (Source References)</span>
+                            </h3>
+                            <div id="qa-references-list"></div>
+                        </div>
+
+                        <div class="copy-actions-bar">
+                            <button class="btn btn-outline" onclick="copyQAAnswerOnly(this)">
+                                <span>📋 جواب کاپی کریں</span>
+                            </button>
+                            <button class="btn btn-outline" onclick="copyQAFullWithRefs(this)">
+                                <span>📜 جواب بمع حوالہ کاپی کریں</span>
+                            </button>
+                            <button class="btn btn-outline" onclick="copyQAOriginalQuote(this)">
+                                <span>📖 اصل عبارت کاپی کریں</span>
+                            </button>
+                            <button class="btn btn-outline" onclick="copyQAQuestion(this)">
+                                <span>❓ سوال کاپی کریں</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- FEATURE 2: تصویر سے سوال پوچھیں (Vision Multi-Question Solver) -->
+        <section id="section-image-qa" class="feature-panel" style="display: none;">
+            <div class="card">
+                <div class="panel-header">
+                    <h2 class="panel-title">📸 فیچر نمبر ۲: تصویر سے سوال پوچھیں (امتحانی پرچے کے تمام سوالات کا حل)</h2>
+                    <p class="panel-subtitle">امتحانی پرچے، اسائنمنٹ یا ہاتھ سے لکھے گئے 1 تا 5 سوالات کی تصویر اپلوڈ کریں، ہمارا سسٹم تمام سوالات پڑھ کر کتاب سے مفصل امتحانی جوابات فراہم کرے گا۔</p>
+                </div>
+
+                <!-- Drag & Drop Zone (Direct Browser / Windows File Dialog Trigger) -->
+                <div class="image-dropzone" id="image-dropzone" onclick="triggerImageFileInput()" style="cursor: pointer;">
+                    <div class="dropzone-icon">📁</div>
+                    <div class="dropzone-title">اپنے کمپیوٹر یا موبائل سے سوالیہ تصویر منتخب کرنے کے لیے یہاں کلک کریں</div>
+                    <div class="dropzone-desc">JPG, PNG, WEBP تصاویر اور موبائل کیمرہ فوٹوز (1 تا 5 یا اس سے زائد امتحانی سوالات)</div>
+                    
+                    <div class="dropzone-actions" onclick="event.stopPropagation();">
+                        <button type="button" class="btn btn-primary" onclick="triggerImageFileInput()">
+                            <span>📁 اپنے PC / گیلری سے تصویر منتخب کریں</span>
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="triggerCameraInput()">
+                            <span>📷 موبائل کیمرہ سے فوٹو لیں</span>
+                        </button>
+                    </div>
+                </div>
+
+                <input type="file" id="image-file-input" accept="image/*" style="display: none;" onchange="handleImageFileSelected(this)">
+                <input type="file" id="camera-file-input" accept="image/*" capture="environment" style="display: none;" onchange="handleImageFileSelected(this)">
+
+                <!-- Image Preview Card -->
+                <div id="image-preview-card" class="image-preview-card" style="display: none;">
+                    <img id="image-preview-thumb" class="image-preview-thumb" src="" alt="سوالیہ تصویر">
+                    <div class="image-preview-info">
+                        <div style="font-weight: 700; color: #0f172a;" id="image-filename">question-paper.jpg</div>
+                        <div class="image-meta-pill" id="image-filesize">سائز: 250 KB</div>
+                        <p style="margin-top: 0.5rem; font-size: 0.88rem; color: #64748b;">تصویر کامیابی سے منتخب ہو گئی۔ اب نیچے دیے گئے بٹن پر کلک کر کے تمام سوالات حل کریں۔</p>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-secondary" onclick="removeSelectedImage()" style="color: #dc2626; border-color: #fca5a5;">
+                            <span>❌ تصویر ہٹائیں</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Submit Button Row -->
+                <div class="button-row" style="margin-top: 1.5rem;">
+                    <button id="image-submit-btn" class="btn btn-primary" onclick="handleImageQASubmit()">
+                        <span id="image-spinner" class="spinner" style="display: none;"></span>
+                        <span>🔍 تصویر کے تمام سوالات حل کریں (Solve All Questions)</span>
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="clearImageQAForm()">
+                        <span>🔄 صاف کریں</span>
+                    </button>
+                </div>
+
+                <!-- Image Questions Results Container -->
+                <div id="image-results-area" class="image-results-wrapper" style="display: none;">
+                    <div class="image-master-bar">
+                        <div class="image-master-title">
+                            <span>✅</span>
+                            <span id="image-master-count-text">تصویر سے حل شدہ امتحانی سوالات</span>
+                        </div>
+                        <button class="btn btn-primary" id="btn-copy-all-image-qa" onclick="copyAllImageQA()">
+                            <span>📋 تمام سوالات و جوابات ایک ساتھ کاپی کریں</span>
+                        </button>
+                    </div>
+
+                    <!-- Individual Questions Container -->
+                    <div id="image-questions-container"></div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- FEATURE 3: پیپر کی تیاری -->
+        <section id="section-exam" class="feature-panel" style="display: none;">
+            <div class="card">
+                <div class="panel-header">
+                    <h2 class="panel-title">📝 فیچر نمبر ۳: پیپر کی تیاری (Exam Preparation)</h2>
+                    <p class="panel-subtitle">منتخب کردہ کتاب کے تمام چیپٹرز سے جامع تعلیمی ماڈل نوٹس، تعریفات، ذیلی سرخیاں، مستند حوالہ جات اور خلاصہ جات حاصل کریں۔</p>
+                </div>
+
+                <!-- Question Count Selection -->
+                <div class="option-picker-box">
+                    <span class="picker-label">آپ ہر چیپٹر سے کتنے تفصیلی سوالات تیار کرنا چاہتے ہیں؟</span>
+                    <div class="picker-radios">
+                        <label class="picker-pill">
+                            <input type="radio" name="exam-count" value="3" checked>
+                            <span>ہر چیپٹر سے 3 سوالات (مجموعی 27 سوالات)</span>
+                        </label>
+                        <label class="picker-pill">
+                            <input type="radio" name="exam-count" value="4">
+                            <span>ہر چیپٹر سے 4 سوالات (مجموعی 36 سوالات)</span>
+                        </label>
+                        <label class="picker-pill">
+                            <input type="radio" name="exam-count" value="5">
+                            <span>ہر چیپٹر سے 5 سوالات (مجموعی 45 سوالات)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="button-row">
+                    <button id="exam-generate-btn" class="btn btn-primary" onclick="handleExamGenerate()">
+                        <span id="exam-spinner" class="spinner" style="display: none;"></span>
+                        <span>سوالات تیار کریں (Generate Exam Questions)</span>
+                    </button>
+                </div>
+
+                <!-- Exam Questions Display Area -->
+                <div id="exam-results-container" class="exam-display-area" style="display: none;">
+                    <div class="exam-summary-bar">
+                        <div>
+                            <strong id="exam-summary-title">کتاب کے تمام چیپٹرز کے امتحانی سوالات</strong>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);" id="exam-summary-subtitle"></div>
+                        </div>
+                        <button class="btn btn-primary" onclick="copyEntireBookExamPrep()">
+                            <span>💾 تمام سوالات، جوابات اور حوالہ جات کاپی کریں (برائے MS Word)</span>
+                        </button>
+                    </div>
+
+                    <!-- Chapters Accordion Container -->
+                    <div id="exam-chapters-accordion" class="chapters-accordion-list"></div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- FEATURE 4: ہر چیپٹر سے MCQs تیار کریں -->
+        <section id="section-mcq-gen" class="feature-panel" style="display: none;">
+            <div class="card">
+                <div class="panel-header">
+                    <h2 class="panel-title">📊 فیچر نمبر ۴: ہر چیپٹر سے MCQs تیار کریں</h2>
+                    <p class="panel-subtitle">منتخب کردہ کتاب کے ہر چیپٹر سے مصدقہ 4 آپشنز (الف، ب، ج، د) والے معروضی سوالات، درست جوابات اور صفحہ نمبر حاصل کریں۔</p>
+                </div>
+
+                <!-- MCQ Count Selection -->
+                <div class="option-picker-box">
+                    <span class="picker-label">آپ ہر چیپٹر سے کتنے MCQs تیار کرنا چاہتے ہیں؟</span>
+                    <div class="picker-radios">
+                        <label class="picker-pill">
+                            <input type="radio" name="mcq-gen-count" value="10" checked>
+                            <span>ہر چیپٹر سے 10 MCQs (مجموعی 90 معروضی)</span>
+                        </label>
+                        <label class="picker-pill">
+                            <input type="radio" name="mcq-gen-count" value="15">
+                            <span>ہر چیپٹر سے 15 MCQs (مجموعی 135 معروضی)</span>
+                        </label>
+                        <label class="picker-pill">
+                            <input type="radio" name="mcq-gen-count" value="20">
+                            <span>ہر چیپٹر سے 20 MCQs (مجموعی 180 معروضی)</span>
+                        </label>
+                        <label class="picker-pill">
+                            <input type="radio" name="mcq-gen-count" value="25">
+                            <span>ہر چیپٹر سے 25 MCQs (مجموعی 225 معروضی)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="button-row">
+                    <button id="mcq-gen-btn" class="btn btn-primary" onclick="handleMCQGenerate()">
+                        <span id="mcq-gen-spinner" class="spinner" style="display: none;"></span>
+                        <span>MCQs تیار کریں (Generate Chapter MCQs)</span>
+                    </button>
+                </div>
+
+                <!-- MCQs Output Area -->
+                <div id="mcq-gen-results-area" class="exam-display-area" style="display: none;">
+                    <div class="exam-summary-bar">
+                        <div>
+                            <strong id="mcq-gen-summary-title">کتاب کے تمام چیپٹرز کے MCQs</strong>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);" id="mcq-gen-summary-subtitle"></div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <button class="btn btn-secondary" onclick="toggleAllMCQAnswers()">
+                                <span id="mcq-toggle-text">👁️ تمام درست جوابات دکھائیں</span>
+                            </button>
+                            <button class="btn btn-primary" onclick="copyEntireBookMCQs()">
+                                <span>💾 تمام چیپٹرز کے MCQs کاپی کریں (برائے MS Word)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Chapters MCQs Container -->
+                    <div id="mcq-gen-chapters-container" class="chapters-accordion-list"></div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- FEATURE 5: کوئز کے درست جوابات معلوم کریں -->
+        <section id="section-quiz" class="feature-panel" style="display: none;">
+            <div class="card">
+                <div class="panel-header">
+                    <h2 class="panel-title">✅ فیچر نمبر ۵: کوئز کے درست جوابات معلوم کریں</h2>
+                    <p class="panel-subtitle">کوئز کا سوال اور آپشنز ایک ساتھ پیسٹ کریں یا موبائل/پی سی سے کوئز کی تصویر اپلوڈ کریں۔ چاہے 2 آپشن ہوں، 3 ہوں یا 4 ہوں، سسٹم کتاب سے موازنہ کر کے صفحہ نمبر اور سطر کے ساتھ تصدیق شدہ جواب بتائے گا۔</p>
+                </div>
+
+                <div class="mcq-container">
+                    <!-- Unified Quiz Text Input & Image Option -->
+                    <div class="form-group">
+                        <div class="form-label-row">
+                            <label class="form-label" for="quiz-unified-input" style="margin-bottom: 0;">
+                                <span>❓ کوئز کا سوال اور آپشنز درج یا پیسٹ کریں:</span>
+                            </label>
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <button type="button" class="btn-paste" onclick="triggerQuizImageInput()">
+                                    <span>📷 کوئز کی تصویر اپلوڈ کریں (PC / Mobile)</span>
+                                </button>
+                                <button type="button" class="btn-paste" onclick="pasteIntoInput('quiz-unified-input')">
+                                    <span>📋 پیسٹ کریں (Paste)</span>
+                                </button>
+                            </div>
+                        </div>
+                        <input type="file" id="quiz-image-file-input" accept="image/*" style="display: none;" onchange="handleQuizImageSelected(this)">
+                        <textarea 
+                            id="quiz-unified-input" 
+                            class="form-textarea urdu-text" 
+                            rows="4" 
+                            placeholder="یہاں پورا کوئز سوال بمع آپشنز ایک ساتھ پیسٹ کریں (اگر صرف 2 یا 3 آپشنز ہوں، یا D نہ ہو، تب بھی سسٹم کتاب سے درست آپشن تلاش کرے گا):&#10;مثال:&#10;شریعت اسلامیہ میں احکام کا اولین ماخذ کون سا ہے؟&#10;الف) قرآن مجید&#10;ب) قیاس&#10;ج) عرف"
+                        ></textarea>
+                    </div>
+
+                    <!-- Quiz Image Preview (if image uploaded) -->
+                    <div id="quiz-image-preview-card" class="image-preview-card" style="display: none; margin-bottom: 1rem;">
+                        <img id="quiz-image-preview-thumb" class="image-preview-thumb" src="" alt="کوئز تصویر">
+                        <div class="image-preview-info">
+                            <div style="font-weight: 700; color: #0f172a;" id="quiz-image-filename">quiz.jpg</div>
+                            <div class="image-meta-pill" id="quiz-image-filesize">کوئز تصویر منتخب ہو گئی</div>
+                            <p style="margin-top: 0.5rem; font-size: 0.88rem; color: #64748b;">اب 'درست جواب تلاش کریں' پر کلک کریں۔ سسٹم تصویر سے سوال و آپشنز پڑھ کر کتاب سے تصدیق شدہ جواب بتائے گا۔</p>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-secondary" onclick="removeQuizImage()" style="color: #dc2626; border-color: #fca5a5;">
+                                <span>❌ تصویر ہٹائیں</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quick Quiz Example -->
+                    <div class="example-chips">
+                        <span class="chip-label">فوری کوئز ٹیسٹ:</span>
+                        <button class="chip-btn urdu-text" onclick="fillQuizExample()">غزوہ کی تعریف (کورس 4934)</button>
+                    </div>
+
+                    <div class="button-row">
+                        <button id="quiz-submit-btn" class="btn btn-primary" onclick="handleQuizSubmit()">
+                            <span id="quiz-spinner" class="spinner" style="display: none;"></span>
+                            <span>درست جواب تلاش کریں (Find Correct Answer)</span>
+                        </button>
+                        <button class="btn btn-secondary" onclick="clearQuizForm()">
+                            <span>🔄 صاف کریں</span>
+                        </button>
+                    </div>
+
+                    <!-- Quiz Verification Result Card -->
+                    <div id="quiz-result-card" class="answer-section" style="display: none;">
+                        <div class="mcq-result-box" id="quiz-result-content"></div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>AIOU Help — علامہ اقبال اوپن یونیورسٹی بی ایس اسلامیات (2.5 سالہ پروگرام)</p>
+        <p style="margin-top: 0.25rem;">تمام سوالات، امتحانی نوٹس اور معروضی جوابات اصل نصابی کتب سے مصدقہ ہیں (Zero Hallucination)</p>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <span>✓</span>
+        <span id="toast-message">مواد کامیابی سے کاپی ہوگیا۔</span>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
