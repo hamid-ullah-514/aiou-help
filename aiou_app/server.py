@@ -30,6 +30,29 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.middleware("http")
+async def vercel_path_middleware(request, call_next):
+    """
+    Ensures seamless routing both locally and on Vercel Serverless environment.
+    If rewritten via vercel.json with ?path=..., maps path to scope['path'].
+    """
+    path_param = request.query_params.get("path")
+    if path_param:
+        clean_path = "/" + path_param.lstrip("/")
+        if len(clean_path) > 1 and clean_path.endswith("/"):
+            clean_path = clean_path[:-1]
+        request.scope["path"] = clean_path
+    else:
+        cur_path = request.scope.get("path", "")
+        if cur_path.endswith(".py") or "index.py" in cur_path:
+            fwd = request.headers.get("x-forwarded-uri")
+            if fwd and not fwd.endswith(".py"):
+                raw_fwd = fwd.split("?")[0]
+                if len(raw_fwd) > 1 and raw_fwd.endswith("/"):
+                    raw_fwd = raw_fwd[:-1]
+                request.scope["path"] = raw_fwd
+    return await call_next(request)
+
 # Mount static files
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
@@ -84,6 +107,7 @@ def get_app_js():
     raise HTTPException(status_code=404, detail="app.js not found")
 
 @app.get("/api/catalog")
+@app.get("/catalog")
 def get_catalog_api():
     """Returns dynamic semesters and courses discovered from workspace folders."""
     try:
@@ -93,6 +117,7 @@ def get_catalog_api():
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/status")
+@app.get("/status")
 def get_status_api():
     """Returns comprehensive system status (indexing, OCR, AI providers)."""
     indexing_stats = get_indexing_stats()
@@ -111,6 +136,7 @@ def get_status_api():
     }
 
 @app.post("/api/ask")
+@app.post("/ask")
 def ask_question_api(req: AskRequest):
     """Processes student question strictly within selected semester and course books."""
     if not req.semester_num:
@@ -125,6 +151,7 @@ def ask_question_api(req: AskRequest):
     return result
 
 @app.post("/api/mcq")
+@app.post("/mcq")
 def solve_mcq_api(req: MCQRequest):
     """Answers Multiple-Choice Questions strictly verified against book evidence."""
     if not req.semester_num:
@@ -146,18 +173,21 @@ def solve_mcq_api(req: MCQRequest):
     return result
 
 @app.post("/api/format_copy")
+@app.post("/format_copy")
 def format_copy_api(req: CopyRequest):
     """Formats answer and references for one-click clean copy to clipboard."""
     text = format_clipboard_text(req.data, include_references=req.include_references)
     return {"formatted_text": text}
 
 @app.get("/api/chapters/{course_code}")
+@app.get("/chapters/{course_code}")
 def get_chapters_api(course_code: str):
     """Returns the list of chapters/units for a course."""
     units = get_course_units(course_code)
     return {"course_code": course_code, "units": units}
 
 @app.post("/api/exam/questions")
+@app.post("/exam/questions")
 def generate_exam_questions_api(req: ExamPrepRequest):
     """Generates structured exam preparation questions and answers for each chapter."""
     if not req.course_code:
@@ -167,6 +197,7 @@ def generate_exam_questions_api(req: ExamPrepRequest):
     return result
 
 @app.post("/api/exam/mcqs")
+@app.post("/exam/mcqs")
 def generate_chapter_mcqs_api(req: ChapterMCQRequest):
     """Generates 4-option MCQs for each chapter of the selected book."""
     if not req.course_code:
@@ -175,7 +206,13 @@ def generate_chapter_mcqs_api(req: ChapterMCQRequest):
     result = generate_chapter_mcqs(course_code=req.course_code, count_per_chapter=count)
     return result
 
+@app.get("/api/health")
+@app.get("/health")
+def health_api():
+    return {"status": "ok", "app": "AIOU Help"}
+
 @app.get("/api/page/{doc_id}/{page_idx}")
+@app.get("/page/{doc_id}/{page_idx}")
 def get_page_api(doc_id: int, page_idx: int):
     """Retrieves full text of a specific page for in-depth student reading."""
     page_data = get_page_full_text(doc_id, page_idx)
@@ -184,6 +221,7 @@ def get_page_api(doc_id: int, page_idx: int):
     return page_data
 
 @app.post("/api/reindex")
+@app.post("/reindex")
 def reindex_api():
     """Allows refreshing index if documents change without freezing interface."""
     res = index_all_books(force=False)
