@@ -257,8 +257,8 @@ def solve_assignment_question(
 
     # Clean q_title
     clean_q = question.strip()
-    if not clean_q.startswith("سوال"):
-        clean_q = f"سوال نمبر {q_num}: {clean_q}"
+    clean_q = re.sub(r'^(?:سوال\s*نمبر\s*\d+[:\s-]*|سوال\s*\d+[:\s-]*|\d+[\.-]\s*)', '', clean_q).strip()
+    clean_q = f"سوال نمبر {q_num}: {clean_q}"
 
     quote = top_p.get("raw_text", "").strip() if top_p else ""
     if len(quote) > 250:
