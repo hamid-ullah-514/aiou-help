@@ -1,7 +1,7 @@
 import os
 import urllib.parse
 from typing import Dict, List, Any, Optional
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -36,11 +36,11 @@ app.add_middleware(
 async def vercel_path_middleware(request, call_next):
     """
     Ensures seamless routing both locally and on Vercel Serverless environment.
-    If rewritten via vercel.json with ?path=..., maps path to scope['path'].
+    If rewritten via vercel.json with ?_vpath=... or ?path=..., maps path to scope['path'].
     """
     cur_path = request.scope.get("path", "")
     if cur_path.endswith(".py") or "index.py" in cur_path:
-        path_param = request.query_params.get("path")
+        path_param = request.query_params.get("_vpath") or request.query_params.get("path")
         if path_param:
             clean_path = "/" + path_param.lstrip("/")
             if len(clean_path) > 1 and clean_path.endswith("/"):
@@ -324,6 +324,7 @@ def list_past_papers_api(
 @app.get("/api/pastpapers/file")
 @app.get("/pastpapers/file")
 def get_past_paper_file_api(
+    request: Request,
     path: Optional[str] = Query(None),
     file_path: Optional[str] = Query(None),
     id: Optional[str] = Query(None),
@@ -331,28 +332,47 @@ def get_past_paper_file_api(
     download: int = Query(0)
 ):
     """Streams or downloads past paper PDF or DOCX file with cloud CDN fallback."""
-    target = path or file_path or id or paper_id or ""
-    
-    # 1. Check local physical file (works on local PC development server)
-    fpath = get_paper_file_path(target)
-    if fpath and fpath.exists() and fpath.is_file():
-        filename = fpath.name
-        media_type = "application/pdf" if filename.lower().endswith(".pdf") else "application/octet-stream"
-        disposition = "attachment" if download == 1 else "inline"
-        safe_ascii = filename.encode("ascii", "ignore").decode("ascii").strip() or "aiou_paper.pdf"
-        quoted_name = urllib.parse.quote(filename)
-        content_disposition = f"{disposition}; filename=\"{safe_ascii}\"; filename*=UTF-8''{quoted_name}"
-        return FileResponse(
-            str(fpath),
-            media_type=media_type,
-            headers={
-                "Content-Disposition": content_disposition,
-                "Accept-Ranges": "bytes"
-            }
-        )
+    # 0. Robust target resolution (prioritize explicit IDs and real file paths)
+    target = id or paper_id or file_path or ""
+    if not target:
+        all_paths = request.query_params.getlist("path")
+        real_paths = [p for p in all_paths if p and not p.startswith("pastpapers/") and not p.startswith("api/")]
+        if real_paths:
+            target = real_paths[-1]
+        elif path and not path.startswith("pastpapers/") and not path.startswith("api/"):
+            target = path
 
-    # 2. On Cloud (Vercel), resolve to permanent high-speed CDN URL from catalog
-    clean_target = urllib.parse.unquote(target).replace("\\", "/").lstrip("/")
+    if not target:
+        qs_raw = request.scope.get("query_string", b"").decode("utf-8", errors="ignore")
+        if qs_raw:
+            parsed_qs = urllib.parse.parse_qs(qs_raw)
+            for k in ("id", "paper_id", "file_path", "path"):
+                vals = [v for v in parsed_qs.get(k, []) if v and not v.startswith("pastpapers/") and not v.startswith("api/")]
+                if vals:
+                    target = vals[-1]
+                    break
+
+    # 1. Check local physical file by direct path (works on local PC development server)
+    if target:
+        fpath = get_paper_file_path(target)
+        if fpath and fpath.exists() and fpath.is_file():
+            filename = fpath.name
+            media_type = "application/pdf" if filename.lower().endswith(".pdf") else "application/octet-stream"
+            disposition = "attachment" if download == 1 else "inline"
+            safe_ascii = filename.encode("ascii", "ignore").decode("ascii").strip() or "aiou_paper.pdf"
+            quoted_name = urllib.parse.quote(filename)
+            content_disposition = f"{disposition}; filename=\"{safe_ascii}\"; filename*=UTF-8''{quoted_name}"
+            return FileResponse(
+                str(fpath),
+                media_type=media_type,
+                headers={
+                    "Content-Disposition": content_disposition,
+                    "Accept-Ranges": "bytes"
+                }
+            )
+
+    # 2. Look up in catalog (works on both Local and Vercel Cloud Serverless)
+    clean_target = urllib.parse.unquote(target).replace("\\", "/").lstrip("/") if target else ""
     catalog = get_past_papers_catalog()
     matched_paper = None
     
@@ -372,6 +392,26 @@ def get_past_paper_file_api(
             break
 
     if matched_paper:
+        # Check if local file exists for this matched paper
+        matched_rel = matched_paper.get("rel_path", "")
+        if matched_rel:
+            local_matched_path = get_paper_file_path(matched_rel)
+            if local_matched_path and local_matched_path.exists() and local_matched_path.is_file():
+                filename = local_matched_path.name
+                media_type = "application/pdf" if filename.lower().endswith(".pdf") else "application/octet-stream"
+                disposition = "attachment" if download == 1 else "inline"
+                safe_ascii = filename.encode("ascii", "ignore").decode("ascii").strip() or "aiou_paper.pdf"
+                quoted_name = urllib.parse.quote(filename)
+                content_disposition = f"{disposition}; filename=\"{safe_ascii}\"; filename*=UTF-8''{quoted_name}"
+                return FileResponse(
+                    str(local_matched_path),
+                    media_type=media_type,
+                    headers={
+                        "Content-Disposition": content_disposition,
+                        "Accept-Ranges": "bytes"
+                    }
+                )
+
         dl_url = matched_paper.get("download_url") or matched_paper.get("view_url") or ""
         if dl_url.startswith("http://") or dl_url.startswith("https://"):
             return RedirectResponse(url=dl_url, status_code=302)

@@ -8,11 +8,11 @@
   "rewrites": [
     {
       "source": "/api",
-      "destination": "/api/index.py?path=status"
+      "destination": "/api/index.py?_vpath=status"
     },
     {
       "source": "/api/(.*)",
-      "destination": "/api/index.py?path=$1"
+      "destination": "/api/index.py?_vpath=$1"
     },
     {
       "source": "/(.*)",
