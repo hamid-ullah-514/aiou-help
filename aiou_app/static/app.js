@@ -61,19 +61,21 @@ function populateSemesterDropdown(catalog) {
     ALL_SEMESTER_IDS.forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
-        el.innerHTML = `<option value="">-- براہِ کرم پہلے سمسٹر منتخب کریں --</option>`;
+        if (el.tagName === "SELECT") {
+            el.innerHTML = `<option value="">-- براہِ کرم پہلے سمسٹر منتخب کریں --</option>`;
 
-        if (!catalog || !catalog.semesters || catalog.semesters.length === 0) {
-            el.innerHTML += `<option value="1">سمسٹر 1 (Semester 1)</option>`;
-            return;
+            if (!catalog || !catalog.semesters || catalog.semesters.length === 0) {
+                el.innerHTML += `<option value="1">سمسٹر 1 (Semester 1)</option>`;
+                return;
+            }
+
+            catalog.semesters.forEach(s => {
+                const opt = document.createElement("option");
+                opt.value = s.semester_num;
+                opt.textContent = `${s.semester_name_ur || `سمسٹر ${s.semester_num}`} (${s.books ? s.books.length : 0} کتب)`;
+                el.appendChild(opt);
+            });
         }
-
-        catalog.semesters.forEach(s => {
-            const opt = document.createElement("option");
-            opt.value = s.semester_num;
-            opt.textContent = `${s.semester_name_ur || `سمسٹر ${s.semester_num}`} (${s.books ? s.books.length : 0} کتب)`;
-            el.appendChild(opt);
-        });
 
         // Default to Semester 1 for immediate smooth student experience
         el.value = "1";
@@ -85,6 +87,7 @@ function populateSemesterDropdown(catalog) {
 function onSemesterChange(source = "global") {
     let semNum = "1";
     const srcEl = document.getElementById(`${source}-semester-select`) || 
+                  document.getElementById("assignment-semester-select") ||
                   document.getElementById("semester-select");
     if (srcEl && srcEl.value) {
         semNum = srcEl.value;
@@ -101,7 +104,9 @@ function onSemesterChange(source = "global") {
             const el = document.getElementById(id);
             if (el) {
                 el.disabled = true;
-                el.innerHTML = `<option value="">-- پہلے سمسٹر کا انتخاب ضروری ہے --</option>`;
+                if (el.tagName === "SELECT") {
+                    el.innerHTML = `<option value="">-- پہلے سمسٹر کا انتخاب ضروری ہے --</option>`;
+                }
             }
         });
         return;
@@ -120,14 +125,21 @@ function onSemesterChange(source = "global") {
         const el = document.getElementById(id);
         if (!el) return;
         el.disabled = false;
-        el.innerHTML = `<option value="ALL">-- سمسٹر ${semNum} کی تمام کتب (جامع سرچ) --</option>`;
 
-        booksInSem.forEach(b => {
-            const opt = document.createElement("option");
-            opt.value = b.course_code;
-            opt.textContent = `${b.course_code}: ${b.course_title_ur} (${b.pages_count || 0} صفحات)`;
-            el.appendChild(opt);
-        });
+        if (el.tagName === "SELECT") {
+            if (id === "assignment-course-select") {
+                el.innerHTML = `<option value="">-- سمسٹر ${semNum} کی کتاب منتخب فرمائیں --</option>`;
+            } else {
+                el.innerHTML = `<option value="ALL">-- سمسٹر ${semNum} کی تمام کتب (جامع سرچ) --</option>`;
+            }
+
+            booksInSem.forEach(b => {
+                const opt = document.createElement("option");
+                opt.value = b.course_code;
+                opt.textContent = `${b.course_code}: ${b.course_title_ur} (${b.pages_count || 0} صفحات)`;
+                el.appendChild(opt);
+            });
+        }
 
         // Default to first real course
         if (booksInSem.length > 0) {
@@ -135,12 +147,13 @@ function onSemesterChange(source = "global") {
         }
     });
 
-    onCourseChange("global");
+    onCourseChange(source);
 }
 
 function onCourseChange(source = "global") {
     let cCode = "";
     const srcEl = document.getElementById(`${source}-course-select`) || 
+                  document.getElementById("assignment-course-select") ||
                   document.getElementById("course-select");
     if (srcEl && srcEl.value) {
         cCode = srcEl.value;
@@ -153,6 +166,31 @@ function onCourseChange(source = "global") {
             el.value = cCode;
         }
     });
+}
+
+// Backward compatibility helpers
+function syncSemesterSelection(val) {
+    if (val) {
+        const asgEl = document.getElementById("assignment-semester-select");
+        if (asgEl) asgEl.value = val;
+    }
+    onSemesterChange("assignment");
+}
+
+function syncCourseSelection(val) {
+    if (val) {
+        const asgEl = document.getElementById("assignment-course-select");
+        if (asgEl) asgEl.value = val;
+    }
+    onCourseChange("assignment");
+}
+
+function updateCourseDropdowns(semVal, targetId) {
+    if (semVal) {
+        const asgEl = document.getElementById("assignment-semester-select");
+        if (asgEl) asgEl.value = semVal;
+    }
+    onSemesterChange("assignment");
 }
 
 // Switch between tabs / features
@@ -186,6 +224,13 @@ function switchFeature(feat, autoTriggerFile = false) {
     if (activeSec) {
         activeSec.style.display = "block";
         window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    if (norm === "assignment" || under === "assignment") {
+        const asgCourse = document.getElementById("assignment-course-select");
+        if (asgCourse && (!asgCourse.options || asgCourse.options.length <= 1)) {
+            onSemesterChange("assignment");
+        }
     }
 
     if ((norm === "image-qa" || under === "image_qa") && autoTriggerFile && !selectedImageDataUrl) {

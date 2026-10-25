@@ -388,7 +388,7 @@
                                 <span class="label-icon">🎓</span>
                                 <span>سمسٹر منتخب کریں:</span>
                             </label>
-                            <select id="assignment-semester-select" class="select-field" onchange="syncSemesterSelection(this.value); updateCourseDropdowns(this.value, 'assignment-course-select');">
+                            <select id="assignment-semester-select" class="select-field" onchange="onSemesterChange('assignment');">
                                 <option value="">-- پہلے سمسٹر منتخب کریں --</option>
                             </select>
                         </div>
@@ -398,7 +398,7 @@
                                 <span class="label-icon">📚</span>
                                 <span>کتاب / کورس کوڈ منتخب کریں:</span>
                             </label>
-                            <select id="assignment-course-select" class="select-field" onchange="syncCourseSelection(this.value);">
+                            <select id="assignment-course-select" class="select-field" onchange="onCourseChange('assignment');">
                                 <option value="">-- پہلے سمسٹر کا انتخاب کریں --</option>
                             </select>
                         </div>
