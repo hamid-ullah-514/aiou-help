@@ -1149,13 +1149,16 @@
                     </button>
                 </div>
 
-                <!-- Bottom Row: Action Toolbar (Download, Share, Fullscreen) -->
+                <!-- Bottom Row: Action Toolbar (View Switcher, Download, Share, Fullscreen) -->
                 <div class="pdf-modal-controls">
+                    <button type="button" class="pdf-modal-btn btn-modal-toggle-view" id="btn-modal-toggle-view" onclick="togglePdfViewerMode()" title="ویور موڈ تبدیل کریں">
+                        <span id="btn-modal-toggle-view-text">🖼️ کینوس موڈ میں دیکھیں</span>
+                    </button>
                     <button type="button" class="pdf-modal-btn btn-modal-download" onclick="downloadActivePdfModal()" title="موبائل یا پی سی پر محفوظ کریں">
-                        <span>⬇️ فائل ڈاؤن لوڈ کریں</span>
+                        <span>⬇️ فائل ڈاؤن لوڈ</span>
                     </button>
                     <button type="button" class="pdf-modal-btn btn-modal-share" onclick="shareActivePdfModal()" title="واٹس ایپ پر پی ڈی ایف فائل بھیجیں">
-                        <span>📲 واٹس ایپ پر فائل شیئر</span>
+                        <span>📲 واٹس ایپ شیئر</span>
                     </button>
                     <button type="button" class="pdf-modal-btn btn-modal-fullscreen" onclick="togglePdfModalFullscreen()" title="مکمل اسکرین ویو">
                         <span>🖥️ فل اسکرین</span>

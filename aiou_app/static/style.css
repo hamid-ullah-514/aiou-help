@@ -3405,6 +3405,14 @@ button, input, textarea, select,
     background: #15803d !important;
 }
 
+.btn-modal-toggle-view {
+    background: #6366f1 !important;
+    border-color: #818cf8 !important;
+}
+.btn-modal-toggle-view:hover {
+    background: #4f46e5 !important;
+}
+
 .btn-modal-fullscreen {
     background: #2563eb !important;
     border-color: #3b82f6 !important;
@@ -3604,6 +3612,14 @@ button, input, textarea, select,
         grid-template-columns: 1fr 1fr;
         gap: 0.4rem;
         width: 100%;
+    }
+
+    .pdf-modal-controls .btn-modal-toggle-view {
+        grid-column: span 2;
+        background: #4f46e5 !important;
+        border-color: #6366f1 !important;
+        font-weight: 800;
+        padding: 0.5rem 0.5rem;
     }
 
     .pdf-modal-controls .btn-modal-fullscreen {

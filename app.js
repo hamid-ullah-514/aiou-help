@@ -1064,67 +1064,79 @@ function showPdfFallbackCard(p) {
 
 let currentPdfDocument = null;
 let currentRenderToken = 0;
+let currentPdfViewerMode = "google"; // "google" (HD Nastaliq view) or "canvas" (PDF.js)
 
-async function openPdfViewerModal(paperId) {
-    const p = getPaperById(paperId);
-    if (!p) return;
-    activePdfModalPaper = p;
+function togglePdfViewerMode() {
+    if (!activePdfModalPaper) return;
+    currentPdfViewerMode = (currentPdfViewerMode === "google") ? "canvas" : "google";
+    renderActivePdfInViewer(activePdfModalPaper);
+}
 
-    const modal = document.getElementById("pdf-viewer-modal");
-    const titleEl = document.getElementById("pdf-modal-title");
-    const metaEl = document.getElementById("pdf-modal-meta");
+async function renderActivePdfInViewer(p) {
     const iframe = document.getElementById("pdf-modal-iframe");
     const canvasContainer = document.getElementById("pdf-modal-canvas-container");
     const loading = document.getElementById("pdf-modal-loading");
     const loadingText = document.getElementById("pdf-modal-loading-text") || (loading ? loading.querySelector("span") : null);
     const fallback = document.getElementById("pdf-modal-fallback");
-
-    if (titleEl) titleEl.textContent = p.clean_title;
-    if (metaEl) metaEl.textContent = `${p.course_code}: ${p.course_title_ur} | ${p.category_ur} | سائز: ${p.size_formatted} | سمسٹر ${p.semester_num}`;
+    const toggleBtnText = document.getElementById("btn-modal-toggle-view-text");
 
     if (fallback) fallback.style.display = "none";
-    if (iframe) {
-        iframe.style.display = "none";
-        iframe.src = "about:blank";
-    }
-    if (canvasContainer) {
-        canvasContainer.innerHTML = "";
-        canvasContainer.style.display = "flex";
-    }
     if (loading) {
         loading.style.display = "flex";
         if (loadingText) loadingText.textContent = "پرچہ کے صفحات تیار ہو رہے ہیں، براہِ کرم انتظار فرمائیں...";
     }
 
     const fileUrl = `${API_BASE}${p.view_url}`;
+    const absoluteUrl = fileUrl.startsWith("http") ? fileUrl : `https://aiou-help.vercel.app${fileUrl}`;
 
-    if (modal) {
-        modal.style.display = "flex";
-        document.body.style.overflow = "hidden";
+    // 1. GOOGLE DOCS HD VIEWER (Official Google Cloud PDF engine: 100% authentic Jameel Noori Nastaliq / Urdu fonts!)
+    if (currentPdfViewerMode === "google") {
+        if (toggleBtnText) toggleBtnText.textContent = "🖼️ کینوس موڈ میں دیکھیں";
+        if (canvasContainer) {
+            canvasContainer.innerHTML = "";
+            canvasContainer.style.display = "none";
+        }
+        if (iframe) {
+            iframe.style.display = "block";
+            iframe.onload = () => {
+                if (loading) loading.style.display = "none";
+            };
+            iframe.onerror = () => {
+                console.warn("Google Docs viewer error, switching to canvas mode...");
+                currentPdfViewerMode = "canvas";
+                renderActivePdfInViewer(p);
+            };
+            iframe.src = `https://docs.google.com/viewer?url=${encodeURIComponent(absoluteUrl)}&embedded=true`;
+        }
+        return;
     }
 
-    // Verify whether file is reachable
-    try {
-        const headCheck = await fetch(fileUrl, { method: "HEAD" });
-        if (!headCheck.ok) {
-            showPdfFallbackCard(p);
-            return;
-        }
-    } catch (e) {
-        // Continue
+    // 2. CANVAS VIEWER (Mozilla PDF.js with CMaps and standardFontData)
+    if (toggleBtnText) toggleBtnText.textContent = "🌐 گوگل ایچ ڈی ویور (بہترین نستعلیق)";
+    if (iframe) {
+        iframe.src = "about:blank";
+        iframe.style.display = "none";
+    }
+    if (canvasContainer) {
+        canvasContainer.innerHTML = "";
+        canvasContainer.style.display = "flex";
     }
 
     const renderId = ++currentRenderToken;
-
-    // 1. PRIMARY IN-PAGE RENDERER: Mozilla PDF.js Canvas (Directly on-page, ZERO Android 'Open' prompt!)
     if (window.pdfjsLib) {
         try {
             if (window.pdfjsLib.GlobalWorkerOptions) {
                 window.pdfjsLib.GlobalWorkerOptions.workerSrc = "js/pdf.worker.min.js";
             }
-            const loadingTask = window.pdfjsLib.getDocument({ url: fileUrl });
+            const loadingTask = window.pdfjsLib.getDocument({
+                url: fileUrl,
+                cMapUrl: "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/",
+                cMapPacked: true,
+                standardFontDataUrl: "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/standard_fonts/",
+                enableXfa: true,
+                verbosity: 0
+            });
             const pdfDoc = await loadingTask.promise;
-
             if (renderId !== currentRenderToken) return;
             currentPdfDocument = pdfDoc;
 
@@ -1133,7 +1145,6 @@ async function openPdfViewerModal(paperId) {
             const totalPages = pdfDoc.numPages;
             for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
                 if (renderId !== currentRenderToken) return;
-
                 const page = await pdfDoc.getPage(pageNum);
                 
                 const containerWidth = canvasContainer ? (canvasContainer.clientWidth || window.innerWidth) - 24 : 650;
@@ -1170,37 +1181,70 @@ async function openPdfViewerModal(paperId) {
             if (loading) loading.style.display = "none";
             return;
         } catch (pdfErr) {
-            console.warn("PDF.js render failed, falling back to embedded viewer:", pdfErr);
+            console.warn("PDF.js render failed, switching to Google Docs viewer:", pdfErr);
+            currentPdfViewerMode = "google";
+            renderActivePdfInViewer(p);
+            return;
         }
     }
 
-    // 2. FALLBACK RENDERER: Google Docs Viewer for mobile, native iframe for desktop
-    if (canvasContainer) canvasContainer.style.display = "none";
-    if (iframe) {
-        iframe.style.display = "block";
-        iframe.onload = () => {
-            if (loading) loading.style.display = "none";
-        };
-        iframe.onerror = () => {
-            if (loading) loading.style.display = "none";
-            showPdfFallbackCard(p);
-        };
-
-        if (isMobileDevice()) {
-            const absoluteUrl = fileUrl.startsWith("http") ? fileUrl : `https://aiou-help.vercel.app${fileUrl}`;
-            iframe.src = `https://docs.google.com/viewer?url=${encodeURIComponent(absoluteUrl)}&embedded=true`;
-        } else {
-            iframe.src = `${fileUrl}#toolbar=1&navpanes=1`;
-        }
-    }
+    // Fallback if no pdfjsLib
+    currentPdfViewerMode = "google";
+    renderActivePdfInViewer(p);
 }
 
-function closePdfViewerModal() {
-    currentRenderToken++;
+async function openPdfViewerModal(paperId) {
+    const p = getPaperById(paperId);
+    if (!p) return;
+    activePdfModalPaper = p;
+
     const modal = document.getElementById("pdf-viewer-modal");
+    const titleEl = document.getElementById("pdf-modal-title");
+    const metaEl = document.getElementById("pdf-modal-meta");
+
+    if (titleEl) titleEl.textContent = p.clean_title;
+    if (metaEl) metaEl.textContent = `${p.course_code}: ${p.course_title_ur} | ${p.category_ur} | سائز: ${p.size_formatted} | سمسٹر ${p.semester_num}`;
+
+    if (modal) {
+        modal.style.display = "flex";
+        document.body.style.overflow = "hidden";
+    }
+
+    // PUSH HISTORY STATE so Android hardware/gesture back button closes the modal without exiting the website!
+    try {
+        if (!window.history.state || window.history.state.modal !== "pdf_viewer") {
+            window.history.pushState({ modal: "pdf_viewer", paperId: paperId }, "", window.location.href);
+        }
+    } catch (e) {
+        console.warn("History pushState failed:", e);
+    }
+
+    // Verify whether file is reachable
+    const fileUrl = `${API_BASE}${p.view_url}`;
+    try {
+        const headCheck = await fetch(fileUrl, { method: "HEAD" });
+        if (!headCheck.ok) {
+            showPdfFallbackCard(p);
+            return;
+        }
+    } catch (e) {
+        // Continue
+    }
+
+    // Default to Google Docs HD viewer: preserves 100% authentic Urdu Nastaliq fonts and connected text
+    currentPdfViewerMode = "google";
+    renderActivePdfInViewer(p);
+}
+
+function closePdfViewerModal(triggerHistoryBack = true) {
+    const modal = document.getElementById("pdf-viewer-modal");
+    if (!modal || modal.style.display === "none") return;
+
+    currentRenderToken++;
     const iframe = document.getElementById("pdf-modal-iframe");
     const canvasContainer = document.getElementById("pdf-modal-canvas-container");
     const fallback = document.getElementById("pdf-modal-fallback");
+
     if (iframe) {
         iframe.src = "about:blank";
         iframe.style.display = "none";
@@ -1210,11 +1254,39 @@ function closePdfViewerModal() {
         canvasContainer.style.display = "none";
     }
     if (fallback) fallback.style.display = "none";
-    if (modal) modal.style.display = "none";
+    modal.style.display = "none";
     document.body.style.overflow = "";
+
+    const lastPaperId = activePdfModalPaper ? activePdfModalPaper.id : null;
     activePdfModalPaper = null;
     currentPdfDocument = null;
+
+    // Pop the history state if user clicked (✕) button so history remains clean
+    if (triggerHistoryBack && window.history.state && window.history.state.modal === "pdf_viewer") {
+        try {
+            window.history.back();
+        } catch (e) {}
+    }
+
+    // Smoothly ensure student is positioned right back at the card of that paper
+    if (lastPaperId) {
+        setTimeout(() => {
+            const cardEl = document.getElementById(`card-${lastPaperId}`);
+            if (cardEl) {
+                smoothScrollToElement(cardEl, 120);
+            }
+        }, 80);
+    }
 }
+
+// Global listener for Android / Browser Hardware Back Button
+window.addEventListener("popstate", function(event) {
+    const modal = document.getElementById("pdf-viewer-modal");
+    if (modal && modal.style.display !== "none") {
+        // Close modal without calling history.back() again
+        closePdfViewerModal(false);
+    }
+});
 
 function downloadActivePdfModal() {
     if (activePdfModalPaper) {
