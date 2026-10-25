@@ -115,17 +115,22 @@ def clean_and_categorize_paper(filename: str, course_code: str, sem_num: str) ->
 
 def scan_and_build_past_papers_index(force_refresh: bool = False) -> Dict[str, Any]:
     """Scans all 5 semester folders and builds a unified past papers catalog."""
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    PUBLIC_DIR.mkdir(parents=True, exist_ok=True)
+    if not force_refresh:
+        for candidate in [INDEX_FILE_DATA, INDEX_FILE_PUBLIC, BASE_DIR / "past_papers_index.json"]:
+            if candidate.exists():
+                try:
+                    with open(candidate, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                        if data and "semesters" in data and len(data.get("papers", [])) > 0:
+                            return data
+                except Exception:
+                    pass
 
-    if not force_refresh and INDEX_FILE_DATA.exists():
-        try:
-            with open(INDEX_FILE_DATA, "r", encoding="utf-8") as f:
-                data = json.load(f)
-                if data and "semesters" in data and len(data.get("papers", [])) > 0:
-                    return data
-        except Exception:
-            pass
+    try:
+        DATA_DIR.mkdir(parents=True, exist_ok=True)
+        PUBLIC_DIR.mkdir(parents=True, exist_ok=True)
+    except Exception:
+        pass
 
     papers = []
     courses_by_sem = {}
@@ -278,15 +283,22 @@ def filter_past_papers(
     return papers
 
 def get_paper_file_path(rel_path: str) -> Optional[Path]:
-    """Resolves relative file path safely."""
+    """Resolves relative file path safely across local directories and public static folder."""
     # Unquote and sanitize path to prevent directory traversal
     clean_p = urllib.parse.unquote(rel_path).replace("\\", "/").lstrip("/")
     if ".." in clean_p:
         return None
 
+    # 1. Check in root directory (local development with all files)
     full_path = BASE_DIR / clean_p
     if full_path.exists() and full_path.is_file():
         return full_path
+
+    # 2. Check in public/past_papers/ (cloud deployed static files)
+    static_path = BASE_DIR / "public" / "past_papers" / clean_p
+    if static_path.exists() and static_path.is_file():
+        return static_path
+
     return None
 
 def create_batch_zip(paper_ids: List[str]) -> Optional[io.BytesIO]:

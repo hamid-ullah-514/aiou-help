@@ -1,11 +1,12 @@
-1st semster book/
-2nd semster book/
-3rd semster book/
-4th semster book/
-5th semster book/
-1st semester/
-2nd semester/
-3rd semester/
-4th semester/
-5th semester/
+/1st semster book/
+/2nd semster book/
+/3rd semster book/
+/4th semster book/
+/5th semster book/
+/1st semester/
+/2nd semester/
+/3rd semester/
+/4th semester/
+/5th semester/
 data/*.db*
+!public/past_papers/**
