@@ -41,6 +41,7 @@ const ALL_SEMESTER_IDS = [
     "semester-select", 
     "qa-semester-select", 
     "image-qa-semester-select", 
+    "assignment-semester-select",
     "exam-semester-select", 
     "mcq-semester-select", 
     "quiz-semester-select"
@@ -50,6 +51,7 @@ const ALL_COURSE_IDS = [
     "course-select", 
     "qa-course-select", 
     "image-qa-course-select", 
+    "assignment-course-select",
     "exam-course-select", 
     "mcq-course-select", 
     "quiz-course-select"
@@ -160,7 +162,7 @@ function switchFeature(feat, autoTriggerFile = false) {
     const under = feat.replace(/-/g, "_");
     currentFeature = norm;
 
-    const allTabs = ["home", "qa", "image-qa", "exam", "mcq-gen", "quiz"];
+    const allTabs = ["home", "qa", "image-qa", "assignment", "exam", "mcq-gen", "quiz"];
     allTabs.forEach(t => {
         const u = t.replace(/-/g, "_");
         const btn = document.getElementById(`feat-btn-${t}`) || document.getElementById(`feat-btn-${u}`);
@@ -1746,4 +1748,636 @@ function escapeHtml(str) {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+}
+
+// ==========================================
+// FEATURE: اسائنمنٹ کے سوالات حل کریں (Assignment Assistant)
+// ==========================================
+let currentAsgInputMode = "bulk"; // "bulk", "single", "image"
+let selectedAsgImageFile = null;
+let selectedAsgImageDataUrl = null;
+
+let currentAssignmentDoc = {
+    course_code: "",
+    book_title: "",
+    semester_num: "1",
+    assignment_num: "1",
+    questions: []
+};
+
+function switchAssignmentInputMode(mode) {
+    currentAsgInputMode = mode;
+
+    const btnBulk = document.getElementById("asg-tab-btn-bulk");
+    const btnSingle = document.getElementById("asg-tab-btn-single");
+    const btnImage = document.getElementById("asg-tab-btn-image");
+
+    const areaBulk = document.getElementById("asg-mode-bulk-area");
+    const areaSingle = document.getElementById("asg-mode-single-area");
+    const areaImage = document.getElementById("asg-mode-image-area");
+
+    if (btnBulk) btnBulk.classList.toggle("active", mode === "bulk");
+    if (btnSingle) btnSingle.classList.toggle("active", mode === "single");
+    if (btnImage) btnImage.classList.toggle("active", mode === "image");
+
+    if (areaBulk) areaBulk.style.display = mode === "bulk" ? "block" : "none";
+    if (areaSingle) areaSingle.style.display = mode === "single" ? "block" : "none";
+    if (areaImage) areaImage.style.display = mode === "image" ? "block" : "none";
+}
+
+function handleAssignmentNumChange(val) {
+    if (currentAssignmentDoc.assignment_num !== val && currentAssignmentDoc.questions.length > 0) {
+        const confirmChange = confirm("کیا آپ مشق نمبر تبدیل کرنا چاہتے ہیں؟ موجودہ حل شدہ سوالات نئی مشق کے مطابق سیو ہوں گے۔");
+        if (confirmChange) {
+            currentAssignmentDoc.assignment_num = val;
+            currentAssignmentDoc.questions = [];
+            updateAssignmentBuilderBox(currentAssignmentDoc);
+            const area = document.getElementById("assignment-results-area");
+            if (area) area.style.display = "none";
+        }
+    } else {
+        currentAssignmentDoc.assignment_num = val;
+    }
+}
+
+function triggerAsgImageInput() {
+    const inp = document.getElementById("asg-image-file-input");
+    if (inp) {
+        inp.value = "";
+        inp.click();
+    }
+}
+
+function handleAsgImageSelected(input) {
+    if (!input || !input.files || input.files.length === 0) return;
+    const file = input.files[0];
+    if (!file.type.startsWith("image/")) {
+        alert("براہِ کرم صرف تصویر فائل (JPG, PNG, WEBP) منتخب فرمائیں۔");
+        return;
+    }
+
+    selectedAsgImageFile = file;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        selectedAsgImageDataUrl = e.target.result;
+        const card = document.getElementById("asg-image-preview-card");
+        const thumb = document.getElementById("asg-image-preview-thumb");
+        const nameEl = document.getElementById("asg-image-filename");
+        if (thumb) thumb.src = selectedAsgImageDataUrl;
+        if (nameEl) nameEl.textContent = `${file.name} (${Math.round(file.size / 1024)} KB)`;
+        if (card) card.style.display = "flex";
+    };
+    reader.readAsDataURL(file);
+}
+
+function clearAsgImageSelection() {
+    selectedAsgImageFile = null;
+    selectedAsgImageDataUrl = null;
+    const card = document.getElementById("asg-image-preview-card");
+    const inp = document.getElementById("asg-image-file-input");
+    if (card) card.style.display = "none";
+    if (inp) inp.value = "";
+}
+
+function clearAssignmentInputs() {
+    for (let i = 1; i <= 5; i++) {
+        const el = document.getElementById(`asg-q-${i}`);
+        if (el) el.value = "";
+    }
+    const bulk = document.getElementById("asg-bulk-paste-box");
+    if (bulk) bulk.value = "";
+    const single = document.getElementById("asg-single-q-input");
+    if (single) single.value = "";
+    clearAsgImageSelection();
+    showToast("تمام خانے خالی کر دیے گئے۔");
+}
+
+function loadStandardAssignmentQuestions() {
+    const courseSelect = document.getElementById("assignment-course-select");
+    const asgRadios = document.getElementsByName("assignment-num-choice");
+    let asgNum = "1";
+    for (const r of asgRadios) {
+        if (r.checked) asgNum = r.value;
+    }
+
+    const courseCode = courseSelect ? courseSelect.value : "";
+    if (!courseCode) {
+        alert("براہِ کرم پہلے اوپر سے سمسٹر اور کتاب کا انتخاب فرمائیں۔");
+        if (courseSelect) courseSelect.focus();
+        return;
+    }
+
+    const bookTitle = courseSelect.options[courseSelect.selectedIndex] ? courseSelect.options[courseSelect.selectedIndex].text : "نصابی کتاب";
+
+    const qTemplates = {
+        "1": [
+            `سوال نمبر 1: «${bookTitle}» کے پہلے یونٹ کے بنیادی مقاصد، لغوی و اصطلاحی تعریف اور پس منظر پر تفصیلی نوٹ تحریر کریں۔`,
+            `سوال نمبر 2: دوسرے یونٹ کے اساسی موضوعات کے قرآنی دلائل اور احادیثِ نبویہ کی روشنی میں تفصیلی گفتگو کریں۔`,
+            `سوال نمبر 3: تیسرے یونٹ کے بنیادی ارکان، فقہی ضوابط اور شرعی اصولوں کا جامع احاطہ کریں۔`,
+            `سوال نمبر 4: چوتھے یونٹ کے اخلاقی، تعلیمی اور تربیتی پہلوؤں اور حکمتوں کی وضاحت فرمائیں۔`,
+            `سوال نمبر 5: پانچویں یونٹ کے معاصر تقاضوں، عملی اطلاق اور نتائج و ثمرات کا خلاصہ قلمبند کریں۔`
+        ],
+        "2": [
+            `سوال نمبر 1: «${bookTitle}» کے چھٹے یونٹ کے بنیادی نظریات، فکری پس منظر اور شرعی تقاضوں پر مفصل روشنی ڈالیں۔`,
+            `سوال نمبر 2: ساتویں یونٹ کے موضوع کی تاریخی و نصابی اہمیت اور ائمہ و فقہاء کے ارشادات درج کریں۔`,
+            `سوال نمبر 3: آٹھویں یونٹ کے بنیادی اصول، ارکان اور اطلاقی ضوابط کا سیر حاصل جائزہ لیں۔`,
+            `سوال نمبر 4: نویں یونٹ کے عصری چیلنجز، معاشرتی اثرات اور اصلاحی مساعی تحریر کریں۔`,
+            `سوال نمبر 5: مشق نمبر ۲ کے تمام مباحث کی روشنی میں خلاصۂ کلام اور جامع تجاویز پیش کریں۔`
+        ]
+    };
+
+    const qs = qTemplates[asgNum] || qTemplates["1"];
+    for (let i = 1; i <= 5; i++) {
+        const el = document.getElementById(`asg-q-${i}`);
+        if (el) el.value = qs[i - 1];
+    }
+
+    showToast(`مشق نمبر ${asgNum} کے ۵ معیاری سوالات خودکار طور پر لوڈ ہو گئے۔`);
+}
+
+async function handleSolveAssignment() {
+    const semSelect = document.getElementById("assignment-semester-select");
+    const courseSelect = document.getElementById("assignment-course-select");
+    const semNum = semSelect ? semSelect.value : "";
+    const courseCode = courseSelect ? courseSelect.value : "";
+
+    if (!semNum) {
+        alert("براہِ کرم پہلے سمسٹر منتخب فرمائیں۔");
+        if (semSelect) semSelect.focus();
+        return;
+    }
+    if (!courseCode) {
+        alert("براہِ کرم کتاب / کورس کوڈ کا انتخاب فرمائیں۔");
+        if (courseSelect) courseSelect.focus();
+        return;
+    }
+
+    const asgRadios = document.getElementsByName("assignment-num-choice");
+    let asgNum = "1";
+    for (const r of asgRadios) {
+        if (r.checked) asgNum = r.value;
+    }
+
+    let payload = {
+        semester_num: semNum,
+        course_code: courseCode,
+        assignment_num: asgNum
+    };
+
+    if (currentAsgInputMode === "image") {
+        if (!selectedAsgImageDataUrl) {
+            alert("براہِ کرم پہلے اسائنمنٹ پیپر کی تصویر اپلوڈ فرمائیں۔");
+            return;
+        }
+        payload.image_b64 = selectedAsgImageDataUrl;
+        payload.mime_type = selectedAsgImageFile ? selectedAsgImageFile.type : "image/jpeg";
+    } else if (currentAsgInputMode === "single") {
+        const singleQ = document.getElementById("asg-single-q-input") ? document.getElementById("asg-single-q-input").value.trim() : "";
+        if (!singleQ) {
+            alert("براہِ کرم اپنا اسائنمنٹ سوال درج فرمائیں۔");
+            return;
+        }
+        payload.questions = [singleQ];
+    } else {
+        // Bulk mode
+        const bulkPaste = document.getElementById("asg-bulk-paste-box") ? document.getElementById("asg-bulk-paste-box").value.trim() : "";
+        if (bulkPaste) {
+            payload.raw_text = bulkPaste;
+        } else {
+            let qs = [
+                document.getElementById("asg-q-1") ? document.getElementById("asg-q-1").value.trim() : "",
+                document.getElementById("asg-q-2") ? document.getElementById("asg-q-2").value.trim() : "",
+                document.getElementById("asg-q-3") ? document.getElementById("asg-q-3").value.trim() : "",
+                document.getElementById("asg-q-4") ? document.getElementById("asg-q-4").value.trim() : "",
+                document.getElementById("asg-q-5") ? document.getElementById("asg-q-5").value.trim() : ""
+            ].filter(Boolean);
+
+            if (qs.length === 0) {
+                loadStandardAssignmentQuestions();
+                qs = [
+                    document.getElementById("asg-q-1").value.trim(),
+                    document.getElementById("asg-q-2").value.trim(),
+                    document.getElementById("asg-q-3").value.trim(),
+                    document.getElementById("asg-q-4").value.trim(),
+                    document.getElementById("asg-q-5").value.trim()
+                ].filter(Boolean);
+            }
+            payload.questions = qs;
+        }
+    }
+
+    const spinner = document.getElementById("asg-spinner");
+    const submitBtn = document.getElementById("asg-submit-btn");
+    if (spinner) spinner.style.display = "inline-block";
+    if (submitBtn) submitBtn.disabled = true;
+
+    try {
+        const resp = await fetch(`${API_BASE}/api/assignment`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        if (!resp.ok) {
+            throw new Error(`Assignment API failed with status ${resp.status}`);
+        }
+
+        const data = await resp.json();
+        if (!data || !data.questions) {
+            throw new Error("Invalid response format from assignment server");
+        }
+
+        // Update Cumulative Document Session
+        if (currentAssignmentDoc.course_code !== data.course_code || currentAssignmentDoc.assignment_num !== data.assignment_num) {
+            currentAssignmentDoc = {
+                course_code: data.course_code,
+                book_title: data.book_title,
+                semester_num: data.semester_num,
+                assignment_num: data.assignment_num,
+                questions: []
+            };
+        }
+
+        if (currentAsgInputMode === "single") {
+            const newQ = data.questions[0];
+            if (newQ) {
+                const existingIdx = currentAssignmentDoc.questions.findIndex(q => q.question.replace(/^سوال\s*نمبر\s*\d+[:\s-]*/, '') === newQ.question.replace(/^سوال\s*نمبر\s*\d+[:\s-]*/, ''));
+                if (existingIdx !== -1) {
+                    currentAssignmentDoc.questions[existingIdx] = newQ;
+                } else {
+                    newQ.q_num = currentAssignmentDoc.questions.length + 1;
+                    if (!newQ.question.startsWith("سوال")) {
+                        newQ.question = `سوال نمبر ${newQ.q_num}: ${newQ.question}`;
+                    }
+                    currentAssignmentDoc.questions.push(newQ);
+                }
+            }
+        } else {
+            currentAssignmentDoc.questions = data.questions;
+        }
+
+        currentAssignmentDoc.course_code = data.course_code;
+        currentAssignmentDoc.book_title = data.book_title;
+        currentAssignmentDoc.semester_num = data.semester_num;
+        currentAssignmentDoc.assignment_num = data.assignment_num;
+
+        renderAssignmentResults(currentAssignmentDoc);
+        updateAssignmentBuilderBox(currentAssignmentDoc);
+        showToast("✓ اسائنمنٹ کے سوالات کامیابی سے تیار ہو گئے۔");
+
+    } catch (e) {
+        console.error("Assignment solver error:", e);
+        showToast("اسائنمنٹ تیار کرنے میں دشواری پیش آئی۔ دوبارہ کوشش فرمائیں۔");
+    } finally {
+        if (spinner) spinner.style.display = "none";
+        if (submitBtn) submitBtn.disabled = false;
+    }
+}
+
+function updateAssignmentBuilderBox(doc) {
+    const box = document.getElementById("assignment-doc-builder-box");
+    const titleEl = document.getElementById("builder-course-title");
+    const asgPill = document.getElementById("builder-asg-pill");
+    const countPill = document.getElementById("builder-count-pill");
+    const pillsList = document.getElementById("builder-questions-pills-list");
+
+    if (!box) return;
+    if (!doc || !doc.questions || doc.questions.length === 0) {
+        box.style.display = "none";
+        return;
+    }
+
+    box.style.display = "block";
+    if (titleEl) titleEl.textContent = `کتاب: «${doc.book_title}» (${doc.course_code})`;
+    if (asgPill) asgPill.textContent = `مشق نمبر ${doc.assignment_num}`;
+    if (countPill) countPill.textContent = `${doc.questions.length} سوالات شامل`;
+
+    if (pillsList) {
+        pillsList.innerHTML = doc.questions.map((q, idx) => `
+            <span class="builder-q-pill" onclick="scrollToAssignmentQuestion(${idx})" title="اس سوال پر جائیں">
+                ✓ سوال نمبر ${idx + 1}
+            </span>
+        `).join("");
+    }
+}
+
+function scrollToAssignmentQuestion(idx) {
+    const el = document.getElementById(`asg-card-${idx}`);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+function resetAssignmentDoc() {
+    const conf = confirm("کیا آپ موجودہ اسائنمنٹ سیشن ختم کر کے نئی اسائنمنٹ شروع کرنا چاہتے ہیں؟");
+    if (!conf) return;
+
+    currentAssignmentDoc = {
+        course_code: "",
+        book_title: "",
+        semester_num: "1",
+        assignment_num: "1",
+        questions: []
+    };
+
+    const box = document.getElementById("assignment-doc-builder-box");
+    const area = document.getElementById("assignment-results-area");
+    if (box) box.style.display = "none";
+    if (area) area.style.display = "none";
+    clearAssignmentInputs();
+    showToast("اسائنمنٹ سیشن ری سیٹ ہو گیا۔ نئی اسائنمنٹ تیار کریں۔");
+}
+
+function formatMarkdownToHtml(md) {
+    if (!md) return "";
+    let lines = md.split("\n");
+    let html = [];
+    for (let l of lines) {
+        let trimmed = l.trim();
+        if (!trimmed) {
+            html.push("<br>");
+            continue;
+        }
+        if (trimmed.startsWith("### ")) {
+            let hText = trimmed.substring(4);
+            html.push(`<h4 class="asg-subheading">${escapeHtml(hText)}</h4>`);
+        } else if (trimmed.startsWith("## ")) {
+            let hText = trimmed.substring(3);
+            html.push(`<h3 class="asg-subheading-lg">${escapeHtml(hText)}</h3>`);
+        } else if (trimmed.startsWith("# ")) {
+            let hText = trimmed.substring(2);
+            html.push(`<h2 class="asg-subheading-xl">${escapeHtml(hText)}</h2>`);
+        } else if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
+            let itemText = trimmed.substring(2);
+            html.push(`<li class="asg-list-item">${escapeHtml(itemText)}</li>`);
+        } else {
+            let p = escapeHtml(trimmed);
+            p = p.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            html.push(`<p class="asg-paragraph">${p}</p>`);
+        }
+    }
+    return html.join("\n");
+}
+
+function renderAssignmentResults(doc) {
+    const area = document.getElementById("assignment-results-area");
+    const container = document.getElementById("assignment-questions-container");
+    const titleEl = document.getElementById("asg-summary-title");
+    const subtitleEl = document.getElementById("asg-summary-subtitle");
+
+    if (!area || !container) return;
+    area.style.display = "block";
+    area.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    const totalWords = doc.questions.reduce((acc, q) => acc + (q.word_count || 450), 0);
+    if (titleEl) titleEl.textContent = `کتاب: «${doc.book_title}» (${doc.course_code}) — مشق نمبر ${doc.assignment_num}`;
+    if (subtitleEl) subtitleEl.textContent = `کل سوالات: ${doc.questions.length} | مجموعی الفاظ: ~${totalWords} | ہر سوال مع ۱۰ سرخیاں، کتاب، یونٹ نمبر اور صفحہ`;
+
+    container.innerHTML = "";
+
+    doc.questions.forEach((q, idx) => {
+        const card = document.createElement("div");
+        card.className = "assignment-q-card";
+        card.id = `asg-card-${idx}`;
+
+        const answerHtml = formatMarkdownToHtml(q.answer);
+
+        card.innerHTML = `
+            <!-- Top Metadata Badges & Quick Action Bar -->
+            <div class="mcq-item-header-bar">
+                <div class="mcq-meta-badges">
+                    <span class="badge-pill badge-book" title="کتاب کا نام و کورس کوڈ">📚 کتاب: ${escapeHtml(q.book_title)} (${escapeHtml(q.course_code)})</span>
+                    <span class="badge-pill badge-unit" title="مشق و یونٹ نمبر">📖 مشق نمبر ${escapeHtml(doc.assignment_num)} | ${escapeHtml(q.unit_name || "")}</span>
+                    <span class="badge-pill badge-page" title="کتاب کا صفحہ نمبر">📄 صفحہ نمبر: ${escapeHtml(q.printed_page || "")}</span>
+                    <span class="badge-pill badge-words" style="background: #fdf2f8; color: #9d174d; border: 1px solid #fbcfe8;">📝 ${q.word_count || 450} الفاظ | ۱۰ سرخیاں</span>
+                </div>
+                <div class="card-quick-actions" style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                    <button class="btn btn-outline btn-copy-single" onclick="copyAssignmentQuestion(${idx}, this)" title="صرف یہ سوال کاپی کریں">
+                        <span>📋 یہ سوال مع ۱۰ سرخیاں کاپی کریں</span>
+                    </button>
+                    <button class="btn btn-secondary btn-copy-single" onclick="downloadAssignmentWordDoc('single', ${idx})" title="صرف یہ سوال ورڈ میں ڈاؤن لوڈ کریں">
+                        <span>📄 صرف یہ سوال ورڈ میں ڈاؤن لوڈ کریں (.doc)</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Question Title -->
+            <div class="asg-q-title-box">
+                <h3 class="asg-q-title">${escapeHtml(q.question)}</h3>
+            </div>
+
+            <!-- 10 Headings Detailed Academic Content -->
+            <div class="asg-answer-content">
+                ${answerHtml}
+            </div>
+
+            <!-- Supporting Book Citation Box -->
+            <div class="asg-citation-box">
+                <div class="citation-header">📖 مستند کتابی حوالہ و نصابی تصدیق:</div>
+                <div class="citation-meta">کتاب: «${escapeHtml(q.book_title)}» | کورس: ${escapeHtml(q.course_code)} | ${escapeHtml(q.unit_name)} | صفحہ نمبر: ${escapeHtml(q.printed_page || "")}</div>
+                ${q.supporting_quote ? `<div class="citation-quote">« ${escapeHtml(q.supporting_quote)} »</div>` : ''}
+            </div>
+
+            <!-- Bottom Action Row -->
+            <div class="asg-card-footer">
+                <button class="btn btn-outline" onclick="copyAssignmentQuestion(${idx}, this)">
+                    <span>📋 یہ سوال مع ۱۰ سرخیاں کاپی کریں</span>
+                </button>
+                <button class="btn btn-primary btn-word" onclick="downloadAssignmentWordDoc('all')">
+                    <span>📥 مکمل ورڈ فائل ڈاؤن لوڈ کریں (.doc)</span>
+                </button>
+            </div>
+        `;
+
+        container.appendChild(card);
+    });
+}
+
+function executeWordBlobDownload(filename, bodyHtml) {
+    const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' "+
+        "xmlns:w='urn:schemas-microsoft-com:office:word' "+
+        "xmlns='http://www.w3.org/TR/REC-html40'>"+
+        "<head><meta charset='utf-8'><title>" + escapeHtml(filename) + "</title>"+
+        "<style>"+
+        "@page { size: A4; margin: 2.5cm 2cm 2.5cm 2cm; mso-page-orientation: portrait; }"+
+        "body { font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'Urdu Typesetting', 'Alvi Nastaleeq', 'Tahoma', 'Calibri', serif; direction: rtl; text-align: right; font-size: 13pt; line-height: 2.3; color: #111827; }"+
+        ".cover-page { text-align: center; padding-top: 100pt; page-break-after: always; }"+
+        ".cover-univ { font-size: 22pt; font-weight: bold; color: #047857; margin-bottom: 8pt; }"+
+        ".cover-prog { font-size: 16pt; color: #1e3a8a; margin-bottom: 20pt; }"+
+        ".cover-box { border: 2pt solid #047857; padding: 20pt; border-radius: 8pt; width: 85%; margin: 0 auto; background-color: #f8fafc; text-align: right; }"+
+        ".cover-title { font-size: 18pt; font-weight: bold; color: #0f172a; margin-bottom: 12pt; text-align: center; border-bottom: 1pt solid #cbd5e1; padding-bottom: 8pt; }"+
+        ".cover-meta p { font-size: 13pt; color: #334155; line-height: 2; margin-bottom: 6pt; }"+
+        ".q-block { page-break-before: always; margin-top: 20pt; }"+
+        ".q-heading-title { font-size: 16pt; font-weight: bold; color: #047857; background-color: #f0fdf4; border: 1.5pt solid #86efac; padding: 8pt 12pt; border-radius: 6pt; margin-bottom: 12pt; }"+
+        ".ref-meta-bar { background-color: #eff6ff; border-right: 4pt solid #3b82f6; padding: 6pt 10pt; margin-bottom: 15pt; font-size: 11pt; color: #1e40af; }"+
+        ".asg-subheading { font-size: 14pt; font-weight: bold; color: #1e3a8a; border-bottom: 1pt solid #e2e8f0; padding-bottom: 3pt; margin-top: 14pt; margin-bottom: 6pt; }"+
+        ".asg-subheading-lg { font-size: 15pt; font-weight: bold; color: #0f766e; margin-top: 16pt; margin-bottom: 8pt; }"+
+        ".asg-subheading-xl { font-size: 16pt; font-weight: bold; color: #047857; margin-top: 18pt; margin-bottom: 10pt; }"+
+        ".asg-paragraph { font-size: 13pt; line-height: 2.3; text-align: justify; margin-bottom: 10pt; }"+
+        ".asg-list-item { font-size: 13pt; line-height: 2.1; margin-right: 15pt; margin-bottom: 4pt; }"+
+        ".quote-box { background-color: #fefce8; border-right: 3pt solid #eab308; padding: 8pt 12pt; margin: 12pt 0; font-style: italic; color: #713f12; }"+
+        "</style></head><body>";
+    const footer = "</body></html>";
+    const sourceHTML = header + bodyHtml + footer;
+    const blob = new Blob(['\ufeff', sourceHTML], { type: 'application/msword;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function downloadAssignmentWordDoc(mode = 'all', singleIdx = null) {
+    if (!currentAssignmentDoc || !currentAssignmentDoc.questions || currentAssignmentDoc.questions.length === 0) {
+        alert("پہلے اسائنمنٹ کے سوالات حل فرمائیں۔");
+        return;
+    }
+
+    const doc = currentAssignmentDoc;
+    const bookTitle = doc.book_title || "نصابی کتاب";
+    const courseCode = doc.course_code || "";
+    const asgNum = doc.assignment_num || "1";
+    const semNum = doc.semester_num || "1";
+
+    let questionsToExport = [];
+    if (mode === 'single' && singleIdx !== null && doc.questions[singleIdx]) {
+        questionsToExport = [doc.questions[singleIdx]];
+    } else {
+        questionsToExport = doc.questions;
+    }
+
+    let coverPageHtml = "";
+    if (mode === 'all') {
+        let indexRows = questionsToExport.map((q, idx) => `
+            <tr>
+                <td style="padding: 8pt; border: 1pt solid #cbd5e1; text-align: center; width: 15%; font-weight: bold;">سوال نمبر ${idx + 1}</td>
+                <td style="padding: 8pt; border: 1pt solid #cbd5e1; text-align: right;">${escapeHtml(q.question)}</td>
+                <td style="padding: 8pt; border: 1pt solid #cbd5e1; text-align: center; width: 25%;">${escapeHtml(q.unit_name || "")}</td>
+            </tr>
+        `).join("");
+
+        coverPageHtml = `
+            <div class="cover-page">
+                <div class="cover-univ">علامہ اقبال اوپن یونیورسٹی، اسلام آباد</div>
+                <div class="cover-prog">کلیہ عربی و علومِ اسلامیہ — بی ایس اسلامیات (2.5 سالہ پروگرام)</div>
+                <div class="cover-box">
+                    <div class="cover-title">اسائنمنٹ / مشقی سوالات و تفصیلی حل</div>
+                    <div class="cover-meta">
+                        <p><strong>کتاب کا نام:</strong> ${escapeHtml(bookTitle)}</p>
+                        <p><strong>کورس کوڈ:</strong> ${escapeHtml(courseCode)}</p>
+                        <p><strong>سمسٹر:</strong> سمسٹر نمبر ${escapeHtml(semNum)}</p>
+                        <p><strong>مشق نمبر:</strong> مشق نمبر ${escapeHtml(asgNum)} (${asgNum === "1" ? "یونٹ نمبر ۱ تا ۵" : "یونٹ نمبر ۶ تا ۹"})</p>
+                        <p><strong>مجموعی سوالات:</strong> ${questionsToExport.length} مفصل امتحانی سوالات</p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30pt; text-align: right;">
+                    <h3 style="color: #047857; border-bottom: 1.5pt solid #047857; padding-bottom: 4pt;">فہرستِ سوالات (Table of Assignment Questions):</h3>
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 10pt; font-size: 11pt;">
+                        <thead>
+                            <tr style="background-color: #f1f5f9;">
+                                <th style="padding: 8pt; border: 1pt solid #cbd5e1; text-align: center;">شمار</th>
+                                <th style="padding: 8pt; border: 1pt solid #cbd5e1; text-align: right;">سوالیہ عنوان</th>
+                                <th style="padding: 8pt; border: 1pt solid #cbd5e1; text-align: center;">متعلقہ یونٹ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${indexRows}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+    }
+
+    let questionsHtml = questionsToExport.map((q, idx) => {
+        let qBodyHtml = formatMarkdownToHtml(q.answer);
+        return `
+            <div class="q-block">
+                <div class="q-heading-title">${escapeHtml(q.question)}</div>
+                <div class="ref-meta-bar">
+                    <strong>مستند کتابی حوالہ:</strong>
+                    کتاب: «${escapeHtml(q.book_title)}» (${escapeHtml(q.course_code)}) |
+                    ${escapeHtml(q.unit_name)} |
+                    صفحہ نمبر: صفحہ ${escapeHtml(q.printed_page || "")} |
+                    طوالت: تقریباً ${q.word_count || 450} الفاظ مع ۱۰ سرخیاں
+                </div>
+                <div class="q-body-text">
+                    ${qBodyHtml}
+                </div>
+                ${q.supporting_quote ? `
+                <div class="quote-box">
+                    <strong>اصل نصابی عبارت / اقتباس:</strong> « ${escapeHtml(q.supporting_quote)} »
+                </div>` : ''}
+            </div>
+        `;
+    }).join("\n");
+
+    const fullDocHtml = coverPageHtml + questionsHtml;
+    const filename = mode === 'all'
+        ? `AIOU_Assignment_${courseCode || "Course"}_Mshq_${asgNum}.doc`
+        : `AIOU_Assignment_${courseCode || "Course"}_Q_${(singleIdx || 0) + 1}.doc`;
+
+    executeWordBlobDownload(filename, fullDocHtml);
+    showToast(`✓ ورڈ فائل (${filename}) کامیابی سے ڈاؤن لوڈ ہو گئی۔`);
+}
+
+async function copyAssignmentQuestion(qIdx, btn = null) {
+    if (!currentAssignmentDoc || !currentAssignmentDoc.questions || !currentAssignmentDoc.questions[qIdx]) return;
+    const q = currentAssignmentDoc.questions[qIdx];
+    const text = [
+        `============================================================`,
+        `${q.question}`,
+        `============================================================`,
+        `📚 کتاب: «${q.book_title}» (کورس کوڈ: ${q.course_code})`,
+        `📖 مشق: مشق نمبر ${currentAssignmentDoc.assignment_num} | ${q.unit_name}`,
+        `📄 صفحہ نمبر: صفحہ ${q.printed_page || ""}`,
+        `📝 طوالت: تقریباً ${q.word_count || 450} الفاظ | ۱۰ مفصل سرخیاں`,
+        `------------------------------------------------------------`,
+        ``,
+        q.answer,
+        ``,
+        `------------------------------------------------------------`,
+        q.supporting_quote ? `📖 اصل کتابی عبارت: « ${q.supporting_quote} »\n` : ``,
+        `[ماخذ: AIOU BS Islamic Studies 2.5-Year Program Materials]`,
+        `============================================================`
+    ].filter(Boolean).join("\r\n");
+
+    await copyToClipboard(text, `سوال نمبر ${qIdx + 1} مع ۱۰ سرخیاں اور نصابی حوالہ کاپی ہو گیا۔`, btn);
+}
+
+async function copyFullAssignment(btn = null) {
+    if (!currentAssignmentDoc || !currentAssignmentDoc.questions || currentAssignmentDoc.questions.length === 0) return;
+    const doc = currentAssignmentDoc;
+    let parts = [
+        `============================================================`,
+        `   AIOU Help — مکمل حل شدہ اسائنمنٹ (Complete Assignment Solution)`,
+        `   کتاب: «${doc.book_title}» (کورس کوڈ: ${doc.course_code})`,
+        `   سمسٹر: سمسٹر ${doc.semester_num} | مشق نمبر: مشق نمبر ${doc.assignment_num}`,
+        `   کل سوالات: ${doc.questions.length} سوالات (ہر سوال ۴۰۰ تا ۵۰۰ الفاظ مع ۱۰ سرخیاں)`,
+        `============================================================\r\n`
+    ];
+
+    doc.questions.forEach((q, idx) => {
+        parts.push(`\r\n############################################################`);
+        parts.push(`### ${q.question} ###`);
+        parts.push(`############################################################`);
+        parts.push(`📚 کتاب: «${q.book_title}» (${q.course_code}) | ${q.unit_name} | صفحہ: ${q.printed_page || ""}`);
+        parts.push(`------------------------------------------------------------\r\n`);
+        parts.push(q.answer);
+        if (q.supporting_quote) {
+            parts.push(`\r\n📖 اصل کتابی عبارت: « ${q.supporting_quote} »`);
+        }
+        parts.push(`\r\n`);
+    });
+
+    parts.push(`\r\n============================================================`);
+    parts.push(`[ماخذ: AIOU BS Islamic Studies 2.5-Year Program Study Materials]`);
+
+    await copyToClipboard(parts.join("\r\n"), `مکمل اسائنمنٹ (${doc.questions.length} سوالات مع تمام سرخیاں و حوالہ جات) کاپی ہو گئی۔`, btn);
+}
+
+function printAssignmentDoc() {
+    window.print();
 }

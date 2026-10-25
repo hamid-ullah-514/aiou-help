@@ -36,6 +36,9 @@
                 <button class="nav-link-btn" id="nav-btn-image-qa" onclick="switchFeature('image_qa', true)">
                     <span>📸</span><span>تصویر سے سوال</span>
                 </button>
+                <button class="nav-link-btn" id="nav-btn-assignment" onclick="switchFeature('assignment')">
+                    <span>📝</span><span>اسائنمنٹ حل کریں</span>
+                </button>
                 <button class="nav-link-btn" id="nav-btn-exam" onclick="switchFeature('exam')">
                     <span>📝</span><span>امتحانی تیاری</span>
                 </button>
@@ -124,6 +127,14 @@
                     <h3 class="home-feat-title">کوئز جواب تلاش کریں</h3>
                     <p class="home-feat-desc">چار یا دو آپشنز میں سے نصابی کتاب سے تصدیق شدہ درست جواب پائیں</p>
                     <span class="home-feat-badge">فوری تصدیق ←</span>
+                </div>
+
+                <!-- Card 6: اسائنمنٹ حل کریں -->
+                <div class="home-feat-card feat-emerald" onclick="switchFeature('assignment')">
+                    <div class="home-feat-icon">📝</div>
+                    <h3 class="home-feat-title">اسائنمنٹ حل کریں</h3>
+                    <p class="home-feat-desc">مشق ۱ یا ۲ کے ۱ تا ۵ سوالات کے ۴۰۰-۵۰۰ الفاظ کے مفصل جوابات مع ۱۰ سرخیاں اور ورڈ فائل حاصل کریں</p>
+                    <span class="home-feat-badge">مکمل اسائنمنٹ و ورڈ فائل ←</span>
                 </div>
             </div>
 
@@ -355,6 +366,237 @@
 
                     <!-- Individual Questions Container -->
                     <div id="image-questions-container"></div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- FEATURE: اسائنمنٹ کے سوالات حل کریں (AIOU Assignment Assistant) -->
+        <section id="section-assignment" class="feature-panel" style="display: none;">
+            <div class="card">
+                <div class="panel-header">
+                    <h2 class="panel-title">📝 اسائنمنٹ حل کریں (AIOU Assignment Assistant)</h2>
+                    <p class="panel-subtitle">سمسٹر، کتاب اور مشق نمبر (مشق ۱ یا ۲) کا انتخاب فرمائیں۔ مشق کے ۱ تا ۵ سوالات کے تقریباً ۴۰۰ تا ۵۰۰ الفاظ پر مشتمل مفصل و معیاری جوابات مع ۱۰ سرخیاں، کتاب، یونٹ نمبر اور صفحہ حاصل کریں اور فوری ایم ایس ورڈ (.doc) فائل ڈاؤن لوڈ کریں۔</p>
+                </div>
+
+                <!-- Assignment Selector & Form Card -->
+                <div class="form-grid">
+                    <!-- Row 1: Semester & Course Selectors -->
+                    <div class="selectors-grid">
+                        <div class="form-group">
+                            <label for="assignment-semester-select">
+                                <span class="label-icon">🎓</span>
+                                <span>سمسٹر منتخب کریں:</span>
+                            </label>
+                            <select id="assignment-semester-select" class="select-field" onchange="syncSemesterSelection(this.value); updateCourseDropdowns(this.value, 'assignment-course-select');">
+                                <option value="">-- پہلے سمسٹر منتخب کریں --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="assignment-course-select">
+                                <span class="label-icon">📚</span>
+                                <span>کتاب / کورس کوڈ منتخب کریں:</span>
+                            </label>
+                            <select id="assignment-course-select" class="select-field" onchange="syncCourseSelection(this.value);">
+                                <option value="">-- پہلے سمسٹر کا انتخاب کریں --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Assignment Number Selection (مشق ۱ یا ۲) -->
+                    <div class="asg-picker-row" style="margin-top: 1rem;">
+                        <label class="asg-picker-title" style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; display: block;">
+                            <span class="label-icon">📑</span>
+                            <span>مشق نمبر منتخب کریں (Select Assignment):</span>
+                        </label>
+                        <div class="picker-radios">
+                            <label class="picker-pill">
+                                <input type="radio" name="assignment-num-choice" value="1" checked onchange="handleAssignmentNumChange('1')">
+                                <span>مشق نمبر ۱ (Assignment 1 — یونٹ نمبر ۱ تا ۵)</span>
+                            </label>
+                            <label class="picker-pill">
+                                <input type="radio" name="assignment-num-choice" value="2" onchange="handleAssignmentNumChange('2')">
+                                <span>مشق نمبر ۲ (Assignment 2 — یونٹ نمبر ۶ تا ۹)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Input Mode Tabs -->
+                    <div class="asg-mode-tabs-container" style="margin-top: 1.25rem;">
+                        <div class="asg-tabs-header">
+                            <button type="button" class="asg-tab-btn active" id="asg-tab-btn-bulk" onclick="switchAssignmentInputMode('bulk')">
+                                <span>📚 تمام ۵ سوالات اکٹھے حل کریں (مکمل مشق)</span>
+                            </button>
+                            <button type="button" class="asg-tab-btn" id="asg-tab-btn-single" onclick="switchAssignmentInputMode('single')">
+                                <span>🔍 ایک ایک سوال حل کریں</span>
+                            </button>
+                            <button type="button" class="asg-tab-btn" id="asg-tab-btn-image" onclick="switchAssignmentInputMode('image')">
+                                <span>📸 تصویر سے سوالات حل کریں</span>
+                            </button>
+                        </div>
+
+                        <!-- Tab 1: Bulk 5 Questions Mode -->
+                        <div id="asg-mode-bulk-area" class="asg-mode-content-box">
+                            <div class="asg-bulk-toolbar">
+                                <span style="font-size: 0.92rem; color: var(--text-secondary);">
+                                    مشق کے پانچوں سوالات درج فرمائیں، یا نیچے دیا گیا بٹن دبا کر اس کورس اور مشق کے ۵ معیاری سوالات خودکار لوڈ کریں:
+                                </span>
+                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem;">
+                                    <button type="button" class="btn btn-secondary btn-sm" onclick="loadStandardAssignmentQuestions()">
+                                        <span>✨ اس مشق کے ۵ معیاری سوالات خودکار لوڈ کریں</span>
+                                    </button>
+                                    <button type="button" class="btn btn-outline btn-sm" onclick="clearAssignmentInputs()">
+                                        <span>🔄 تمام خانے خالی کریں</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="asg-5-inputs-grid" style="margin-top: 0.85rem; display: grid; gap: 0.65rem;">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label for="asg-q-1" style="font-size: 0.9rem;"><strong>سوال نمبر ۱:</strong></label>
+                                    <input type="text" id="asg-q-1" class="input-field" placeholder="پہلا سوال درج کریں...">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label for="asg-q-2" style="font-size: 0.9rem;"><strong>سوال نمبر ۲:</strong></label>
+                                    <input type="text" id="asg-q-2" class="input-field" placeholder="دوسرا سوال درج کریں...">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label for="asg-q-3" style="font-size: 0.9rem;"><strong>سوال نمبر ۳:</strong></label>
+                                    <input type="text" id="asg-q-3" class="input-field" placeholder="تیسرا سوال درج کریں...">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label for="asg-q-4" style="font-size: 0.9rem;"><strong>سوال نمبر ۴:</strong></label>
+                                    <input type="text" id="asg-q-4" class="input-field" placeholder="چوتھا سوال درج کریں...">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label for="asg-q-5" style="font-size: 0.9rem;"><strong>سوال نمبر ۵:</strong></label>
+                                    <input type="text" id="asg-q-5" class="input-field" placeholder="پانچواں سوال درج کریں...">
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 0.75rem;">
+                                <details class="asg-paste-details" style="background: #f8fafc; border: 1px solid var(--border-light); border-radius: 6px; padding: 0.5rem 0.75rem;">
+                                    <summary style="cursor: pointer; color: var(--primary); font-weight: 700; font-size: 0.9rem;">
+                                        یا ایک ہی بڑے باکس میں تمام سوالات ایک ساتھ پیسٹ کریں (کلک کریں) ▾
+                                    </summary>
+                                    <div style="margin-top: 0.5rem;">
+                                        <textarea id="asg-bulk-paste-box" class="textarea-field" rows="4" placeholder="یہاں مشق کے تمام سوالات ایک ساتھ پیسٹ کریں..."></textarea>
+                                    </div>
+                                </details>
+                            </div>
+                        </div>
+
+                        <!-- Tab 2: Single Question Mode -->
+                        <div id="asg-mode-single-area" class="asg-mode-content-box" style="display: none;">
+                            <div class="form-group">
+                                <label for="asg-single-q-input">
+                                    <span>اپنی اسائنمنٹ کا کوئی بھی ایک سوال درج فرمائیں:</span>
+                                </label>
+                                <textarea id="asg-single-q-input" class="textarea-field" rows="3" placeholder="مثلاً: علمِ تجوید کی بنیادی تعریف، اہمیت اور قرآن و سنت کی روشنی میں فضائل بیان کریں۔"></textarea>
+                            </div>
+                            <div class="asg-tip-note" style="margin-top: 0.5rem; font-size: 0.85rem; color: #047857; background: #ecfdf5; padding: 0.5rem 0.85rem; border-radius: 6px; border: 1px solid #a7f3d0;">
+                                💡 <strong>اسائنمنٹ فائل بلڈر کی سہولت:</strong> آپ جتنے بھی سوالات باری باری حل کریں گے، وہ خودکار طور پر سوال نمبر ۱، ۲، ۳ کی ترتیب سے محفوظ ہو جائیں گے اور آپ ایک ہی کلک سے مکمل اسائنمنٹ ورڈ فائل ڈاؤن لوڈ کر سکیں گے۔
+                            </div>
+                        </div>
+
+                        <!-- Tab 3: Image Mode -->
+                        <div id="asg-mode-image-area" class="asg-mode-content-box" style="display: none;">
+                            <div class="upload-dropzone" onclick="triggerAsgImageInput()">
+                                <input type="file" id="asg-image-file-input" accept="image/*" style="display: none;" onchange="handleAsgImageSelected(this)">
+                                <div class="dropzone-content">
+                                    <div class="dropzone-icon">📷</div>
+                                    <div class="dropzone-text">
+                                        <strong>اسائنمنٹ پیپر کی تصویر منتخب کریں</strong>
+                                        <p>موبائل کیمرے سے تصویر لیں یا گیلری سے اپلوڈ کریں</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="asg-image-preview-card" style="display: none; margin-top: 0.75rem; background: #f8fafc; border: 1px solid var(--border-light); border-radius: 8px; padding: 0.75rem; align-items: center; justify-content: space-between;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <img id="asg-image-preview-thumb" src="" alt="Preview" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid #cbd5e1;">
+                                    <span id="asg-image-filename" style="font-size: 0.9rem; font-weight: 600; color: #1e293b;"></span>
+                                </div>
+                                <button type="button" class="btn btn-outline btn-sm" onclick="clearAsgImageSelection()">تصویر ہٹائیں ✕</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button Row -->
+                    <div class="button-row" style="margin-top: 1.5rem;">
+                        <button id="asg-submit-btn" class="btn btn-primary btn-emerald" style="width: 100%; font-size: 1.05rem; padding: 0.85rem;" onclick="handleSolveAssignment()">
+                            <span id="asg-spinner" class="spinner" style="display: none;"></span>
+                            <span>🚀 اسائنمنٹ کے جامع و مفصل جوابات تیار کریں (۴۰۰-۵۰۰ الفاظ مع ۱۰ سرخیاں)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Cumulative Document Builder Bar (اسائنمنٹ ڈاکیومنٹ بلڈر سیشن) -->
+                <div id="assignment-doc-builder-box" class="assignment-builder-card" style="display: none; margin-top: 1.75rem;">
+                    <div class="builder-status-row">
+                        <div class="builder-info">
+                            <span class="builder-badge">📄 اسائنمنٹ ورڈ فائل سیشن</span>
+                            <strong id="builder-course-title">کتاب: ...</strong>
+                            <span id="builder-asg-pill" class="badge-pill badge-unit">مشق نمبر ۱</span>
+                            <span id="builder-count-pill" class="badge-pill badge-book">۰ سوالات شامل</span>
+                        </div>
+                        <div class="builder-actions">
+                            <button class="btn btn-primary btn-word" onclick="downloadAssignmentWordDoc('all')" title="مائیکروسافٹ ورڈ فائل ڈاؤن لوڈ کریں">
+                                <span>📥 مکمل اسائنمنٹ ورڈ فائل ڈاؤن لوڈ کریں (.doc)</span>
+                            </button>
+                            <button class="btn btn-secondary" onclick="printAssignmentDoc()" title="پرنٹ یا پی ڈی ایف محفوظ کریں">
+                                <span>🖨️ پرنٹ / PDF</span>
+                            </button>
+                            <button class="btn btn-outline" onclick="copyFullAssignment(this)" title="تمام سوالات کلپ بورڈ پر کاپی کریں">
+                                <span>📋 تمام سوالات کاپی کریں</span>
+                            </button>
+                            <button class="btn btn-outline btn-danger-soft" onclick="resetAssignmentDoc()" title="نئی اسائنمنٹ شروع کریں">
+                                <span>🗑️ نئی اسائنمنٹ شروع کریں</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="builder-questions-pills-list" class="builder-pills-row"></div>
+                </div>
+
+                <!-- Assignment Results Display Area -->
+                <div id="assignment-results-area" class="exam-display-area" style="display: none; margin-top: 2rem;">
+                    <div class="exam-summary-bar">
+                        <div>
+                            <strong id="asg-summary-title">حل شدہ اسائنمنٹ سوالات</strong>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);" id="asg-summary-subtitle"></div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <button class="btn btn-primary btn-word" onclick="downloadAssignmentWordDoc('all')">
+                                <span>📥 مکمل ورڈ فائل ڈاؤن لوڈ کریں (.doc)</span>
+                            </button>
+                            <button class="btn btn-outline" onclick="copyFullAssignment(this)">
+                                <span>📋 تمام ۵ سوالات کاپی کریں</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Solved Questions Container -->
+                    <div id="assignment-questions-container" class="assignment-questions-list"></div>
+
+                    <!-- End of Assignment Bottom Action Bar -->
+                    <div class="mcq-bottom-master-bar" style="margin-top: 2rem;">
+                        <div class="bottom-bar-content">
+                            <div class="bottom-bar-text">
+                                <strong style="font-size: 1.15rem; color: #065f46;">📚 مکمل اسائنمنٹ تیار ہے!</strong>
+                                <p style="margin-top: 0.35rem; color: #047857; font-size: 0.95rem;">
+                                    آپ نیچے دیا گیا بٹن دبا کر یہ مکمل اسائنمنٹ آفیشل ٹائٹل پیج (سرورق)، انڈیکس، حوالہ جات اور تمام سوالات کے ۱۰ عناوین سمیت مائیکروسافٹ ورڈ (.doc) فارمیٹ میں فوری ڈاؤن لوڈ کر سکتے ہیں۔
+                                </p>
+                            </div>
+                            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center;">
+                                <button class="btn btn-primary btn-word" style="font-size: 1.05rem; padding: 0.85rem 1.75rem;" onclick="downloadAssignmentWordDoc('all')">
+                                    <span>📥 مکمل اسائنمنٹ ورڈ فائل ڈاؤن لوڈ کریں (.doc / MS Word)</span>
+                                </button>
+                                <button class="btn btn-secondary" style="font-size: 1rem; padding: 0.8rem 1.4rem;" onclick="copyFullAssignment(this)">
+                                    <span>📋 تمام سوالات کلپ بورڈ پر کاپی کریں</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -737,6 +979,10 @@
         <button class="mobile-nav-item" id="mob-btn-qa" onclick="switchFeature('qa')">
             <span class="mobile-nav-icon">🔍</span>
             <span class="mobile-nav-label">سوال</span>
+        </button>
+        <button class="mobile-nav-item" id="mob-btn-assignment" onclick="switchFeature('assignment')">
+            <span class="mobile-nav-icon">📝</span>
+            <span class="mobile-nav-label">اسائنمنٹ</span>
         </button>
         <button class="mobile-nav-item" id="mob-btn-exam" onclick="switchFeature('exam')">
             <span class="mobile-nav-icon">🎓</span>

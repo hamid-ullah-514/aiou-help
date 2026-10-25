@@ -6,6 +6,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 APP_DIR = BASE_DIR / "aiou_app"
 DATA_DIR = BASE_DIR / "data"
 STATIC_DIR = BASE_DIR / "public"
+EXAM_BANKS_DIR = DATA_DIR / "exam_banks"
+MCQ_BANKS_DIR = DATA_DIR / "mcq_banks"
 
 DB_NAME = os.environ.get("AIOU_DB_NAME", "aiou_" + "search.db")
 DB_PATH = DATA_DIR / DB_NAME

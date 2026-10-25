@@ -95,6 +95,15 @@ class ImageAskRequest(BaseModel):
     course_code: Optional[str] = None
     mime_type: str = "image/jpeg"
 
+class AssignmentRequest(BaseModel):
+    semester_num: str
+    course_code: str
+    assignment_num: str = "1"  # "1" or "2"
+    questions: Optional[List[str]] = None
+    raw_text: Optional[str] = None
+    image_b64: Optional[str] = None
+    mime_type: str = "image/jpeg"
+
 @app.get("/")
 def get_index():
     index_file = STATIC_DIR / "index.html"
@@ -246,6 +255,29 @@ def generate_chapter_mcqs_api(req: ChapterMCQRequest):
         raise HTTPException(status_code=400, detail="براہِ کرم کورس کوڈ منتخب کریں۔")
     count = req.count_per_chapter if req.count_per_chapter in (10, 15, 20, 25) else 10
     result = generate_chapter_mcqs(course_code=req.course_code, count_per_chapter=count)
+    return result
+
+@app.post("/api/assignment")
+@app.post("/assignment")
+def solve_assignment_api(req: AssignmentRequest):
+    """
+    Solves AIOU BS Islamic Studies assignments (1 to 5 questions).
+    Produces 400-500 words per question with 10 distinct headings,
+    unit citations, page references, and book quotations.
+    """
+    if not req.course_code:
+        raise HTTPException(status_code=400, detail="براہِ کرم کورس کوڈ اور کتاب کا انتخاب فرمائیں۔")
+
+    from aiou_app.assignment_engine import solve_assignment_batch
+    result = solve_assignment_batch(
+        course_code=req.course_code,
+        semester_num=req.semester_num,
+        assignment_num=req.assignment_num,
+        questions=req.questions,
+        raw_text=req.raw_text,
+        image_b64=req.image_b64,
+        mime_type=req.mime_type
+    )
     return result
 
 @app.get("/api")

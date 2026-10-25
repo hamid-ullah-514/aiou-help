@@ -110,6 +110,92 @@ def call_groq_grounded(
         return None
     return None
 
+def call_groq_assignment_answer(
+    question: str,
+    passages: List[Dict[str, Any]],
+    book_title: str,
+    course_code: str,
+    unit_name: str = "",
+    assignment_num: str = "1"
+) -> Optional[str]:
+    """
+    Generates a university-level 400-500 word assignment answer for AIOU BS Islamic Studies,
+    structured with 10 academic headings, Quranic/Hadith evidence, and strict grounding in book materials.
+    """
+    if not GROQ_API_KEY:
+        return None
+
+    # Construct context from passages
+    context_blocks = []
+    for idx, p in enumerate(passages[:6]):
+        pg_str = p.get('printed_page', f"PDF {p.get('pdf_page')}")
+        context_blocks.append(
+            f"[مقتبس {idx+1} | کتاب: {p.get('course_title_ur', book_title)} | صفحہ: {pg_str} | سطور: {p.get('line_start', '')}-{p.get('line_end', '')}]\n{p.get('raw_text', '')}"
+        )
+    context_text = "\n\n".join(context_blocks)
+
+    system_instruction = (
+        "آپ علامہ اقبال اوپن یونیورسٹی (AIOU) کے بی ایس اسلامیات (2.5 سالہ پروگرام) کے سینئر استاد اور اسائنمنٹ ایگزامینر ہیں۔\n"
+        "طالب علم کی مشق / اسائنمنٹ کے سوال کا تفصیلی، معیاری، امتحانی اور علمی جواب تیار کرنا آپ کا فریضہ ہے۔\n\n"
+        "لازمی امتحانی شرائط:\n"
+        "۱۔ طوالت: جواب کی طوالت لازماً تقریباً 400 سے 500 الفاظ پر مشتمل ہونی چاہیے۔ جواب کسی صورت مختصر نہ ہو۔\n"
+        "۲۔ سرخیاں (Headings): جواب میں درج ذیل ۱۰ واضح، الگ اور جلی سرخیاں (Bold Headings) لازمی شامل ہوں:\n"
+        "   ۱۔ اساسی تعارف و تمہید (Introduction & Significance)\n"
+        "   ۲۔ لغوی و اصطلاحی مفہوم و تعریف (Linguistic & Technical Definitions)\n"
+        "   ۳۔ قرآنی ارشادات و شرعی دلائل (Quranic Guidance & Injunctions)\n"
+        "   ۴۔ احادیثِ نبویہ و اسوۂ رسول ﷺ (Prophetic Traditions & Sunnah)\n"
+        "   ۵۔ تاریخی و نصابی پس منظر (Historical & Curricular Background)\n"
+        "   ۶۔ بنیادی ارکان، شرائط و فقہی اصول (Fundamental Pillars & Rules)\n"
+        "   ۷۔ حکمت، فوائد و تربیتی پہلو (Wisdom & Educational Benefits)\n"
+        "   ۸۔ عصرِ حاضر میں اہمیت و عملی اطلاق (Contemporary Significance & Practical Application)\n"
+        "   ۹۔ اہم اثرات و معاشرتی نتائج (Social & Moral Outcomes)\n"
+        "   ۱۰۔ خلاصۂ کلام، تجاویز و حاصلِ بحث (Summary, Evaluation & Final Conclusion)\n"
+        "۳۔ ہر سرخی کے نیچے ۳ تا ۵ مدلل جملے لکھیں تاکہ مکمل علمی گفتگو اور تسلسل قائم رہے۔\n"
+        "۴۔ فراہم کردہ نصابی کتاب کے اقتباسات کی روشنی میں حقائق، نصوص اور مباحث کو تحریر کریں۔\n"
+        "۵۔ زبان و بیان: شستہ، علمی، ادبی اور معیاری اردو زبان استعمال کریں۔"
+    )
+
+    url = "https://api.groq.com/openai/v1/chat/completions"
+    payload = {
+        "model": GROQ_MODEL,
+        "messages": [
+            {"role": "system", "content": system_instruction},
+            {
+                "role": "user",
+                "content": (
+                    f"کتاب: {book_title} (کورس کوڈ: {course_code})\n"
+                    f"مشق نمبر: {assignment_num} | متعلقہ یونٹ: {unit_name}\n\n"
+                    f"نصابی کتاب کے ماخذ اقتباسات:\n{context_text}\n\n"
+                    f"طالب علم کی اسائنمنٹ کا سوال:\n{question}\n\n"
+                    "براہِ کرم ۱۰ مفصل سرخیوں کے ساتھ تقریباً ۴۰۰ تا ۵۰۰ الفاظ پر مشتمل مکمل، مدلل اور باوقار اسائنمنٹ جواب تحریر فرمائیں۔"
+                )
+            }
+        ],
+        "temperature": 0.25,
+        "max_tokens": 2200
+    }
+
+    try:
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={
+                "Authorization": f"Bearer {GROQ_API_KEY}",
+                "Content-Type": "application/json",
+                "User-Agent": "AIOU-Help-Assistant/1.0"
+            }
+        )
+        with urllib.request.urlopen(req, timeout=50) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            choices = data.get("choices", [])
+            if choices:
+                msg = choices[0].get("message", {}).get("content", "").strip()
+                return msg
+    except Exception as e:
+        print("Groq API Assignment Answer Error:", e)
+        return None
+    return None
+
 def extract_questions_from_image_groq(
     image_b64: str,
     mime_type: str = "image/jpeg"

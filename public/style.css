@@ -1725,6 +1725,327 @@ button, input, textarea, select,
     margin-bottom: 0.5rem;
 }
 
+/* ==========================================
+   FEATURE: ASSIGNMENT SOLVER & WORD BUILDER
+   ========================================== */
+.feat-emerald {
+    border-top: 4px solid #059669;
+}
+
+.asg-picker-row {
+    background: #f8fafc;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    padding: 0.85rem 1rem;
+}
+
+.asg-mode-tabs-container {
+    background: #ffffff;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.asg-tabs-header {
+    display: flex;
+    background: #f1f5f9;
+    border-bottom: 1px solid var(--border-light);
+    overflow-x: auto;
+}
+
+.asg-tab-btn {
+    flex: 1;
+    padding: 0.8rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #475569;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.asg-tab-btn:hover {
+    color: #047857;
+    background: #f8fafc;
+}
+
+.asg-tab-btn.active {
+    color: #047857;
+    background: #ffffff;
+    border-bottom-color: #047857;
+}
+
+.asg-mode-content-box {
+    padding: 1.25rem;
+}
+
+.asg-bulk-toolbar {
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+}
+
+.asg-5-inputs-grid input {
+    background: #ffffff;
+}
+
+/* Cumulative Document Builder Bar */
+.assignment-builder-card {
+    background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+    border: 2px solid #3b82f6;
+    border-radius: var(--radius-md);
+    padding: 1.15rem 1.35rem;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.12);
+}
+
+.builder-status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+}
+
+.builder-info {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.builder-badge {
+    background: #2563eb;
+    color: #ffffff;
+    font-size: 0.82rem;
+    font-weight: 800;
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+}
+
+.builder-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.builder-pills-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.85rem;
+    padding-top: 0.65rem;
+    border-top: 1px dashed #bfdbfe;
+}
+
+.builder-q-pill {
+    background: #ffffff;
+    color: #1e40af;
+    border: 1px solid #93c5fd;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.builder-q-pill:hover {
+    background: #2563eb;
+    color: #ffffff;
+    border-color: #2563eb;
+}
+
+/* Assignment Question Card */
+.assignment-q-card {
+    background: #ffffff;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: 1.35rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.asg-q-title-box {
+    background: #f8fafc;
+    border-right: 4px solid #047857;
+    border-radius: 4px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.15rem;
+}
+
+.asg-q-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.9;
+    margin: 0;
+}
+
+.asg-answer-content {
+    font-size: 1.05rem;
+    line-height: 2.3;
+    color: #1e293b;
+    text-align: justify;
+}
+
+.asg-subheading-xl {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #047857;
+    margin-top: 1.5rem;
+    margin-bottom: 0.6rem;
+    border-bottom: 2px solid #a7f3d0;
+    padding-bottom: 0.35rem;
+}
+
+.asg-subheading-lg {
+    font-size: 1.18rem;
+    font-weight: 800;
+    color: #0f766e;
+    margin-top: 1.35rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid #cbd5e1;
+    padding-bottom: 0.3rem;
+}
+
+.asg-subheading {
+    font-size: 1.12rem;
+    font-weight: 800;
+    color: #1e3a8a;
+    background: #f0fdf4;
+    border-right: 4px solid #16a34a;
+    padding: 0.45rem 0.85rem;
+    border-radius: 4px;
+    margin-top: 1.25rem;
+    margin-bottom: 0.65rem;
+}
+
+.asg-paragraph {
+    margin-bottom: 0.85rem;
+    text-align: justify;
+}
+
+.asg-list-item {
+    margin-right: 1.5rem;
+    margin-bottom: 0.35rem;
+    list-style-type: square;
+}
+
+.asg-citation-box {
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    border-radius: var(--radius-sm);
+    padding: 0.85rem 1rem;
+    margin-top: 1.25rem;
+}
+
+.asg-citation-box .citation-header {
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: #15803d;
+    margin-bottom: 0.25rem;
+}
+
+.asg-citation-box .citation-meta {
+    font-size: 0.88rem;
+    color: #334155;
+    margin-bottom: 0.4rem;
+}
+
+.asg-citation-box .citation-quote {
+    background: #ffffff;
+    border-right: 3px solid #16a34a;
+    padding: 0.5rem 0.85rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-style: italic;
+    color: #1e293b;
+    line-height: 2;
+}
+
+.asg-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.25rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+/* MS Word Button Styles */
+.btn-word {
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    border: none !important;
+    border-radius: var(--radius-sm) !important;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: all 0.18s ease !important;
+    box-shadow: 0 2px 6px rgba(29, 78, 216, 0.25) !important;
+}
+
+.btn-word:hover {
+    background: #1e3a8a !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(29, 78, 216, 0.35) !important;
+}
+
+.btn-emerald {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    border: none !important;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3) !important;
+}
+
+.btn-emerald:hover {
+    background: #065f46 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4) !important;
+}
+
+.btn-danger-soft {
+    background: #fef2f2 !important;
+    color: #b91c1c !important;
+    border-color: #fecaca !important;
+}
+
+.btn-danger-soft:hover {
+    background: #fee2e2 !important;
+    color: #991b1b !important;
+}
+
+@media print {
+    header, footer, .mobile-bottom-nav, .panel-header, .form-grid, .builder-actions, .asg-card-footer, .mcq-bottom-master-bar, .card-quick-actions, .hero-welcome-card, .home-feature-cards-grid {
+        display: none !important;
+    }
+    body {
+        background: #ffffff !important;
+        font-size: 12pt !important;
+        color: #000000 !important;
+    }
+    .assignment-q-card {
+        border: none !important;
+        box-shadow: none !important;
+        page-break-after: always;
+        padding: 0 !important;
+    }
+    #assignment-results-area {
+        display: block !important;
+    }
+}
+
 .btn-paste {
     background: #f1f5f9;
     border: 1px solid #cbd5e1;
@@ -2295,6 +2616,52 @@ button, input, textarea, select,
     .copy-actions-bar .btn, .exam-q-actions .btn {
         width: 100%;
         font-size: 0.85rem;
+    }
+
+    .asg-tabs-header {
+        flex-direction: column;
+    }
+
+    .asg-tab-btn {
+        width: 100%;
+        text-align: center;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .builder-status-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .builder-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .builder-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .asg-card-footer {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .asg-card-footer .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .card-quick-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .card-quick-actions .btn {
+        width: 100%;
+        justify-content: center;
     }
 
     .mcq-winner-row {
