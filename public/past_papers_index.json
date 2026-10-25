@@ -1,6 +1,6 @@
 {
   "success": true,
-  "total_papers": 456,
+  "total_papers": 432,
   "total_semesters": 5,
   "semesters": [
     {
@@ -47,22 +47,22 @@
         {
           "course_code": "1901",
           "course_title_ur": "تاریخ دعوت و عزیمت (1901 / 2630)",
-          "papers_count": 23
+          "papers_count": 24
         },
         {
           "course_code": "1904",
           "course_title_ur": "تصوف اور اخلاق و تربیت",
-          "papers_count": 17
+          "papers_count": 15
         },
         {
           "course_code": "1906",
           "course_title_ur": "اسلامی معاشیات و فقہ المعاملات",
-          "papers_count": 18
+          "papers_count": 19
         },
         {
           "course_code": "1908",
           "course_title_ur": "مطالعہ کتب فقہ (فقہ اسلامی)",
-          "papers_count": 22
+          "papers_count": 19
         },
         {
           "course_code": "1913",
@@ -75,46 +75,21 @@
           "papers_count": 23
         }
       ],
-      "papers_count": 132
+      "papers_count": 129
     },
     {
       "semester_num": "3",
       "semester_name_ur": "سمسٹر 3 (Semester 3)",
       "courses": [
         {
-          "course_code": "1901",
-          "course_title_ur": "تاریخ دعوت و عزیمت (1901 / 2630)",
-          "papers_count": 3
-        },
-        {
-          "course_code": "1904",
-          "course_title_ur": "تصوف اور اخلاق و تربیت",
-          "papers_count": 4
-        },
-        {
-          "course_code": "1906",
-          "course_title_ur": "اسلامی معاشیات و فقہ المعاملات",
-          "papers_count": 2
-        },
-        {
           "course_code": "1907",
           "course_title_ur": "اسلام کا سیاسی نظام",
           "papers_count": 21
         },
         {
-          "course_code": "1908",
-          "course_title_ur": "مطالعہ کتب فقہ (فقہ اسلامی)",
-          "papers_count": 7
-        },
-        {
           "course_code": "1912",
           "course_title_ur": "تاریخ تصوف و سلوک",
           "papers_count": 37
-        },
-        {
-          "course_code": "1913",
-          "course_title_ur": "اسلام کا اقتصادی نظام",
-          "papers_count": 3
         },
         {
           "course_code": "1981",
@@ -125,14 +100,9 @@
           "course_code": "2953",
           "course_title_ur": "اصول فقہ (2953 / 3952)",
           "papers_count": 31
-        },
-        {
-          "course_code": "4931",
-          "course_title_ur": "تاریخ اسلام",
-          "papers_count": 2
         }
       ],
-      "papers_count": 121
+      "papers_count": 100
     },
     {
       "semester_num": "4",
@@ -201,10 +171,10 @@
   ],
   "categories_stats": {
     "guess_paper": 39,
-    "past_paper": 230,
-    "solved_paper": 82,
+    "past_paper": 223,
+    "solved_paper": 71,
     "key_book": 62,
-    "quiz_mcq": 32,
+    "quiz_mcq": 26,
     "assignment": 11
   },
   "papers": [
@@ -3430,26 +3400,6 @@
     },
     {
       "id": "pp_2_1904_0162",
-      "filename": "1904 solved guss paper 14 question.pdf",
-      "clean_title": "1904 solved guss paper 14 question",
-      "semester_num": "2",
-      "semester_name_ur": "سمسٹر 2 (Semester 2)",
-      "course_code": "1904",
-      "course_title_ur": "تصوف اور اخلاق و تربیت",
-      "season_ur": "",
-      "category_key": "solved_paper",
-      "category_ur": "حل شدہ امتحانی پرچہ",
-      "category_icon": "✍️",
-      "size_mb": 8.73,
-      "size_formatted": "8.73 MB",
-      "file_type": "pdf",
-      "rel_path": "2nd semester/1904 solved guss paper 14 question.pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=2nd%20semester/1904%20solved%20guss%20paper%2014%20question.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=2nd%20semester/1904%20solved%20guss%20paper%2014%20question.pdf&download=1"
-    },
-    {
-      "id": "pp_2_1904_0163",
       "filename": "1904 spring 2025 assignment No 01.pdf",
       "clean_title": "1904 spring 2025 assignment No 01",
       "semester_num": "2",
@@ -3469,7 +3419,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1904%20spring%202025%20assignment%20No%2001.pdf&download=1"
     },
     {
-      "id": "pp_2_1904_0164",
+      "id": "pp_2_1904_0163",
       "filename": "1904.pdf",
       "clean_title": "1904",
       "semester_num": "2",
@@ -3489,7 +3439,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1904.pdf&download=1"
     },
     {
-      "id": "pp_2_1904_0165",
+      "id": "pp_2_1904_0164",
       "filename": "1904_ 27 marks .pdf",
       "clean_title": "1904 27 marks",
       "semester_num": "2",
@@ -3509,27 +3459,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1904_%2027%20marks%20.pdf&download=1"
     },
     {
-      "id": "pp_2_1904_0166",
-      "filename": "1904کی اہم MCQs.pdf",
-      "clean_title": "1904کی اہم MCQs",
-      "semester_num": "2",
-      "semester_name_ur": "سمسٹر 2 (Semester 2)",
-      "course_code": "1904",
-      "course_title_ur": "تصوف اور اخلاق و تربیت",
-      "season_ur": "",
-      "category_key": "quiz_mcq",
-      "category_ur": "کوئز و معروضی پرچہ",
-      "category_icon": "❓",
-      "size_mb": 7.05,
-      "size_formatted": "7.05 MB",
-      "file_type": "pdf",
-      "rel_path": "2nd semester/1904کی اہم MCQs.pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=2nd%20semester/1904%DA%A9%DB%8C%20%D8%A7%DB%81%D9%85%20MCQs.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=2nd%20semester/1904%DA%A9%DB%8C%20%D8%A7%DB%81%D9%85%20MCQs.pdf&download=1"
-    },
-    {
-      "id": "pp_2_1906_0167",
+      "id": "pp_2_1906_0165",
       "filename": "1906 (1).pdf",
       "clean_title": "1906 (1)",
       "semester_num": "2",
@@ -3549,7 +3479,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1906%20%281%29.pdf&download=1"
     },
     {
-      "id": "pp_2_1906_0168",
+      "id": "pp_2_1906_0166",
       "filename": "1906 @1Q10 -1.pdf",
       "clean_title": "1906 @1Q10 1",
       "semester_num": "2",
@@ -3569,7 +3499,7 @@
       "download_url": "/past_papers/2nd%20semester/1906%20%401Q10%20-1.pdf"
     },
     {
-      "id": "pp_2_1906_0169",
+      "id": "pp_2_1906_0167",
       "filename": "1906 @1Q10 .pdf",
       "clean_title": "1906 @1Q10",
       "semester_num": "2",
@@ -3589,7 +3519,7 @@
       "download_url": "/past_papers/2nd%20semester/1906%20%401Q10%20.pdf"
     },
     {
-      "id": "pp_2_1906_0170",
+      "id": "pp_2_1906_0168",
       "filename": "1906 Guess .pdf",
       "clean_title": "1906 Guess",
       "semester_num": "2",
@@ -3609,7 +3539,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1906%20Guess%20.pdf&download=1"
     },
     {
-      "id": "pp_2_1906_0171",
+      "id": "pp_2_1906_0169",
       "filename": "1906 SPRING 2026.pdf",
       "clean_title": "1906 SPRING 2026",
       "semester_num": "2",
@@ -3629,7 +3559,7 @@
       "download_url": "/past_papers/2nd%20semester/1906%20SPRING%202026.pdf"
     },
     {
-      "id": "pp_2_1906_0172",
+      "id": "pp_2_1906_0170",
       "filename": "1906 Solved spr25.pdf",
       "clean_title": "1906 Solved spr25",
       "semester_num": "2",
@@ -3649,7 +3579,7 @@
       "download_url": "/past_papers/2nd%20semester/1906%20Solved%20spr25.pdf"
     },
     {
-      "id": "pp_2_1906_0173",
+      "id": "pp_2_1906_0171",
       "filename": "1906 Spring 2025 assignment No 02.pdf",
       "clean_title": "1906 Spring 2025 assignment No 02",
       "semester_num": "2",
@@ -3669,7 +3599,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1906%20Spring%202025%20assignment%20No%2002.pdf&download=1"
     },
     {
-      "id": "pp_2_1906_0174",
+      "id": "pp_2_1906_0172",
       "filename": "1906 assig q paper.pdf",
       "clean_title": "1906 assig q paper",
       "semester_num": "2",
@@ -3689,7 +3619,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1906%20assig%20q%20paper.pdf&download=1"
     },
     {
-      "id": "pp_2_1906_0175",
+      "id": "pp_2_1906_0173",
       "filename": "1906 ka past paper.pdf",
       "clean_title": "1906 ka past paper",
       "semester_num": "2",
@@ -3709,7 +3639,7 @@
       "download_url": "/past_papers/2nd%20semester/1906%20ka%20past%20paper.pdf"
     },
     {
-      "id": "pp_2_1906_0176",
+      "id": "pp_2_1906_0174",
       "filename": "1906 key book 03087611772.pdf",
       "clean_title": "1906 key book",
       "semester_num": "2",
@@ -3729,7 +3659,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1906%20key%20book%2003087611772.pdf&download=1"
     },
     {
-      "id": "pp_2_1906_0177",
+      "id": "pp_2_1906_0175",
       "filename": "1906 spring 2025 assignment No 01-1.pdf",
       "clean_title": "1906 spring 2025 assignment No 01 1",
       "semester_num": "2",
@@ -3749,7 +3679,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1906%20spring%202025%20assignment%20No%2001-1.pdf&download=1"
     },
     {
-      "id": "pp_2_1906_0178",
+      "id": "pp_2_1906_0176",
       "filename": "1906-2622 GUESS PAPER.pdf",
       "clean_title": "1906 2622 GUESS PAPER",
       "semester_num": "2",
@@ -3769,7 +3699,7 @@
       "download_url": "/past_papers/2nd%20semester/1906-2622%20GUESS%20PAPER.pdf"
     },
     {
-      "id": "pp_2_1906_0179",
+      "id": "pp_2_1906_0177",
       "filename": "1906.. Quiz .pdf",
       "clean_title": "1906.. Quiz",
       "semester_num": "2",
@@ -3789,7 +3719,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1906..%20Quiz%20.pdf&download=1"
     },
     {
-      "id": "pp_2_1906_0180",
+      "id": "pp_2_1906_0178",
       "filename": "1906..gess.pdf",
       "clean_title": "1906..gess",
       "semester_num": "2",
@@ -3809,7 +3739,7 @@
       "download_url": "/past_papers/2nd%20semester/1906..gess.pdf"
     },
     {
-      "id": "pp_2_1906_0181",
+      "id": "pp_2_1906_0179",
       "filename": "1906.Q.pdf",
       "clean_title": "1906.Q",
       "semester_num": "2",
@@ -3829,7 +3759,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1906.Q.pdf&download=1"
     },
     {
-      "id": "pp_2_1906_0182",
+      "id": "pp_2_1906_0180",
       "filename": "1906@11Q30 .pdf",
       "clean_title": "1906@11Q30",
       "semester_num": "2",
@@ -3849,7 +3779,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1906%4011Q30%20.pdf&download=1"
     },
     {
-      "id": "pp_2_1908_0183",
+      "id": "pp_2_1908_0181",
       "filename": "1908 ALL QUIZ.pdf",
       "clean_title": "1908 ALL QUIZ",
       "semester_num": "2",
@@ -3869,7 +3799,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1908%20ALL%20QUIZ.pdf&download=1"
     },
     {
-      "id": "pp_2_1908_0184",
+      "id": "pp_2_1908_0182",
       "filename": "1908 S-26.pdf",
       "clean_title": "1908 S 26",
       "semester_num": "2",
@@ -3889,7 +3819,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1908%20S-26.pdf&download=1"
     },
     {
-      "id": "pp_2_1908_0185",
+      "id": "pp_2_1908_0183",
       "filename": "1908 SPRING 2026.pdf",
       "clean_title": "1908 SPRING 2026",
       "semester_num": "2",
@@ -3909,7 +3839,7 @@
       "download_url": "/past_papers/2nd%20semester/1908%20SPRING%202026.pdf"
     },
     {
-      "id": "pp_2_1908_0186",
+      "id": "pp_2_1908_0184",
       "filename": "1908 ka notes best of luck.pdf",
       "clean_title": "1908 ka notes best of luck",
       "semester_num": "2",
@@ -3929,7 +3859,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1908%20ka%20notes%20best%20of%20luck.pdf&download=1"
     },
     {
-      "id": "pp_2_1908_0187",
+      "id": "pp_2_1908_0185",
       "filename": "1908 past papers.pdf",
       "clean_title": "1908 past papers",
       "semester_num": "2",
@@ -3949,7 +3879,7 @@
       "download_url": "/past_papers/2nd%20semester/1908%20past%20papers.pdf"
     },
     {
-      "id": "pp_2_1908_0188",
+      "id": "pp_2_1908_0186",
       "filename": "1908.pdf",
       "clean_title": "1908",
       "semester_num": "2",
@@ -3969,27 +3899,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1908.pdf&download=1"
     },
     {
-      "id": "pp_2_1908_0189",
-      "filename": "1908_Exam_Preparation_45_Questions_With_Answer.pdf",
-      "clean_title": "1908 Exam Preparation 45 Questions With Answer",
-      "semester_num": "2",
-      "semester_name_ur": "سمسٹر 2 (Semester 2)",
-      "course_code": "1908",
-      "course_title_ur": "مطالعہ کتب فقہ (فقہ اسلامی)",
-      "season_ur": "",
-      "category_key": "solved_paper",
-      "category_ur": "حل شدہ امتحانی پرچہ",
-      "category_icon": "✍️",
-      "size_mb": 3.83,
-      "size_formatted": "3.83 MB",
-      "file_type": "pdf",
-      "rel_path": "2nd semester/1908_Exam_Preparation_45_Questions_With_Answer.pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=2nd%20semester/1908_Exam_Preparation_45_Questions_With_Answer.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=2nd%20semester/1908_Exam_Preparation_45_Questions_With_Answer.pdf&download=1"
-    },
-    {
-      "id": "pp_2_1913_0190",
+      "id": "pp_2_1913_0187",
       "filename": "1913 20 important Q.docx",
       "clean_title": "1913 20 important Q",
       "semester_num": "2",
@@ -4009,7 +3919,7 @@
       "download_url": "/past_papers/2nd%20semester/1913%2020%20important%20Q.docx"
     },
     {
-      "id": "pp_2_1913_0191",
+      "id": "pp_2_1913_0188",
       "filename": "1913 All Units New Pattren Keybook.pdf",
       "clean_title": "1913 All Units New Pattren Keybook",
       "semester_num": "2",
@@ -4029,7 +3939,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1913%20All%20Units%20New%20Pattren%20Keybook.pdf&download=1"
     },
     {
-      "id": "pp_2_1913_0192",
+      "id": "pp_2_1913_0189",
       "filename": "1913 Aut25.pdf",
       "clean_title": "1913 Aut25",
       "semester_num": "2",
@@ -4049,7 +3959,7 @@
       "download_url": "/past_papers/2nd%20semester/1913%20Aut25.pdf"
     },
     {
-      "id": "pp_2_1913_0193",
+      "id": "pp_2_1913_0190",
       "filename": "1913 Best Key Book.pdf",
       "clean_title": "1913 Best Key Book",
       "semester_num": "2",
@@ -4069,7 +3979,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1913%20Best%20Key%20Book.pdf&download=1"
     },
     {
-      "id": "pp_2_1913_0194",
+      "id": "pp_2_1913_0191",
       "filename": "1913 GUESS PAPER-1.pdf",
       "clean_title": "1913 GUESS PAPER 1",
       "semester_num": "2",
@@ -4089,7 +3999,7 @@
       "download_url": "/past_papers/2nd%20semester/1913%20GUESS%20PAPER-1.pdf"
     },
     {
-      "id": "pp_2_1913_0195",
+      "id": "pp_2_1913_0192",
       "filename": "1913 Guess Paper.pdf",
       "clean_title": "1913 Guess Paper",
       "semester_num": "2",
@@ -4109,7 +4019,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1913%20Guess%20Paper.pdf&download=1"
     },
     {
-      "id": "pp_2_1913_0196",
+      "id": "pp_2_1913_0193",
       "filename": "1913 Important questions.pdf",
       "clean_title": "1913 Important questions",
       "semester_num": "2",
@@ -4129,7 +4039,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1913%20Important%20questions.pdf&download=1"
     },
     {
-      "id": "pp_2_1913_0197",
+      "id": "pp_2_1913_0194",
       "filename": "1913 SPRING 2025-1.pdf",
       "clean_title": "1913 SPRING 2025 1",
       "semester_num": "2",
@@ -4149,7 +4059,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1913%20SPRING%202025-1.pdf&download=1"
     },
     {
-      "id": "pp_2_1913_0198",
+      "id": "pp_2_1913_0195",
       "filename": "1913 SPRING 2026.pdf",
       "clean_title": "1913 SPRING 2026",
       "semester_num": "2",
@@ -4169,7 +4079,7 @@
       "download_url": "/past_papers/2nd%20semester/1913%20SPRING%202026.pdf"
     },
     {
-      "id": "pp_2_1913_0199",
+      "id": "pp_2_1913_0196",
       "filename": "1913 Solved spr25.pdf",
       "clean_title": "1913 Solved spr25",
       "semester_num": "2",
@@ -4189,7 +4099,7 @@
       "download_url": "/past_papers/2nd%20semester/1913%20Solved%20spr25.pdf"
     },
     {
-      "id": "pp_2_1913_0200",
+      "id": "pp_2_1913_0197",
       "filename": "1913 Urdu.pdf",
       "clean_title": "1913 Urdu",
       "semester_num": "2",
@@ -4209,7 +4119,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1913%20Urdu.pdf&download=1"
     },
     {
-      "id": "pp_2_1913_0201",
+      "id": "pp_2_1913_0198",
       "filename": "1913 notes by Sherazi 0346-6537447.pdf",
       "clean_title": "1913 notes by Sherazi",
       "semester_num": "2",
@@ -4229,7 +4139,7 @@
       "download_url": "/past_papers/2nd%20semester/1913%20notes%20by%20Sherazi%200346-6537447.pdf"
     },
     {
-      "id": "pp_2_1913_0202",
+      "id": "pp_2_1913_0199",
       "filename": "1913 quiz 30 marks autumn 2025.pdf",
       "clean_title": "1913 quiz 30 marks autumn 2025",
       "semester_num": "2",
@@ -4249,7 +4159,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1913%20quiz%2030%20marks%20autumn%202025.pdf&download=1"
     },
     {
-      "id": "pp_2_1913_0203",
+      "id": "pp_2_1913_0200",
       "filename": "1913 کوائز.pdf",
       "clean_title": "1913 کوائز",
       "semester_num": "2",
@@ -4269,7 +4179,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1913%20%DA%A9%D9%88%D8%A7%D8%A6%D8%B2.pdf&download=1"
     },
     {
-      "id": "pp_2_1913_0204",
+      "id": "pp_2_1913_0201",
       "filename": "1913.pdf",
       "clean_title": "1913",
       "semester_num": "2",
@@ -4289,7 +4199,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1913.pdf&download=1"
     },
     {
-      "id": "pp_2_1913_0205",
+      "id": "pp_2_1913_0202",
       "filename": "1913Quiz .pdf",
       "clean_title": "1913Quiz",
       "semester_num": "2",
@@ -4309,7 +4219,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1913Quiz%20.pdf&download=1"
     },
     {
-      "id": "pp_2_1913_0206",
+      "id": "pp_2_1913_0203",
       "filename": "1913_Keybook.pdf",
       "clean_title": "1913 Keybook",
       "semester_num": "2",
@@ -4329,7 +4239,7 @@
       "download_url": "/past_papers/2nd%20semester/1913_Keybook.pdf"
     },
     {
-      "id": "pp_2_1913_0207",
+      "id": "pp_2_1913_0204",
       "filename": "1913حل شدہ سوالات.pdf",
       "clean_title": "1913حل شدہ سوالات",
       "semester_num": "2",
@@ -4349,7 +4259,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1913%D8%AD%D9%84%20%D8%B4%D8%AF%DB%81%20%D8%B3%D9%88%D8%A7%D9%84%D8%A7%D8%AA.pdf&download=1"
     },
     {
-      "id": "pp_2_1913_0208",
+      "id": "pp_2_1913_0205",
       "filename": "1913کوئز30 مارکس خزاں 2025.pdf",
       "clean_title": "1913کوئز30 مارکس خزاں 2025",
       "semester_num": "2",
@@ -4369,7 +4279,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/1913%DA%A9%D9%88%D8%A6%D8%B230%20%D9%85%D8%A7%D8%B1%DA%A9%D8%B3%20%D8%AE%D8%B2%D8%A7%DA%BA%202025.pdf&download=1"
     },
     {
-      "id": "pp_2_4931_0209",
+      "id": "pp_2_4931_0206",
       "filename": "4931 AUTUMN 2025.pdf",
       "clean_title": "4931 AUTUMN 2025",
       "semester_num": "2",
@@ -4389,7 +4299,7 @@
       "download_url": "/past_papers/2nd%20semester/4931%20AUTUMN%202025.pdf"
     },
     {
-      "id": "pp_2_4931_0210",
+      "id": "pp_2_4931_0207",
       "filename": "4931 Aut25..pdf",
       "clean_title": "4931 Aut25.",
       "semester_num": "2",
@@ -4409,7 +4319,7 @@
       "download_url": "/past_papers/2nd%20semester/4931%20Aut25..pdf"
     },
     {
-      "id": "pp_2_4931_0211",
+      "id": "pp_2_4931_0208",
       "filename": "4931 Guess Paper (03087611772) Impact Servics Aiou.pdf",
       "clean_title": "4931 Guess Paper () Impact Servics Aiou",
       "semester_num": "2",
@@ -4429,7 +4339,7 @@
       "download_url": "/past_papers/2nd%20semester/4931%20Guess%20Paper%20%2803087611772%29%20Impact%20Servics%20Aiou.pdf"
     },
     {
-      "id": "pp_2_4931_0212",
+      "id": "pp_2_4931_0209",
       "filename": "4931 SPRING 2026.pdf",
       "clean_title": "4931 SPRING 2026",
       "semester_num": "2",
@@ -4449,7 +4359,7 @@
       "download_url": "/past_papers/2nd%20semester/4931%20SPRING%202026.pdf"
     },
     {
-      "id": "pp_2_4931_0213",
+      "id": "pp_2_4931_0210",
       "filename": "4931 Urdu Version.pdf",
       "clean_title": "4931 Urdu Version",
       "semester_num": "2",
@@ -4469,7 +4379,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/4931%20Urdu%20Version.pdf&download=1"
     },
     {
-      "id": "pp_2_4931_0214",
+      "id": "pp_2_4931_0211",
       "filename": "4931 code quiz .pdf",
       "clean_title": "4931 code quiz",
       "semester_num": "2",
@@ -4489,7 +4399,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/4931%20code%20quiz%20.pdf&download=1"
     },
     {
-      "id": "pp_2_4931_0215",
+      "id": "pp_2_4931_0212",
       "filename": "4931 guss paper @2.pdf",
       "clean_title": "4931 guss paper @2",
       "semester_num": "2",
@@ -4509,7 +4419,7 @@
       "download_url": "/past_papers/2nd%20semester/4931%20guss%20paper%20%402.pdf"
     },
     {
-      "id": "pp_2_4931_0216",
+      "id": "pp_2_4931_0213",
       "filename": "4931 keybook 5 chapter .pdf",
       "clean_title": "4931 keybook 5 chapter",
       "semester_num": "2",
@@ -4529,7 +4439,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/4931%20keybook%205%20chapter%20.pdf&download=1"
     },
     {
-      "id": "pp_2_4931_0217",
+      "id": "pp_2_4931_0214",
       "filename": "4931 soloved spring 2025.pdf",
       "clean_title": "4931 soloved spring 2025",
       "semester_num": "2",
@@ -4549,7 +4459,7 @@
       "download_url": "/past_papers/2nd%20semester/4931%20soloved%20spring%202025.pdf"
     },
     {
-      "id": "pp_2_4931_0218",
+      "id": "pp_2_4931_0215",
       "filename": "4931 urdu soloved spring 2025.pdf",
       "clean_title": "4931 urdu soloved spring 2025",
       "semester_num": "2",
@@ -4569,7 +4479,7 @@
       "download_url": "/past_papers/2nd%20semester/4931%20urdu%20soloved%20spring%202025.pdf"
     },
     {
-      "id": "pp_2_4931_0219",
+      "id": "pp_2_4931_0216",
       "filename": "4931 ❤️.pdf",
       "clean_title": "4931 ❤️",
       "semester_num": "2",
@@ -4589,7 +4499,7 @@
       "download_url": "/past_papers/2nd%20semester/4931%20%E2%9D%A4%EF%B8%8F.pdf"
     },
     {
-      "id": "pp_2_4931_0220",
+      "id": "pp_2_4931_0217",
       "filename": "4931 🖕.pdf",
       "clean_title": "4931 🖕",
       "semester_num": "2",
@@ -4609,7 +4519,7 @@
       "download_url": "/past_papers/2nd%20semester/4931%20%F0%9F%96%95.pdf"
     },
     {
-      "id": "pp_2_4931_0221",
+      "id": "pp_2_4931_0218",
       "filename": "4931 🤲.pdf",
       "clean_title": "4931 🤲",
       "semester_num": "2",
@@ -4629,7 +4539,7 @@
       "download_url": "/past_papers/2nd%20semester/4931%20%F0%9F%A4%B2.pdf"
     },
     {
-      "id": "pp_2_4931_0222",
+      "id": "pp_2_4931_0219",
       "filename": "4931(Spring-25)-1(1).pdf",
       "clean_title": "4931(Spring 25) 1(1)",
       "semester_num": "2",
@@ -4649,7 +4559,7 @@
       "download_url": "/past_papers/2nd%20semester/4931%28Spring-25%29-1%281%29.pdf"
     },
     {
-      "id": "pp_2_4931_0223",
+      "id": "pp_2_4931_0220",
       "filename": "4931(Spring-25)-2(1).pdf",
       "clean_title": "4931(Spring 25) 2(1)",
       "semester_num": "2",
@@ -4669,7 +4579,7 @@
       "download_url": "/past_papers/2nd%20semester/4931%28Spring-25%29-2%281%29.pdf"
     },
     {
-      "id": "pp_2_4931_0224",
+      "id": "pp_2_4931_0221",
       "filename": "4931‎ SPRING 2025.pdf",
       "clean_title": "4931‎ SPRING 2025",
       "semester_num": "2",
@@ -4689,7 +4599,7 @@
       "download_url": "/past_papers/2nd%20semester/4931%E2%80%8E%20SPRING%202025.pdf"
     },
     {
-      "id": "pp_2_4931_0225",
+      "id": "pp_2_4931_0222",
       "filename": "4931👍.pdf",
       "clean_title": "4931👍",
       "semester_num": "2",
@@ -4709,47 +4619,7 @@
       "download_url": "/past_papers/2nd%20semester/4931%F0%9F%91%8D.pdf"
     },
     {
-      "id": "pp_2_1908_0226",
-      "filename": "Code_1908_Islami_Tahreekat_180_MCQs_With_Correct_Answer.pdf",
-      "clean_title": "Code 1908 Islami Tahreekat 180 MCQs With Correct Answer",
-      "semester_num": "2",
-      "semester_name_ur": "سمسٹر 2 (Semester 2)",
-      "course_code": "1908",
-      "course_title_ur": "مطالعہ کتب فقہ (فقہ اسلامی)",
-      "season_ur": "",
-      "category_key": "solved_paper",
-      "category_ur": "حل شدہ امتحانی پرچہ",
-      "category_icon": "✍️",
-      "size_mb": 6.7,
-      "size_formatted": "6.7 MB",
-      "file_type": "pdf",
-      "rel_path": "2nd semester/Code_1908_Islami_Tahreekat_180_MCQs_With_Correct_Answer.pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=2nd%20semester/Code_1908_Islami_Tahreekat_180_MCQs_With_Correct_Answer.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=2nd%20semester/Code_1908_Islami_Tahreekat_180_MCQs_With_Correct_Answer.pdf&download=1"
-    },
-    {
-      "id": "pp_2_1908_0227",
-      "filename": "Course_Code_1908_25_Aham_Sawalat.pdf",
-      "clean_title": "Course Code 1908 25 Aham Sawalat",
-      "semester_num": "2",
-      "semester_name_ur": "سمسٹر 2 (Semester 2)",
-      "course_code": "1908",
-      "course_title_ur": "مطالعہ کتب فقہ (فقہ اسلامی)",
-      "season_ur": "",
-      "category_key": "past_paper",
-      "category_ur": "سابقہ امتحانی پرچہ",
-      "category_icon": "📄",
-      "size_mb": 7.09,
-      "size_formatted": "7.09 MB",
-      "file_type": "pdf",
-      "rel_path": "2nd semester/Course_Code_1908_25_Aham_Sawalat.pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=2nd%20semester/Course_Code_1908_25_Aham_Sawalat.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=2nd%20semester/Course_Code_1908_25_Aham_Sawalat.pdf&download=1"
-    },
-    {
-      "id": "pp_2_1908_0228",
+      "id": "pp_2_1908_0223",
       "filename": "Hayat  chapter 7 1908 .pdf",
       "clean_title": "Hayat chapter 7 1908",
       "semester_num": "2",
@@ -4769,7 +4639,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/Hayat%20%20chapter%207%201908%20.pdf&download=1"
     },
     {
-      "id": "pp_2_1908_0229",
+      "id": "pp_2_1908_0224",
       "filename": "Hayat chapter 01 1908.pdf",
       "clean_title": "Hayat chapter 01 1908",
       "semester_num": "2",
@@ -4789,7 +4659,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/Hayat%20chapter%2001%201908.pdf&download=1"
     },
     {
-      "id": "pp_2_4931_0230",
+      "id": "pp_2_4931_0225",
       "filename": "Hayat chapter 01 4931.pdf",
       "clean_title": "Hayat chapter 01 4931",
       "semester_num": "2",
@@ -4809,7 +4679,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/Hayat%20chapter%2001%204931.pdf&download=1"
     },
     {
-      "id": "pp_2_4931_0231",
+      "id": "pp_2_4931_0226",
       "filename": "Hayat chapter 02 4931.pdf",
       "clean_title": "Hayat chapter 02 4931",
       "semester_num": "2",
@@ -4829,7 +4699,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/Hayat%20chapter%2002%204931.pdf&download=1"
     },
     {
-      "id": "pp_2_1908_0232",
+      "id": "pp_2_1908_0227",
       "filename": "Hayat chapter 03 1908 .pdf",
       "clean_title": "Hayat chapter 03 1908",
       "semester_num": "2",
@@ -4849,7 +4719,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/Hayat%20chapter%2003%201908%20.pdf&download=1"
     },
     {
-      "id": "pp_2_1908_0233",
+      "id": "pp_2_1908_0228",
       "filename": "Hayat chapter 04 1908 .pdf",
       "clean_title": "Hayat chapter 04 1908",
       "semester_num": "2",
@@ -4869,7 +4739,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/Hayat%20chapter%2004%201908%20.pdf&download=1"
     },
     {
-      "id": "pp_2_4931_0234",
+      "id": "pp_2_4931_0229",
       "filename": "Hayat chapter 04 4931.pdf",
       "clean_title": "Hayat chapter 04 4931",
       "semester_num": "2",
@@ -4889,7 +4759,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/Hayat%20chapter%2004%204931.pdf&download=1"
     },
     {
-      "id": "pp_2_1908_0235",
+      "id": "pp_2_1908_0230",
       "filename": "Hayat chapter 05 1908 .pdf",
       "clean_title": "Hayat chapter 05 1908",
       "semester_num": "2",
@@ -4909,7 +4779,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/Hayat%20chapter%2005%201908%20.pdf&download=1"
     },
     {
-      "id": "pp_2_1908_0236",
+      "id": "pp_2_1908_0231",
       "filename": "Hayat chapter 06 1908.pdf",
       "clean_title": "Hayat chapter 06 1908",
       "semester_num": "2",
@@ -4929,7 +4799,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/Hayat%20chapter%2006%201908.pdf&download=1"
     },
     {
-      "id": "pp_2_1908_0237",
+      "id": "pp_2_1908_0232",
       "filename": "Hayat chapter 08 1908.pdf",
       "clean_title": "Hayat chapter 08 1908",
       "semester_num": "2",
@@ -4949,7 +4819,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/Hayat%20chapter%2008%201908.pdf&download=1"
     },
     {
-      "id": "pp_2_1908_0238",
+      "id": "pp_2_1908_0233",
       "filename": "Hayat chapter 09 1908.pdf",
       "clean_title": "Hayat chapter 09 1908",
       "semester_num": "2",
@@ -4969,7 +4839,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/Hayat%20chapter%2009%201908.pdf&download=1"
     },
     {
-      "id": "pp_2_1908_0239",
+      "id": "pp_2_1908_0234",
       "filename": "Headings...1908-1.pdf",
       "clean_title": "Headings...1908 1",
       "semester_num": "2",
@@ -4989,7 +4859,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/Headings...1908-1.pdf&download=1"
     },
     {
-      "id": "pp_2_1908_0240",
+      "id": "pp_2_1908_0235",
       "filename": "Key book 1908-1.pdf",
       "clean_title": "Key book 1908 1",
       "semester_num": "2",
@@ -5009,7 +4879,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/Key%20book%201908-1.pdf&download=1"
     },
     {
-      "id": "pp_2_1908_0241",
+      "id": "pp_2_1908_0236",
       "filename": "Notes 1908 ka best of luck.pdf",
       "clean_title": "Notes 1908 ka best of luck",
       "semester_num": "2",
@@ -5029,7 +4899,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/Notes%201908%20ka%20best%20of%20luck.pdf&download=1"
     },
     {
-      "id": "pp_2_1908_0242",
+      "id": "pp_2_1908_0237",
       "filename": "Notes 1908.pdf",
       "clean_title": "Notes 1908",
       "semester_num": "2",
@@ -5049,7 +4919,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/Notes%201908.pdf&download=1"
     },
     {
-      "id": "pp_2_1913_0243",
+      "id": "pp_2_1913_0238",
       "filename": "Notes 1913-1.pdf",
       "clean_title": "Notes 1913 1",
       "semester_num": "2",
@@ -5069,7 +4939,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/Notes%201913-1.pdf&download=1"
     },
     {
-      "id": "pp_2_1906_0244",
+      "id": "pp_2_1906_0239",
       "filename": "Notes1906.pdf",
       "clean_title": "Notes1906",
       "semester_num": "2",
@@ -5089,7 +4959,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/Notes1906.pdf&download=1"
     },
     {
-      "id": "pp_2_4931_0245",
+      "id": "pp_2_4931_0240",
       "filename": "Q .1 code 4931.pdf",
       "clean_title": "Q .1 code 4931",
       "semester_num": "2",
@@ -5109,7 +4979,7 @@
       "download_url": "/past_papers/2nd%20semester/Q%20.1%20code%204931.pdf"
     },
     {
-      "id": "pp_2_1913_0246",
+      "id": "pp_2_1913_0241",
       "filename": "Q.11 code 1913 sarfraz Hussain.pdf",
       "clean_title": "Q.11 code 1913 sarfraz Hussain",
       "semester_num": "2",
@@ -5129,7 +4999,7 @@
       "download_url": "/past_papers/2nd%20semester/Q.11%20code%201913%20sarfraz%20Hussain.pdf"
     },
     {
-      "id": "pp_2_4931_0247",
+      "id": "pp_2_4931_0242",
       "filename": "Sham new 4931.1.pdf",
       "clean_title": "Sham new 4931.1",
       "semester_num": "2",
@@ -5149,7 +5019,27 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/Sham%20new%204931.1.pdf&download=1"
     },
     {
-      "id": "pp_2_4931_0248",
+      "id": "pp_2_1906_0243",
+      "filename": "code 1906 All book only 45 Question without ans.pdf",
+      "clean_title": "code 1906 All book only 45 Question without ans",
+      "semester_num": "2",
+      "semester_name_ur": "سمسٹر 2 (Semester 2)",
+      "course_code": "1906",
+      "course_title_ur": "اسلامی معاشیات و فقہ المعاملات",
+      "season_ur": "",
+      "category_key": "solved_paper",
+      "category_ur": "حل شدہ امتحانی پرچہ",
+      "category_icon": "✍️",
+      "size_mb": 2.09,
+      "size_formatted": "2.09 MB",
+      "file_type": "pdf",
+      "rel_path": "2nd semester/code 1906 All book only 45 Question without ans.pdf",
+      "is_static": false,
+      "view_url": "/api/pastpapers/file?path=2nd%20semester/code%201906%20All%20book%20only%2045%20Question%20without%20ans.pdf&download=0",
+      "download_url": "/api/pastpapers/file?path=2nd%20semester/code%201906%20All%20book%20only%2045%20Question%20without%20ans.pdf&download=1"
+    },
+    {
+      "id": "pp_2_4931_0244",
       "filename": "hayat chapter 03 4931.pdf",
       "clean_title": "hayat chapter 03 4931",
       "semester_num": "2",
@@ -5169,7 +5059,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/hayat%20chapter%2003%204931.pdf&download=1"
     },
     {
-      "id": "pp_2_1908_0249",
+      "id": "pp_2_1908_0245",
       "filename": "keybook 1908 ALI AIOU ACADEMY.pdf",
       "clean_title": "keybook 1908 ALI AIOU ACADEMY",
       "semester_num": "2",
@@ -5189,7 +5079,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/keybook%201908%20ALI%20AIOU%20ACADEMY.pdf&download=1"
     },
     {
-      "id": "pp_2_1901_0250",
+      "id": "pp_2_1901_0246",
       "filename": "notes 1901-1.pdf",
       "clean_title": "notes 1901 1",
       "semester_num": "2",
@@ -5209,7 +5099,27 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/notes%201901-1.pdf&download=1"
     },
     {
-      "id": "pp_2_1913_0251",
+      "id": "pp_2_1901_0247",
+      "filename": "past paper 1901 1902 1903 1904 1905 1906 1907 1908 1909 1910 prayerss.pdf",
+      "clean_title": "past paper 1901 1902 1903 1904 1905 1906 1907 1908 1909 1910 prayerss",
+      "semester_num": "2",
+      "semester_name_ur": "سمسٹر 2 (Semester 2)",
+      "course_code": "1901",
+      "course_title_ur": "تاریخ دعوت و عزیمت (1901 / 2630)",
+      "season_ur": "",
+      "category_key": "past_paper",
+      "category_ur": "سابقہ امتحانی پرچہ",
+      "category_icon": "📄",
+      "size_mb": 3.62,
+      "size_formatted": "3.62 MB",
+      "file_type": "pdf",
+      "rel_path": "2nd semester/past paper 1901 1902 1903 1904 1905 1906 1907 1908 1909 1910 prayerss.pdf",
+      "is_static": false,
+      "view_url": "/api/pastpapers/file?path=2nd%20semester/past%20paper%201901%201902%201903%201904%201905%201906%201907%201908%201909%201910%20prayerss.pdf&download=0",
+      "download_url": "/api/pastpapers/file?path=2nd%20semester/past%20paper%201901%201902%201903%201904%201905%201906%201907%201908%201909%201910%20prayerss.pdf&download=1"
+    },
+    {
+      "id": "pp_2_1913_0248",
       "filename": "question 02 1913.pdf",
       "clean_title": "question 02 1913",
       "semester_num": "2",
@@ -5229,7 +5139,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/question%2002%201913.pdf&download=1"
     },
     {
-      "id": "pp_2_1913_0252",
+      "id": "pp_2_1913_0249",
       "filename": "question 05 1913.pdf",
       "clean_title": "question 05 1913",
       "semester_num": "2",
@@ -5249,7 +5159,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/question%2005%201913.pdf&download=1"
     },
     {
-      "id": "pp_2_1913_0253",
+      "id": "pp_2_1913_0250",
       "filename": "question 06 1913.pdf",
       "clean_title": "question 06 1913",
       "semester_num": "2",
@@ -5269,7 +5179,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/question%2006%201913.pdf&download=1"
     },
     {
-      "id": "pp_2_1913_0254",
+      "id": "pp_2_1913_0251",
       "filename": "question 07 1913.pdf",
       "clean_title": "question 07 1913",
       "semester_num": "2",
@@ -5289,7 +5199,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/question%2007%201913.pdf&download=1"
     },
     {
-      "id": "pp_2_1913_0255",
+      "id": "pp_2_1913_0252",
       "filename": "question 15 1913.pdf",
       "clean_title": "question 15 1913",
       "semester_num": "2",
@@ -5309,7 +5219,7 @@
       "download_url": "/api/pastpapers/file?path=2nd%20semester/question%2015%201913.pdf&download=1"
     },
     {
-      "id": "pp_2_1901_0256",
+      "id": "pp_2_1901_0253",
       "filename": "spring 2026 code 1901 (01)-1.docx",
       "clean_title": "spring 2026 code 1901 (01) 1",
       "semester_num": "2",
@@ -5329,7 +5239,7 @@
       "download_url": "/past_papers/2nd%20semester/spring%202026%20code%201901%20%2801%29-1.docx"
     },
     {
-      "id": "pp_2_1913_0257",
+      "id": "pp_2_1913_0254",
       "filename": "اسلامی اقتصادی نظام 1913.pdf",
       "clean_title": "اسلامی اقتصادی نظام 1913",
       "semester_num": "2",
@@ -5349,7 +5259,7 @@
       "download_url": "/past_papers/2nd%20semester/%D8%A7%D8%B3%D9%84%D8%A7%D9%85%DB%8C%20%D8%A7%D9%82%D8%AA%D8%B5%D8%A7%D8%AF%DB%8C%20%D9%86%D8%B8%D8%A7%D9%85%201913.pdf"
     },
     {
-      "id": "pp_3_1912_0258",
+      "id": "pp_3_1912_0255",
       "filename": "( 1912 )Autumn 2025 .pdf",
       "clean_title": "( 1912 )Autumn 2025",
       "semester_num": "3",
@@ -5369,87 +5279,7 @@
       "download_url": "/past_papers/3rd%20semester/%28%201912%20%29Autumn%202025%20.pdf"
     },
     {
-      "id": "pp_3_1904_0259",
-      "filename": "1904 New pettren 30 Solved Question .pdf",
-      "clean_title": "1904 New pettren 30 Solved Question",
-      "semester_num": "3",
-      "semester_name_ur": "سمسٹر 3 (Semester 3)",
-      "course_code": "1904",
-      "course_title_ur": "تصوف اور اخلاق و تربیت",
-      "season_ur": "",
-      "category_key": "solved_paper",
-      "category_ur": "حل شدہ امتحانی پرچہ",
-      "category_icon": "✍️",
-      "size_mb": 10.59,
-      "size_formatted": "10.59 MB",
-      "file_type": "pdf",
-      "rel_path": "3rd semester/1904 New pettren 30 Solved Question .pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=3rd%20semester/1904%20New%20pettren%2030%20Solved%20Question%20.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=3rd%20semester/1904%20New%20pettren%2030%20Solved%20Question%20.pdf&download=1"
-    },
-    {
-      "id": "pp_3_1904_0260",
-      "filename": "1904 New pettren Question All book .pdf",
-      "clean_title": "1904 New pettren Question All book",
-      "semester_num": "3",
-      "semester_name_ur": "سمسٹر 3 (Semester 3)",
-      "course_code": "1904",
-      "course_title_ur": "تصوف اور اخلاق و تربیت",
-      "season_ur": "",
-      "category_key": "past_paper",
-      "category_ur": "سابقہ امتحانی پرچہ",
-      "category_icon": "📄",
-      "size_mb": 3.57,
-      "size_formatted": "3.57 MB",
-      "file_type": "pdf",
-      "rel_path": "3rd semester/1904 New pettren Question All book .pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=3rd%20semester/1904%20New%20pettren%20Question%20All%20book%20.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=3rd%20semester/1904%20New%20pettren%20Question%20All%20book%20.pdf&download=1"
-    },
-    {
-      "id": "pp_3_1904_0261",
-      "filename": "1904 solved guss paper 14 question.pdf",
-      "clean_title": "1904 solved guss paper 14 question",
-      "semester_num": "3",
-      "semester_name_ur": "سمسٹر 3 (Semester 3)",
-      "course_code": "1904",
-      "course_title_ur": "تصوف اور اخلاق و تربیت",
-      "season_ur": "",
-      "category_key": "solved_paper",
-      "category_ur": "حل شدہ امتحانی پرچہ",
-      "category_icon": "✍️",
-      "size_mb": 8.73,
-      "size_formatted": "8.73 MB",
-      "file_type": "pdf",
-      "rel_path": "3rd semester/1904 solved guss paper 14 question.pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=3rd%20semester/1904%20solved%20guss%20paper%2014%20question.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=3rd%20semester/1904%20solved%20guss%20paper%2014%20question.pdf&download=1"
-    },
-    {
-      "id": "pp_3_1904_0262",
-      "filename": "1904کی اہم MCQs.pdf",
-      "clean_title": "1904کی اہم MCQs",
-      "semester_num": "3",
-      "semester_name_ur": "سمسٹر 3 (Semester 3)",
-      "course_code": "1904",
-      "course_title_ur": "تصوف اور اخلاق و تربیت",
-      "season_ur": "",
-      "category_key": "quiz_mcq",
-      "category_ur": "کوئز و معروضی پرچہ",
-      "category_icon": "❓",
-      "size_mb": 7.05,
-      "size_formatted": "7.05 MB",
-      "file_type": "pdf",
-      "rel_path": "3rd semester/1904کی اہم MCQs.pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=3rd%20semester/1904%DA%A9%DB%8C%20%D8%A7%DB%81%D9%85%20MCQs.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=3rd%20semester/1904%DA%A9%DB%8C%20%D8%A7%DB%81%D9%85%20MCQs.pdf&download=1"
-    },
-    {
-      "id": "pp_3_1907_0263",
+      "id": "pp_3_1907_0256",
       "filename": "1907 AUTUMN 2025 SOLVED PAPER (KHAN ACADEMY 03178001246).pdf",
       "clean_title": "1907 AUTUMN 2025 SOLVED PAPER (KHAN ACADEMY )",
       "semester_num": "3",
@@ -5469,7 +5299,7 @@
       "download_url": "/past_papers/3rd%20semester/1907%20AUTUMN%202025%20SOLVED%20PAPER%20%28KHAN%20ACADEMY%2003178001246%29.pdf"
     },
     {
-      "id": "pp_3_1907_0264",
+      "id": "pp_3_1907_0257",
       "filename": "1907 AUTUMN 2025-1.pdf",
       "clean_title": "1907 AUTUMN 2025 1",
       "semester_num": "3",
@@ -5489,7 +5319,7 @@
       "download_url": "/past_papers/3rd%20semester/1907%20AUTUMN%202025-1.pdf"
     },
     {
-      "id": "pp_3_1907_0265",
+      "id": "pp_3_1907_0258",
       "filename": "1907 All Quiz Autumn 2025.pdf",
       "clean_title": "1907 All Quiz Autumn 2025",
       "semester_num": "3",
@@ -5509,7 +5339,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/1907%20All%20Quiz%20Autumn%202025.pdf&download=1"
     },
     {
-      "id": "pp_3_1907_0266",
+      "id": "pp_3_1907_0259",
       "filename": "1907 Guess paper 03087611772 Impact Services Aiou.pdf",
       "clean_title": "1907 Guess paper Impact Services Aiou",
       "semester_num": "3",
@@ -5529,7 +5359,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/1907%20Guess%20paper%2003087611772%20Impact%20Services%20Aiou.pdf&download=1"
     },
     {
-      "id": "pp_3_1907_0267",
+      "id": "pp_3_1907_0260",
       "filename": "1907 SOLVED AUT24.pdf",
       "clean_title": "1907 SOLVED AUT24",
       "semester_num": "3",
@@ -5549,7 +5379,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/1907%20SOLVED%20AUT24.pdf&download=1"
     },
     {
-      "id": "pp_3_1907_0268",
+      "id": "pp_3_1907_0261",
       "filename": "1907 SOLVED AUTUMN 2024.pdf",
       "clean_title": "1907 SOLVED AUTUMN 2024",
       "semester_num": "3",
@@ -5569,7 +5399,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/1907%20SOLVED%20AUTUMN%202024.pdf&download=1"
     },
     {
-      "id": "pp_3_1907_0269",
+      "id": "pp_3_1907_0262",
       "filename": "1907 SOLVED-1.pdf",
       "clean_title": "1907 SOLVED 1",
       "semester_num": "3",
@@ -5589,7 +5419,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/1907%20SOLVED-1.pdf&download=1"
     },
     {
-      "id": "pp_3_1907_0270",
+      "id": "pp_3_1907_0263",
       "filename": "1907 SPRING 2026.pdf",
       "clean_title": "1907 SPRING 2026",
       "semester_num": "3",
@@ -5609,7 +5439,7 @@
       "download_url": "/past_papers/3rd%20semester/1907%20SPRING%202026.pdf"
     },
     {
-      "id": "pp_3_1907_0271",
+      "id": "pp_3_1907_0264",
       "filename": "1907 Solved Guess-1.pdf",
       "clean_title": "1907 Solved Guess 1",
       "semester_num": "3",
@@ -5629,7 +5459,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/1907%20Solved%20Guess-1.pdf&download=1"
     },
     {
-      "id": "pp_3_1907_0272",
+      "id": "pp_3_1907_0265",
       "filename": "1907 Spring 2025 Solved 03087611772.pdf",
       "clean_title": "1907 Spring 2025 Solved",
       "semester_num": "3",
@@ -5649,7 +5479,7 @@
       "download_url": "/past_papers/3rd%20semester/1907%20Spring%202025%20Solved%2003087611772.pdf"
     },
     {
-      "id": "pp_3_1907_0273",
+      "id": "pp_3_1907_0266",
       "filename": "1907 key book 03087611772-1.pdf",
       "clean_title": "1907 key book 1",
       "semester_num": "3",
@@ -5669,7 +5499,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/1907%20key%20book%2003087611772-1.pdf&download=1"
     },
     {
-      "id": "pp_3_1907_0274",
+      "id": "pp_3_1907_0267",
       "filename": "1907 sovle guess paper .H.$.pdf",
       "clean_title": "1907 sovle guess paper .H.$",
       "semester_num": "3",
@@ -5689,7 +5519,7 @@
       "download_url": "/past_papers/3rd%20semester/1907%20sovle%20guess%20paper%20.H.%24.pdf"
     },
     {
-      "id": "pp_3_1907_0275",
+      "id": "pp_3_1907_0268",
       "filename": "1907-1.pdf",
       "clean_title": "1907 1",
       "semester_num": "3",
@@ -5709,7 +5539,7 @@
       "download_url": "/past_papers/3rd%20semester/1907-1.pdf"
     },
     {
-      "id": "pp_3_1907_0276",
+      "id": "pp_3_1907_0269",
       "filename": "1907-2.pdf",
       "clean_title": "1907 2",
       "semester_num": "3",
@@ -5729,7 +5559,7 @@
       "download_url": "/past_papers/3rd%20semester/1907-2.pdf"
     },
     {
-      "id": "pp_3_1907_0277",
+      "id": "pp_3_1907_0270",
       "filename": "1907. Aut25-1.pdf",
       "clean_title": "1907. Aut25 1",
       "semester_num": "3",
@@ -5749,7 +5579,7 @@
       "download_url": "/past_papers/3rd%20semester/1907.%20Aut25-1.pdf"
     },
     {
-      "id": "pp_3_1907_0278",
+      "id": "pp_3_1907_0271",
       "filename": "1907.01-1.pdf",
       "clean_title": "1907.01 1",
       "semester_num": "3",
@@ -5769,107 +5599,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/1907.01-1.pdf&download=1"
     },
     {
-      "id": "pp_3_1908_0279",
-      "filename": "1908  (59 QUIZ).pdf",
-      "clean_title": "1908 (59 QUIZ)",
-      "semester_num": "3",
-      "semester_name_ur": "سمسٹر 3 (Semester 3)",
-      "course_code": "1908",
-      "course_title_ur": "مطالعہ کتب فقہ (فقہ اسلامی)",
-      "season_ur": "",
-      "category_key": "quiz_mcq",
-      "category_ur": "کوئز و معروضی پرچہ",
-      "category_icon": "❓",
-      "size_mb": 4.29,
-      "size_formatted": "4.29 MB",
-      "file_type": "pdf",
-      "rel_path": "3rd semester/1908  (59 QUIZ).pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=3rd%20semester/1908%20%20%2859%20QUIZ%29.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=3rd%20semester/1908%20%20%2859%20QUIZ%29.pdf&download=1"
-    },
-    {
-      "id": "pp_3_1908_0280",
-      "filename": "1908 AUTUMN 2025.pdf",
-      "clean_title": "1908 AUTUMN 2025",
-      "semester_num": "3",
-      "semester_name_ur": "سمسٹر 3 (Semester 3)",
-      "course_code": "1908",
-      "course_title_ur": "مطالعہ کتب فقہ (فقہ اسلامی)",
-      "season_ur": "خزاں 2025",
-      "category_key": "past_paper",
-      "category_ur": "سابقہ امتحانی پرچہ",
-      "category_icon": "📄",
-      "size_mb": 6.71,
-      "size_formatted": "6.71 MB",
-      "file_type": "pdf",
-      "rel_path": "3rd semester/1908 AUTUMN 2025.pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=3rd%20semester/1908%20AUTUMN%202025.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=3rd%20semester/1908%20AUTUMN%202025.pdf&download=1"
-    },
-    {
-      "id": "pp_3_1908_0281",
-      "filename": "1908 QUIZ.pdf",
-      "clean_title": "1908 QUIZ",
-      "semester_num": "3",
-      "semester_name_ur": "سمسٹر 3 (Semester 3)",
-      "course_code": "1908",
-      "course_title_ur": "مطالعہ کتب فقہ (فقہ اسلامی)",
-      "season_ur": "",
-      "category_key": "quiz_mcq",
-      "category_ur": "کوئز و معروضی پرچہ",
-      "category_icon": "❓",
-      "size_mb": 1.86,
-      "size_formatted": "1.86 MB",
-      "file_type": "pdf",
-      "rel_path": "3rd semester/1908 QUIZ.pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=3rd%20semester/1908%20QUIZ.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=3rd%20semester/1908%20QUIZ.pdf&download=1"
-    },
-    {
-      "id": "pp_3_1908_0282",
-      "filename": "1908 SPRING 2025.pdf",
-      "clean_title": "1908 SPRING 2025",
-      "semester_num": "3",
-      "semester_name_ur": "سمسٹر 3 (Semester 3)",
-      "course_code": "1908",
-      "course_title_ur": "مطالعہ کتب فقہ (فقہ اسلامی)",
-      "season_ur": "بہار 2025",
-      "category_key": "past_paper",
-      "category_ur": "سابقہ امتحانی پرچہ",
-      "category_icon": "📄",
-      "size_mb": 5.89,
-      "size_formatted": "5.89 MB",
-      "file_type": "pdf",
-      "rel_path": "3rd semester/1908 SPRING 2025.pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=3rd%20semester/1908%20SPRING%202025.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=3rd%20semester/1908%20SPRING%202025.pdf&download=1"
-    },
-    {
-      "id": "pp_3_1908_0283",
-      "filename": "1908_Exam_Preparation_45_Questions_With_Answer.pdf",
-      "clean_title": "1908 Exam Preparation 45 Questions With Answer",
-      "semester_num": "3",
-      "semester_name_ur": "سمسٹر 3 (Semester 3)",
-      "course_code": "1908",
-      "course_title_ur": "مطالعہ کتب فقہ (فقہ اسلامی)",
-      "season_ur": "",
-      "category_key": "solved_paper",
-      "category_ur": "حل شدہ امتحانی پرچہ",
-      "category_icon": "✍️",
-      "size_mb": 3.83,
-      "size_formatted": "3.83 MB",
-      "file_type": "pdf",
-      "rel_path": "3rd semester/1908_Exam_Preparation_45_Questions_With_Answer.pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=3rd%20semester/1908_Exam_Preparation_45_Questions_With_Answer.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=3rd%20semester/1908_Exam_Preparation_45_Questions_With_Answer.pdf&download=1"
-    },
-    {
-      "id": "pp_3_1912_0284",
+      "id": "pp_3_1912_0272",
       "filename": "1912 (1).pdf",
       "clean_title": "1912 (1)",
       "semester_num": "3",
@@ -5889,7 +5619,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/1912%20%281%29.pdf&download=1"
     },
     {
-      "id": "pp_3_1912_0285",
+      "id": "pp_3_1912_0273",
       "filename": "1912 Aut25.pdf",
       "clean_title": "1912 Aut25",
       "semester_num": "3",
@@ -5909,7 +5639,7 @@
       "download_url": "/past_papers/3rd%20semester/1912%20Aut25.pdf"
     },
     {
-      "id": "pp_3_1912_0286",
+      "id": "pp_3_1912_0274",
       "filename": "1912 Autumn 2025 Assignment Question.pdf",
       "clean_title": "1912 Autumn 2025 Assignment Question",
       "semester_num": "3",
@@ -5929,7 +5659,7 @@
       "download_url": "/past_papers/3rd%20semester/1912%20Autumn%202025%20Assignment%20Question.pdf"
     },
     {
-      "id": "pp_3_1912_0287",
+      "id": "pp_3_1912_0275",
       "filename": "1912 Best Key Book-1.pdf",
       "clean_title": "1912 Best Key Book 1",
       "semester_num": "3",
@@ -5949,7 +5679,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/1912%20Best%20Key%20Book-1.pdf&download=1"
     },
     {
-      "id": "pp_3_1912_0288",
+      "id": "pp_3_1912_0276",
       "filename": "1912 Guess Paper 03087611772 Impact servics Aiou .pdf",
       "clean_title": "1912 Guess Paper Impact servics Aiou",
       "semester_num": "3",
@@ -5969,7 +5699,7 @@
       "download_url": "/past_papers/3rd%20semester/1912%20Guess%20Paper%2003087611772%20Impact%20servics%20Aiou%20.pdf"
     },
     {
-      "id": "pp_3_1912_0289",
+      "id": "pp_3_1912_0277",
       "filename": "1912 Important  Questions.pdf",
       "clean_title": "1912 Important Questions",
       "semester_num": "3",
@@ -5989,7 +5719,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/1912%20Important%20%20Questions.pdf&download=1"
     },
     {
-      "id": "pp_3_1912_0290",
+      "id": "pp_3_1912_0278",
       "filename": "1912 Notes.pdf",
       "clean_title": "1912 Notes",
       "semester_num": "3",
@@ -6009,7 +5739,7 @@
       "download_url": "/past_papers/3rd%20semester/1912%20Notes.pdf"
     },
     {
-      "id": "pp_3_1912_0291",
+      "id": "pp_3_1912_0279",
       "filename": "1912 Quiz 2.pdf",
       "clean_title": "1912 Quiz 2",
       "semester_num": "3",
@@ -6029,7 +5759,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/1912%20Quiz%202.pdf&download=1"
     },
     {
-      "id": "pp_3_1912_0292",
+      "id": "pp_3_1912_0280",
       "filename": "1912 Quiz 8.pdf",
       "clean_title": "1912 Quiz 8",
       "semester_num": "3",
@@ -6049,7 +5779,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/1912%20Quiz%208.pdf&download=1"
     },
     {
-      "id": "pp_3_1912_0293",
+      "id": "pp_3_1912_0281",
       "filename": "1912 Quiz Spring 2026.pdf",
       "clean_title": "1912 Quiz Spring 2026",
       "semester_num": "3",
@@ -6069,7 +5799,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/1912%20Quiz%20Spring%202026.pdf&download=1"
     },
     {
-      "id": "pp_3_1912_0294",
+      "id": "pp_3_1912_0282",
       "filename": "1912 Quiz.pdf",
       "clean_title": "1912 Quiz",
       "semester_num": "3",
@@ -6089,7 +5819,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/1912%20Quiz.pdf&download=1"
     },
     {
-      "id": "pp_3_1912_0295",
+      "id": "pp_3_1912_0283",
       "filename": "1912 SOLVED GUESS PAPER 12 QUESTION.pdf",
       "clean_title": "1912 SOLVED GUESS PAPER 12 QUESTION",
       "semester_num": "3",
@@ -6109,7 +5839,7 @@
       "download_url": "/past_papers/3rd%20semester/1912%20SOLVED%20GUESS%20PAPER%2012%20QUESTION.pdf"
     },
     {
-      "id": "pp_3_1912_0296",
+      "id": "pp_3_1912_0284",
       "filename": "1912 Solve  Guess Paper.pdf",
       "clean_title": "1912 Solve Guess Paper",
       "semester_num": "3",
@@ -6129,7 +5859,7 @@
       "download_url": "/past_papers/3rd%20semester/1912%20Solve%20%20Guess%20Paper.pdf"
     },
     {
-      "id": "pp_3_1912_0297",
+      "id": "pp_3_1912_0285",
       "filename": "1912 TODAY PAPER SOLVED.pdf",
       "clean_title": "1912 TODAY PAPER SOLVED",
       "semester_num": "3",
@@ -6149,7 +5879,7 @@
       "download_url": "/past_papers/3rd%20semester/1912%20TODAY%20PAPER%20SOLVED.pdf"
     },
     {
-      "id": "pp_3_1912_0298",
+      "id": "pp_3_1912_0286",
       "filename": "1912 حل شدہ سوالات۔-1.pdf",
       "clean_title": "1912 حل شدہ سوالات۔ 1",
       "semester_num": "3",
@@ -6169,7 +5899,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/1912%20%D8%AD%D9%84%20%D8%B4%D8%AF%DB%81%20%D8%B3%D9%88%D8%A7%D9%84%D8%A7%D8%AA%DB%94-1.pdf&download=1"
     },
     {
-      "id": "pp_3_1912_0299",
+      "id": "pp_3_1912_0287",
       "filename": "1912- SOLVED QUESTIONS-1.pdf",
       "clean_title": "1912 SOLVED QUESTIONS 1",
       "semester_num": "3",
@@ -6189,7 +5919,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/1912-%20SOLVED%20QUESTIONS-1.pdf&download=1"
     },
     {
-      "id": "pp_3_1912_0300",
+      "id": "pp_3_1912_0288",
       "filename": "1912...ASSIGNMENT NO 02 SPRING 2026.pdf",
       "clean_title": "1912...ASSIGNMENT NO 02 SPRING 2026",
       "semester_num": "3",
@@ -6209,7 +5939,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/1912...ASSIGNMENT%20NO%2002%20SPRING%202026.pdf&download=1"
     },
     {
-      "id": "pp_3_1912_0301",
+      "id": "pp_3_1912_0289",
       "filename": "1912..30مارکس بہار 2026.pdf",
       "clean_title": "1912..30مارکس بہار 2026",
       "semester_num": "3",
@@ -6229,7 +5959,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/1912..30%D9%85%D8%A7%D8%B1%DA%A9%D8%B3%20%D8%A8%DB%81%D8%A7%D8%B1%202026.pdf&download=1"
     },
     {
-      "id": "pp_3_1912_0302",
+      "id": "pp_3_1912_0290",
       "filename": "1912.pdf",
       "clean_title": "1912",
       "semester_num": "3",
@@ -6249,7 +5979,7 @@
       "download_url": "/past_papers/3rd%20semester/1912.pdf"
     },
     {
-      "id": "pp_3_1912_0303",
+      "id": "pp_3_1912_0291",
       "filename": "1912_Keybook_.pdf",
       "clean_title": "1912 Keybook",
       "semester_num": "3",
@@ -6269,7 +5999,7 @@
       "download_url": "/past_papers/3rd%20semester/1912_Keybook_.pdf"
     },
     {
-      "id": "pp_3_1981_0304",
+      "id": "pp_3_1981_0292",
       "filename": "1981 AUTUMN 2025 SOLVED PAPER (KHAN ACADEMY).pdf",
       "clean_title": "1981 AUTUMN 2025 SOLVED PAPER (KHAN ACADEMY)",
       "semester_num": "3",
@@ -6289,7 +6019,7 @@
       "download_url": "/past_papers/3rd%20semester/1981%20AUTUMN%202025%20SOLVED%20PAPER%20%28KHAN%20ACADEMY%29.pdf"
     },
     {
-      "id": "pp_3_1981_0305",
+      "id": "pp_3_1981_0293",
       "filename": "1981 Guess Paper Autumn 2025.pdf",
       "clean_title": "1981 Guess Paper Autumn 2025",
       "semester_num": "3",
@@ -6309,7 +6039,7 @@
       "download_url": "/past_papers/3rd%20semester/1981%20Guess%20Paper%20Autumn%202025.pdf"
     },
     {
-      "id": "pp_3_1981_0306",
+      "id": "pp_3_1981_0294",
       "filename": "1981 Quiz .pdf",
       "clean_title": "1981 Quiz",
       "semester_num": "3",
@@ -6329,7 +6059,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/1981%20Quiz%20.pdf&download=1"
     },
     {
-      "id": "pp_3_1981_0307",
+      "id": "pp_3_1981_0295",
       "filename": "1981 SPR 2026.pdf",
       "clean_title": "1981 SPR 2026",
       "semester_num": "3",
@@ -6349,7 +6079,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/1981%20SPR%202026.pdf&download=1"
     },
     {
-      "id": "pp_3_1981_0308",
+      "id": "pp_3_1981_0296",
       "filename": "1981 SPRING 2026.pdf",
       "clean_title": "1981 SPRING 2026",
       "semester_num": "3",
@@ -6369,7 +6099,7 @@
       "download_url": "/past_papers/3rd%20semester/1981%20SPRING%202026.pdf"
     },
     {
-      "id": "pp_3_1981_0309",
+      "id": "pp_3_1981_0297",
       "filename": "1981 SPRINg 2025.pdf",
       "clean_title": "1981 SPRINg 2025",
       "semester_num": "3",
@@ -6389,7 +6119,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/1981%20SPRINg%202025.pdf&download=1"
     },
     {
-      "id": "pp_3_1981_0310",
+      "id": "pp_3_1981_0298",
       "filename": "1981 Solved aut25.pdf",
       "clean_title": "1981 Solved aut25",
       "semester_num": "3",
@@ -6409,7 +6139,7 @@
       "download_url": "/past_papers/3rd%20semester/1981%20Solved%20aut25.pdf"
     },
     {
-      "id": "pp_3_1981_0311",
+      "id": "pp_3_1981_0299",
       "filename": "1981 Solved spr26.pdf",
       "clean_title": "1981 Solved spr26",
       "semester_num": "3",
@@ -6429,7 +6159,7 @@
       "download_url": "/past_papers/3rd%20semester/1981%20Solved%20spr26.pdf"
     },
     {
-      "id": "pp_3_2953_0312",
+      "id": "pp_3_2953_0300",
       "filename": "2953  Confirm Quiz .pdf",
       "clean_title": "2953 Confirm Quiz",
       "semester_num": "3",
@@ -6449,7 +6179,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/2953%20%20Confirm%20Quiz%20.pdf&download=1"
     },
     {
-      "id": "pp_3_2953_0313",
+      "id": "pp_3_2953_0301",
       "filename": "2953 AUTUMN 2025.pdf",
       "clean_title": "2953 AUTUMN 2025",
       "semester_num": "3",
@@ -6469,7 +6199,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/2953%20AUTUMN%202025.pdf&download=1"
     },
     {
-      "id": "pp_3_2953_0314",
+      "id": "pp_3_2953_0302",
       "filename": "2953 Autunm 2023 solved 03087611772.pdf",
       "clean_title": "2953 Autunm 2023 solved",
       "semester_num": "3",
@@ -6489,7 +6219,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/2953%20Autunm%202023%20solved%2003087611772.pdf&download=1"
     },
     {
-      "id": "pp_3_2953_0315",
+      "id": "pp_3_2953_0303",
       "filename": "2953 FINAL GUESS PAPER SOLVED AU 2025.pdf",
       "clean_title": "2953 FINAL GUESS PAPER SOLVED AU 2025",
       "semester_num": "3",
@@ -6509,7 +6239,7 @@
       "download_url": "/past_papers/3rd%20semester/2953%20FINAL%20GUESS%20PAPER%20SOLVED%20AU%202025.pdf"
     },
     {
-      "id": "pp_3_2953_0316",
+      "id": "pp_3_2953_0304",
       "filename": "2953 Guess paper (03087611772) Impact Services Aiou.pdf",
       "clean_title": "2953 Guess paper () Impact Services Aiou",
       "semester_num": "3",
@@ -6529,7 +6259,7 @@
       "download_url": "/past_papers/3rd%20semester/2953%20Guess%20paper%20%2803087611772%29%20Impact%20Services%20Aiou.pdf"
     },
     {
-      "id": "pp_3_2953_0317",
+      "id": "pp_3_2953_0305",
       "filename": "2953 Guess paper 03087611772.pdf",
       "clean_title": "2953 Guess paper",
       "semester_num": "3",
@@ -6549,7 +6279,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/2953%20Guess%20paper%2003087611772.pdf&download=1"
     },
     {
-      "id": "pp_3_2953_0318",
+      "id": "pp_3_2953_0306",
       "filename": "2953 Key Book Zeeshan AIOU Help 03040571214 (3).pdf",
       "clean_title": "2953 Key Book Zeeshan AIOU Help (3)",
       "semester_num": "3",
@@ -6569,7 +6299,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/2953%20Key%20Book%20Zeeshan%20AIOU%20Help%2003040571214%20%283%29.pdf&download=1"
     },
     {
-      "id": "pp_3_2953_0319",
+      "id": "pp_3_2953_0307",
       "filename": "2953 Key Book.pdf",
       "clean_title": "2953 Key Book",
       "semester_num": "3",
@@ -6589,7 +6319,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/2953%20Key%20Book.pdf&download=1"
     },
     {
-      "id": "pp_3_2953_0320",
+      "id": "pp_3_2953_0308",
       "filename": "2953 Quiz Solved-1.pdf",
       "clean_title": "2953 Quiz Solved 1",
       "semester_num": "3",
@@ -6609,7 +6339,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/2953%20Quiz%20Solved-1.pdf&download=1"
     },
     {
-      "id": "pp_3_2953_0321",
+      "id": "pp_3_2953_0309",
       "filename": "2953 Quiz Solved-2.pdf",
       "clean_title": "2953 Quiz Solved 2",
       "semester_num": "3",
@@ -6629,7 +6359,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/2953%20Quiz%20Solved-2.pdf&download=1"
     },
     {
-      "id": "pp_3_2953_0322",
+      "id": "pp_3_2953_0310",
       "filename": "2953 SPRING 2026.pdf",
       "clean_title": "2953 SPRING 2026",
       "semester_num": "3",
@@ -6649,7 +6379,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/2953%20SPRING%202026.pdf&download=1"
     },
     {
-      "id": "pp_3_2953_0323",
+      "id": "pp_3_2953_0311",
       "filename": "2953 Solved Assignment.pdf",
       "clean_title": "2953 Solved Assignment",
       "semester_num": "3",
@@ -6669,7 +6399,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/2953%20Solved%20Assignment.pdf&download=1"
     },
     {
-      "id": "pp_3_2953_0324",
+      "id": "pp_3_2953_0312",
       "filename": "2953 Solved Notes 03087611772.pdf",
       "clean_title": "2953 Solved Notes",
       "semester_num": "3",
@@ -6689,7 +6419,7 @@
       "download_url": "/past_papers/3rd%20semester/2953%20Solved%20Notes%2003087611772.pdf"
     },
     {
-      "id": "pp_3_2953_0325",
+      "id": "pp_3_2953_0313",
       "filename": "2953 Solved Notes.pdf",
       "clean_title": "2953 Solved Notes",
       "semester_num": "3",
@@ -6709,7 +6439,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/2953%20Solved%20Notes.pdf&download=1"
     },
     {
-      "id": "pp_3_2953_0326",
+      "id": "pp_3_2953_0314",
       "filename": "2953 Spring 2024.pdf",
       "clean_title": "2953 Spring 2024",
       "semester_num": "3",
@@ -6729,7 +6459,7 @@
       "download_url": "/past_papers/3rd%20semester/2953%20Spring%202024.pdf"
     },
     {
-      "id": "pp_3_2953_0327",
+      "id": "pp_3_2953_0315",
       "filename": "2953 soloved spring 2025.pdf",
       "clean_title": "2953 soloved spring 2025",
       "semester_num": "3",
@@ -6749,7 +6479,7 @@
       "download_url": "/past_papers/3rd%20semester/2953%20soloved%20spring%202025.pdf"
     },
     {
-      "id": "pp_3_2953_0328",
+      "id": "pp_3_2953_0316",
       "filename": "2953- SPRING 2025.pdf",
       "clean_title": "2953 SPRING 2025",
       "semester_num": "3",
@@ -6769,7 +6499,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/2953-%20SPRING%202025.pdf&download=1"
     },
     {
-      "id": "pp_3_2953_0329",
+      "id": "pp_3_2953_0317",
       "filename": "2953-1-1.pdf",
       "clean_title": "2953 1 1",
       "semester_num": "3",
@@ -6789,7 +6519,7 @@
       "download_url": "/past_papers/3rd%20semester/2953-1-1.pdf"
     },
     {
-      "id": "pp_3_2953_0330",
+      "id": "pp_3_2953_0318",
       "filename": "2953..Headings...1 to 3 chapters.pdf",
       "clean_title": "2953..Headings...1 to 3 chapters",
       "semester_num": "3",
@@ -6809,7 +6539,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/2953..Headings...1%20to%203%20chapters.pdf&download=1"
     },
     {
-      "id": "pp_3_2953_0331",
+      "id": "pp_3_2953_0319",
       "filename": "2953.pdf",
       "clean_title": "2953",
       "semester_num": "3",
@@ -6829,7 +6559,7 @@
       "download_url": "/past_papers/3rd%20semester/2953.pdf"
     },
     {
-      "id": "pp_3_2953_0332",
+      "id": "pp_3_2953_0320",
       "filename": "2953TODAY PAPER AUT 2025.pdf",
       "clean_title": "2953TODAY PAPER AUT 2025",
       "semester_num": "3",
@@ -6849,47 +6579,7 @@
       "download_url": "/past_papers/3rd%20semester/2953TODAY%20PAPER%20AUT%202025.pdf"
     },
     {
-      "id": "pp_3_4931_0333",
-      "filename": "4931_All_Book_45_Important_Questions With ans.pdf",
-      "clean_title": "4931 All Book 45 Important Questions With ans",
-      "semester_num": "3",
-      "semester_name_ur": "سمسٹر 3 (Semester 3)",
-      "course_code": "4931",
-      "course_title_ur": "تاریخ اسلام",
-      "season_ur": "",
-      "category_key": "solved_paper",
-      "category_ur": "حل شدہ امتحانی پرچہ",
-      "category_icon": "✍️",
-      "size_mb": 13.22,
-      "size_formatted": "13.22 MB",
-      "file_type": "pdf",
-      "rel_path": "3rd semester/4931_All_Book_45_Important_Questions With ans.pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=3rd%20semester/4931_All_Book_45_Important_Questions%20With%20ans.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=3rd%20semester/4931_All_Book_45_Important_Questions%20With%20ans.pdf&download=1"
-    },
-    {
-      "id": "pp_3_4931_0334",
-      "filename": "4931_All_Book_45_Important_Questions.pdf",
-      "clean_title": "4931 All Book 45 Important Questions",
-      "semester_num": "3",
-      "semester_name_ur": "سمسٹر 3 (Semester 3)",
-      "course_code": "4931",
-      "course_title_ur": "تاریخ اسلام",
-      "season_ur": "",
-      "category_key": "past_paper",
-      "category_ur": "سابقہ امتحانی پرچہ",
-      "category_icon": "📄",
-      "size_mb": 3.57,
-      "size_formatted": "3.57 MB",
-      "file_type": "pdf",
-      "rel_path": "3rd semester/4931_All_Book_45_Important_Questions.pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=3rd%20semester/4931_All_Book_45_Important_Questions.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=3rd%20semester/4931_All_Book_45_Important_Questions.pdf&download=1"
-    },
-    {
-      "id": "pp_3_1912_0335",
+      "id": "pp_3_1912_0321",
       "filename": "AIOU-1912-S40-V1-1912.pdf",
       "clean_title": "AIOU 1912 S40 V1 1912",
       "semester_num": "3",
@@ -6909,7 +6599,7 @@
       "download_url": "/past_papers/3rd%20semester/AIOU-1912-S40-V1-1912.pdf"
     },
     {
-      "id": "pp_3_1912_0336",
+      "id": "pp_3_1912_0322",
       "filename": "AIOU_1912_Practice_Paper.pdf",
       "clean_title": "AIOU 1912 Practice Paper",
       "semester_num": "3",
@@ -6929,7 +6619,7 @@
       "download_url": "/past_papers/3rd%20semester/AIOU_1912_Practice_Paper.pdf"
     },
     {
-      "id": "pp_3_1912_0337",
+      "id": "pp_3_1912_0323",
       "filename": "AIOU_1912_Solved_Paper.pdf",
       "clean_title": "AIOU 1912 Solved Paper",
       "semester_num": "3",
@@ -6949,7 +6639,7 @@
       "download_url": "/past_papers/3rd%20semester/AIOU_1912_Solved_Paper.pdf"
     },
     {
-      "id": "pp_3_1912_0338",
+      "id": "pp_3_1912_0324",
       "filename": "AIOU_1912_Urdu_Right_Side_Final.pdf",
       "clean_title": "AIOU 1912 Urdu Right Side Final",
       "semester_num": "3",
@@ -6969,7 +6659,7 @@
       "download_url": "/past_papers/3rd%20semester/AIOU_1912_Urdu_Right_Side_Final.pdf"
     },
     {
-      "id": "pp_3_1907_0339",
+      "id": "pp_3_1907_0325",
       "filename": "AIOU_Code_1907_40_MCQs.pdf",
       "clean_title": "AIOU Code 1907 40 MCQs",
       "semester_num": "3",
@@ -6989,7 +6679,7 @@
       "download_url": "/past_papers/3rd%20semester/AIOU_Code_1907_40_MCQs.pdf"
     },
     {
-      "id": "pp_3_1907_0340",
+      "id": "pp_3_1907_0326",
       "filename": "Assignment # 02...1907.pdf",
       "clean_title": "Assignment # 02...1907",
       "semester_num": "3",
@@ -7009,27 +6699,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/Assignment%20%23%2002...1907.pdf&download=1"
     },
     {
-      "id": "pp_3_1901_0341",
-      "filename": "Code 1901 Maqasid e Shariah - Total 180 MCQs.pdf",
-      "clean_title": "Code 1901 Maqasid e Shariah Total 180 MCQs",
-      "semester_num": "3",
-      "semester_name_ur": "سمسٹر 3 (Semester 3)",
-      "course_code": "1901",
-      "course_title_ur": "تاریخ دعوت و عزیمت (1901 / 2630)",
-      "season_ur": "",
-      "category_key": "quiz_mcq",
-      "category_ur": "کوئز و معروضی پرچہ",
-      "category_icon": "❓",
-      "size_mb": 9.82,
-      "size_formatted": "9.82 MB",
-      "file_type": "pdf",
-      "rel_path": "3rd semester/Code 1901 Maqasid e Shariah - Total 180 MCQs.pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=3rd%20semester/Code%201901%20Maqasid%20e%20Shariah%20-%20Total%20180%20MCQs.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=3rd%20semester/Code%201901%20Maqasid%20e%20Shariah%20-%20Total%20180%20MCQs.pdf&download=1"
-    },
-    {
-      "id": "pp_3_1907_0342",
+      "id": "pp_3_1907_0327",
       "filename": "Code 1907 Spring 2024 past paper Solved -1.pdf",
       "clean_title": "Code 1907 Spring 2024 past paper Solved 1",
       "semester_num": "3",
@@ -7049,7 +6719,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/Code%201907%20Spring%202024%20past%20paper%20Solved%20-1.pdf&download=1"
     },
     {
-      "id": "pp_3_1912_0343",
+      "id": "pp_3_1912_0328",
       "filename": "Code 1912 Assignment questions Autumn 2025.pdf",
       "clean_title": "Code 1912 Assignment questions Autumn 2025",
       "semester_num": "3",
@@ -7069,107 +6739,7 @@
       "download_url": "/past_papers/3rd%20semester/Code%201912%20Assignment%20questions%20Autumn%202025.pdf"
     },
     {
-      "id": "pp_3_1913_0344",
-      "filename": "Code 1913 27 Important Exam Questions With Answers.pdf",
-      "clean_title": "Code 1913 27 Important Exam Questions With Answers",
-      "semester_num": "3",
-      "semester_name_ur": "سمسٹر 3 (Semester 3)",
-      "course_code": "1913",
-      "course_title_ur": "اسلام کا اقتصادی نظام",
-      "season_ur": "",
-      "category_key": "solved_paper",
-      "category_ur": "حل شدہ امتحانی پرچہ",
-      "category_icon": "✍️",
-      "size_mb": 7.15,
-      "size_formatted": "7.15 MB",
-      "file_type": "pdf",
-      "rel_path": "3rd semester/Code 1913 27 Important Exam Questions With Answers.pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=3rd%20semester/Code%201913%2027%20Important%20Exam%20Questions%20With%20Answers.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=3rd%20semester/Code%201913%2027%20Important%20Exam%20Questions%20With%20Answers.pdf&download=1"
-    },
-    {
-      "id": "pp_3_1913_0345",
-      "filename": "Code 1913 27 Important Exam Questions Without Answers.pdf",
-      "clean_title": "Code 1913 27 Important Exam Questions Without Answers",
-      "semester_num": "3",
-      "semester_name_ur": "سمسٹر 3 (Semester 3)",
-      "course_code": "1913",
-      "course_title_ur": "اسلام کا اقتصادی نظام",
-      "season_ur": "",
-      "category_key": "solved_paper",
-      "category_ur": "حل شدہ امتحانی پرچہ",
-      "category_icon": "✍️",
-      "size_mb": 2.47,
-      "size_formatted": "2.47 MB",
-      "file_type": "pdf",
-      "rel_path": "3rd semester/Code 1913 27 Important Exam Questions Without Answers.pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=3rd%20semester/Code%201913%2027%20Important%20Exam%20Questions%20Without%20Answers.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=3rd%20semester/Code%201913%2027%20Important%20Exam%20Questions%20Without%20Answers.pdf&download=1"
-    },
-    {
-      "id": "pp_3_1908_0346",
-      "filename": "Code_1908_Islami_Tahreekat_180_MCQs_With_Correct_Answer.pdf",
-      "clean_title": "Code 1908 Islami Tahreekat 180 MCQs With Correct Answer",
-      "semester_num": "3",
-      "semester_name_ur": "سمسٹر 3 (Semester 3)",
-      "course_code": "1908",
-      "course_title_ur": "مطالعہ کتب فقہ (فقہ اسلامی)",
-      "season_ur": "",
-      "category_key": "solved_paper",
-      "category_ur": "حل شدہ امتحانی پرچہ",
-      "category_icon": "✍️",
-      "size_mb": 6.7,
-      "size_formatted": "6.7 MB",
-      "file_type": "pdf",
-      "rel_path": "3rd semester/Code_1908_Islami_Tahreekat_180_MCQs_With_Correct_Answer.pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=3rd%20semester/Code_1908_Islami_Tahreekat_180_MCQs_With_Correct_Answer.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=3rd%20semester/Code_1908_Islami_Tahreekat_180_MCQs_With_Correct_Answer.pdf&download=1"
-    },
-    {
-      "id": "pp_3_1913_0347",
-      "filename": "Code_1913_Full_Book_180_MCQs.pdf",
-      "clean_title": "Code 1913 Full Book 180 MCQs",
-      "semester_num": "3",
-      "semester_name_ur": "سمسٹر 3 (Semester 3)",
-      "course_code": "1913",
-      "course_title_ur": "اسلام کا اقتصادی نظام",
-      "season_ur": "",
-      "category_key": "quiz_mcq",
-      "category_ur": "کوئز و معروضی پرچہ",
-      "category_icon": "❓",
-      "size_mb": 10.72,
-      "size_formatted": "10.72 MB",
-      "file_type": "pdf",
-      "rel_path": "3rd semester/Code_1913_Full_Book_180_MCQs.pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=3rd%20semester/Code_1913_Full_Book_180_MCQs.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=3rd%20semester/Code_1913_Full_Book_180_MCQs.pdf&download=1"
-    },
-    {
-      "id": "pp_3_1908_0348",
-      "filename": "Course_Code_1908_25_Aham_Sawalat.pdf",
-      "clean_title": "Course Code 1908 25 Aham Sawalat",
-      "semester_num": "3",
-      "semester_name_ur": "سمسٹر 3 (Semester 3)",
-      "course_code": "1908",
-      "course_title_ur": "مطالعہ کتب فقہ (فقہ اسلامی)",
-      "season_ur": "",
-      "category_key": "past_paper",
-      "category_ur": "سابقہ امتحانی پرچہ",
-      "category_icon": "📄",
-      "size_mb": 7.09,
-      "size_formatted": "7.09 MB",
-      "file_type": "pdf",
-      "rel_path": "3rd semester/Course_Code_1908_25_Aham_Sawalat.pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=3rd%20semester/Course_Code_1908_25_Aham_Sawalat.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=3rd%20semester/Course_Code_1908_25_Aham_Sawalat.pdf&download=1"
-    },
-    {
-      "id": "pp_3_1907_0349",
+      "id": "pp_3_1907_0329",
       "filename": "Hayat notes 1907 chapter 02.pdf",
       "clean_title": "Hayat notes 1907 chapter 02",
       "semester_num": "3",
@@ -7189,7 +6759,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/Hayat%20notes%201907%20chapter%2002.pdf&download=1"
     },
     {
-      "id": "pp_3_1912_0350",
+      "id": "pp_3_1912_0330",
       "filename": "Hayat notes 1912 chapter 1.pdf",
       "clean_title": "Hayat notes 1912 chapter 1",
       "semester_num": "3",
@@ -7209,7 +6779,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/Hayat%20notes%201912%20chapter%201.pdf&download=1"
     },
     {
-      "id": "pp_3_1912_0351",
+      "id": "pp_3_1912_0331",
       "filename": "Hayat notes 1912 chapter 2.pdf",
       "clean_title": "Hayat notes 1912 chapter 2",
       "semester_num": "3",
@@ -7229,7 +6799,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/Hayat%20notes%201912%20chapter%202.pdf&download=1"
     },
     {
-      "id": "pp_3_1912_0352",
+      "id": "pp_3_1912_0332",
       "filename": "Hayat notes 1912 chapter 6.pdf",
       "clean_title": "Hayat notes 1912 chapter 6",
       "semester_num": "3",
@@ -7249,7 +6819,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/Hayat%20notes%201912%20chapter%206.pdf&download=1"
     },
     {
-      "id": "pp_3_1981_0353",
+      "id": "pp_3_1981_0333",
       "filename": "Hayat notes 1981 chapter 4.pdf",
       "clean_title": "Hayat notes 1981 chapter 4",
       "semester_num": "3",
@@ -7269,7 +6839,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/Hayat%20notes%201981%20chapter%204.pdf&download=1"
     },
     {
-      "id": "pp_3_2953_0354",
+      "id": "pp_3_2953_0334",
       "filename": "Hayat notes 2953 chapter 01.pdf",
       "clean_title": "Hayat notes 2953 chapter 01",
       "semester_num": "3",
@@ -7289,7 +6859,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/Hayat%20notes%202953%20chapter%2001.pdf&download=1"
     },
     {
-      "id": "pp_3_2953_0355",
+      "id": "pp_3_2953_0335",
       "filename": "Hayat notes 2953 chapter 02.pdf",
       "clean_title": "Hayat notes 2953 chapter 02",
       "semester_num": "3",
@@ -7309,7 +6879,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/Hayat%20notes%202953%20chapter%2002.pdf&download=1"
     },
     {
-      "id": "pp_3_2953_0356",
+      "id": "pp_3_2953_0336",
       "filename": "Hayat notes 2953 chapter 03.pdf",
       "clean_title": "Hayat notes 2953 chapter 03",
       "semester_num": "3",
@@ -7329,7 +6899,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/Hayat%20notes%202953%20chapter%2003.pdf&download=1"
     },
     {
-      "id": "pp_3_2953_0357",
+      "id": "pp_3_2953_0337",
       "filename": "Hayat notes 2953 chapter 04.pdf",
       "clean_title": "Hayat notes 2953 chapter 04",
       "semester_num": "3",
@@ -7349,7 +6919,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/Hayat%20notes%202953%20chapter%2004.pdf&download=1"
     },
     {
-      "id": "pp_3_2953_0358",
+      "id": "pp_3_2953_0338",
       "filename": "Hayat notes 2953 chapter 05.pdf",
       "clean_title": "Hayat notes 2953 chapter 05",
       "semester_num": "3",
@@ -7369,7 +6939,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/Hayat%20notes%202953%20chapter%2005.pdf&download=1"
     },
     {
-      "id": "pp_3_2953_0359",
+      "id": "pp_3_2953_0339",
       "filename": "Hayat notes 2953 chapter 06.pdf",
       "clean_title": "Hayat notes 2953 chapter 06",
       "semester_num": "3",
@@ -7389,7 +6959,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/Hayat%20notes%202953%20chapter%2006.pdf&download=1"
     },
     {
-      "id": "pp_3_2953_0360",
+      "id": "pp_3_2953_0340",
       "filename": "Hayat notes 2953 chapter 07.pdf",
       "clean_title": "Hayat notes 2953 chapter 07",
       "semester_num": "3",
@@ -7409,7 +6979,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/Hayat%20notes%202953%20chapter%2007.pdf&download=1"
     },
     {
-      "id": "pp_3_1912_0361",
+      "id": "pp_3_1912_0341",
       "filename": "Headings 1912..chapter 1&2.pdf",
       "clean_title": "Headings 1912..chapter 1&2",
       "semester_num": "3",
@@ -7429,7 +6999,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/Headings%201912..chapter%201%262.pdf&download=1"
     },
     {
-      "id": "pp_3_1912_0362",
+      "id": "pp_3_1912_0342",
       "filename": "Headings..1912..1 to 4 Chapters.pdf",
       "clean_title": "Headings..1912..1 to 4 Chapters",
       "semester_num": "3",
@@ -7449,7 +7019,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/Headings..1912..1%20to%204%20Chapters.pdf&download=1"
     },
     {
-      "id": "pp_3_1912_0363",
+      "id": "pp_3_1912_0343",
       "filename": "Important Notes _1912.pdf",
       "clean_title": "Important Notes 1912",
       "semester_num": "3",
@@ -7469,7 +7039,7 @@
       "download_url": "/past_papers/3rd%20semester/Important%20Notes%20_1912.pdf"
     },
     {
-      "id": "pp_3_1981_0364",
+      "id": "pp_3_1981_0344",
       "filename": "Important Notes _1981.pdf",
       "clean_title": "Important Notes 1981",
       "semester_num": "3",
@@ -7489,7 +7059,7 @@
       "download_url": "/past_papers/3rd%20semester/Important%20Notes%20_1981.pdf"
     },
     {
-      "id": "pp_3_1912_0365",
+      "id": "pp_3_1912_0345",
       "filename": "Important Notes_ 1912.pdf",
       "clean_title": "Important Notes 1912",
       "semester_num": "3",
@@ -7509,7 +7079,7 @@
       "download_url": "/past_papers/3rd%20semester/Important%20Notes_%201912.pdf"
     },
     {
-      "id": "pp_3_1907_0366",
+      "id": "pp_3_1907_0346",
       "filename": "Important Notes_1907-1.pdf",
       "clean_title": "Important Notes 1907 1",
       "semester_num": "3",
@@ -7529,7 +7099,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/Important%20Notes_1907-1.pdf&download=1"
     },
     {
-      "id": "pp_3_2953_0367",
+      "id": "pp_3_2953_0347",
       "filename": "Notes_2953.pdf",
       "clean_title": "Notes 2953",
       "semester_num": "3",
@@ -7549,7 +7119,7 @@
       "download_url": "/past_papers/3rd%20semester/Notes_2953.pdf"
     },
     {
-      "id": "pp_3_1912_0368",
+      "id": "pp_3_1912_0348",
       "filename": "Quiz 1912 Solved.pdf",
       "clean_title": "Quiz 1912 Solved",
       "semester_num": "3",
@@ -7569,7 +7139,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/Quiz%201912%20Solved.pdf&download=1"
     },
     {
-      "id": "pp_3_1912_0369",
+      "id": "pp_3_1912_0349",
       "filename": "Quiz 30-30 Code 1912 By 03155734959 -1.pdf",
       "clean_title": "Quiz 30 30 Code 1912 By 1",
       "semester_num": "3",
@@ -7589,7 +7159,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/Quiz%2030-30%20Code%201912%20By%2003155734959%20-1.pdf&download=1"
     },
     {
-      "id": "pp_3_1981_0370",
+      "id": "pp_3_1981_0350",
       "filename": "Shah g All Quiz 1981 .pdf",
       "clean_title": "Shah g All Quiz 1981",
       "semester_num": "3",
@@ -7609,47 +7179,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/Shah%20g%20All%20Quiz%201981%20.pdf&download=1"
     },
     {
-      "id": "pp_3_1906_0371",
-      "filename": "code 1906 All book 180 MCQs with Correct Ans.pdf",
-      "clean_title": "code 1906 All book 180 MCQs with Correct Ans",
-      "semester_num": "3",
-      "semester_name_ur": "سمسٹر 3 (Semester 3)",
-      "course_code": "1906",
-      "course_title_ur": "اسلامی معاشیات و فقہ المعاملات",
-      "season_ur": "",
-      "category_key": "solved_paper",
-      "category_ur": "حل شدہ امتحانی پرچہ",
-      "category_icon": "✍️",
-      "size_mb": 4.12,
-      "size_formatted": "4.12 MB",
-      "file_type": "pdf",
-      "rel_path": "3rd semester/code 1906 All book 180 MCQs with Correct Ans.pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=3rd%20semester/code%201906%20All%20book%20180%20MCQs%20with%20Correct%20Ans.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=3rd%20semester/code%201906%20All%20book%20180%20MCQs%20with%20Correct%20Ans.pdf&download=1"
-    },
-    {
-      "id": "pp_3_1906_0372",
-      "filename": "code 1906 All book only 45 Question without ans.pdf",
-      "clean_title": "code 1906 All book only 45 Question without ans",
-      "semester_num": "3",
-      "semester_name_ur": "سمسٹر 3 (Semester 3)",
-      "course_code": "1906",
-      "course_title_ur": "اسلامی معاشیات و فقہ المعاملات",
-      "season_ur": "",
-      "category_key": "solved_paper",
-      "category_ur": "حل شدہ امتحانی پرچہ",
-      "category_icon": "✍️",
-      "size_mb": 2.09,
-      "size_formatted": "2.09 MB",
-      "file_type": "pdf",
-      "rel_path": "3rd semester/code 1906 All book only 45 Question without ans.pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=3rd%20semester/code%201906%20All%20book%20only%2045%20Question%20without%20ans.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=3rd%20semester/code%201906%20All%20book%20only%2045%20Question%20without%20ans.pdf&download=1"
-    },
-    {
-      "id": "pp_3_2953_0373",
+      "id": "pp_3_2953_0351",
       "filename": "important notes _2953 Q10 .pdf",
       "clean_title": "important notes 2953 Q10",
       "semester_num": "3",
@@ -7669,7 +7199,7 @@
       "download_url": "/past_papers/3rd%20semester/important%20notes%20_2953%20Q10%20.pdf"
     },
     {
-      "id": "pp_3_1912_0374",
+      "id": "pp_3_1912_0352",
       "filename": "keybook 1912 ALI AIOU ACADEMY.pdf",
       "clean_title": "keybook 1912 ALI AIOU ACADEMY",
       "semester_num": "3",
@@ -7689,27 +7219,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/keybook%201912%20ALI%20AIOU%20ACADEMY.pdf&download=1"
     },
     {
-      "id": "pp_3_1901_0375",
-      "filename": "past paper 1901 1902 1903 1904 1905 1906 1907 1908 1909 1910 prayerss.pdf",
-      "clean_title": "past paper 1901 1902 1903 1904 1905 1906 1907 1908 1909 1910 prayerss",
-      "semester_num": "3",
-      "semester_name_ur": "سمسٹر 3 (Semester 3)",
-      "course_code": "1901",
-      "course_title_ur": "تاریخ دعوت و عزیمت (1901 / 2630)",
-      "season_ur": "",
-      "category_key": "past_paper",
-      "category_ur": "سابقہ امتحانی پرچہ",
-      "category_icon": "📄",
-      "size_mb": 3.62,
-      "size_formatted": "3.62 MB",
-      "file_type": "pdf",
-      "rel_path": "3rd semester/past paper 1901 1902 1903 1904 1905 1906 1907 1908 1909 1910 prayerss.pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=3rd%20semester/past%20paper%201901%201902%201903%201904%201905%201906%201907%201908%201909%201910%20prayerss.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=3rd%20semester/past%20paper%201901%201902%201903%201904%201905%201906%201907%201908%201909%201910%20prayerss.pdf&download=1"
-    },
-    {
-      "id": "pp_3_2953_0376",
+      "id": "pp_3_2953_0353",
       "filename": "solved_mcqs_2953.pdf",
       "clean_title": "solved mcqs 2953",
       "semester_num": "3",
@@ -7729,7 +7239,7 @@
       "download_url": "/past_papers/3rd%20semester/solved_mcqs_2953.pdf"
     },
     {
-      "id": "pp_3_1912_0377",
+      "id": "pp_3_1912_0354",
       "filename": "تمام کوائز 1912.pdf",
       "clean_title": "تمام کوائز 1912",
       "semester_num": "3",
@@ -7749,27 +7259,7 @@
       "download_url": "/api/pastpapers/file?path=3rd%20semester/%D8%AA%D9%85%D8%A7%D9%85%20%DA%A9%D9%88%D8%A7%D8%A6%D8%B2%201912.pdf&download=1"
     },
     {
-      "id": "pp_3_1901_0378",
-      "filename": "کوڈ 1901 مقاصد شریعہ 45 اہم سوالات.pdf",
-      "clean_title": "کوڈ 1901 مقاصد شریعہ 45 اہم سوالات",
-      "semester_num": "3",
-      "semester_name_ur": "سمسٹر 3 (Semester 3)",
-      "course_code": "1901",
-      "course_title_ur": "تاریخ دعوت و عزیمت (1901 / 2630)",
-      "season_ur": "",
-      "category_key": "past_paper",
-      "category_ur": "سابقہ امتحانی پرچہ",
-      "category_icon": "📄",
-      "size_mb": 1.97,
-      "size_formatted": "1.97 MB",
-      "file_type": "pdf",
-      "rel_path": "3rd semester/کوڈ 1901 مقاصد شریعہ 45 اہم سوالات.pdf",
-      "is_static": false,
-      "view_url": "/api/pastpapers/file?path=3rd%20semester/%DA%A9%D9%88%DA%88%201901%20%D9%85%D9%82%D8%A7%D8%B5%D8%AF%20%D8%B4%D8%B1%DB%8C%D8%B9%DB%81%2045%20%D8%A7%DB%81%D9%85%20%D8%B3%D9%88%D8%A7%D9%84%D8%A7%D8%AA.pdf&download=0",
-      "download_url": "/api/pastpapers/file?path=3rd%20semester/%DA%A9%D9%88%DA%88%201901%20%D9%85%D9%82%D8%A7%D8%B5%D8%AF%20%D8%B4%D8%B1%DB%8C%D8%B9%DB%81%2045%20%D8%A7%DB%81%D9%85%20%D8%B3%D9%88%D8%A7%D9%84%D8%A7%D8%AA.pdf&download=1"
-    },
-    {
-      "id": "pp_4_1905_0379",
+      "id": "pp_4_1905_0355",
       "filename": "1905 Book.pdf",
       "clean_title": "1905 Book",
       "semester_num": "4",
@@ -7789,7 +7279,7 @@
       "download_url": "/api/pastpapers/file?path=4th%20semester/1905%20Book.pdf&download=1"
     },
     {
-      "id": "pp_4_1905_0380",
+      "id": "pp_4_1905_0356",
       "filename": "1905 Guess paper 03087611772 Impact services Aiou.pdf",
       "clean_title": "1905 Guess paper Impact services Aiou",
       "semester_num": "4",
@@ -7809,7 +7299,7 @@
       "download_url": "/past_papers/4th%20semester/1905%20Guess%20paper%2003087611772%20Impact%20services%20Aiou.pdf"
     },
     {
-      "id": "pp_4_1905_0381",
+      "id": "pp_4_1905_0357",
       "filename": "1905 QUIZ SOLVED BY ZSA.pdf",
       "clean_title": "1905 QUIZ SOLVED BY ZSA",
       "semester_num": "4",
@@ -7829,7 +7319,7 @@
       "download_url": "/api/pastpapers/file?path=4th%20semester/1905%20QUIZ%20SOLVED%20BY%20ZSA.pdf&download=1"
     },
     {
-      "id": "pp_4_1905_0382",
+      "id": "pp_4_1905_0358",
       "filename": "1905 SPR 2026.pdf",
       "clean_title": "1905 SPR 2026",
       "semester_num": "4",
@@ -7849,7 +7339,7 @@
       "download_url": "/api/pastpapers/file?path=4th%20semester/1905%20SPR%202026.pdf&download=1"
     },
     {
-      "id": "pp_4_1905_0383",
+      "id": "pp_4_1905_0359",
       "filename": "1905 SPRING 2026.pdf",
       "clean_title": "1905 SPRING 2026",
       "semester_num": "4",
@@ -7869,7 +7359,7 @@
       "download_url": "/past_papers/4th%20semester/1905%20SPRING%202026.pdf"
     },
     {
-      "id": "pp_4_1905_0384",
+      "id": "pp_4_1905_0360",
       "filename": "1905 most important short questions.pdf",
       "clean_title": "1905 most important short questions",
       "semester_num": "4",
@@ -7889,7 +7379,7 @@
       "download_url": "/past_papers/4th%20semester/1905%20most%20important%20short%20questions.pdf"
     },
     {
-      "id": "pp_4_1905_0385",
+      "id": "pp_4_1905_0361",
       "filename": "1905 soloved spring 2025.pdf",
       "clean_title": "1905 soloved spring 2025",
       "semester_num": "4",
@@ -7909,7 +7399,7 @@
       "download_url": "/past_papers/4th%20semester/1905%20soloved%20spring%202025.pdf"
     },
     {
-      "id": "pp_4_1905_0386",
+      "id": "pp_4_1905_0362",
       "filename": "1905.pdf",
       "clean_title": "1905",
       "semester_num": "4",
@@ -7929,7 +7419,7 @@
       "download_url": "/past_papers/4th%20semester/1905.pdf"
     },
     {
-      "id": "pp_4_1916_0387",
+      "id": "pp_4_1916_0363",
       "filename": "1916  SOLVED AUTUMN 2024.pdf",
       "clean_title": "1916 SOLVED AUTUMN 2024",
       "semester_num": "4",
@@ -7949,7 +7439,7 @@
       "download_url": "/api/pastpapers/file?path=4th%20semester/1916%20%20SOLVED%20AUTUMN%202024.pdf&download=1"
     },
     {
-      "id": "pp_4_1916_0388",
+      "id": "pp_4_1916_0364",
       "filename": "1916 (1).pdf",
       "clean_title": "1916 (1)",
       "semester_num": "4",
@@ -7969,7 +7459,7 @@
       "download_url": "/api/pastpapers/file?path=4th%20semester/1916%20%281%29.pdf&download=1"
     },
     {
-      "id": "pp_4_1916_0389",
+      "id": "pp_4_1916_0365",
       "filename": "1916 .Solved spr25.pdf",
       "clean_title": "1916 .Solved spr25",
       "semester_num": "4",
@@ -7989,7 +7479,7 @@
       "download_url": "/past_papers/4th%20semester/1916%20.Solved%20spr25.pdf"
     },
     {
-      "id": "pp_4_1916_0390",
+      "id": "pp_4_1916_0366",
       "filename": "1916 AUTUMN 2025.pdf",
       "clean_title": "1916 AUTUMN 2025",
       "semester_num": "4",
@@ -8009,7 +7499,7 @@
       "download_url": "/api/pastpapers/file?path=4th%20semester/1916%20AUTUMN%202025.pdf&download=1"
     },
     {
-      "id": "pp_4_1916_0391",
+      "id": "pp_4_1916_0367",
       "filename": "1916 Best Key Book.pdf",
       "clean_title": "1916 Best Key Book",
       "semester_num": "4",
@@ -8029,7 +7519,7 @@
       "download_url": "/api/pastpapers/file?path=4th%20semester/1916%20Best%20Key%20Book.pdf&download=1"
     },
     {
-      "id": "pp_4_1916_0392",
+      "id": "pp_4_1916_0368",
       "filename": "1916 Important Questions-1.pdf",
       "clean_title": "1916 Important Questions 1",
       "semester_num": "4",
@@ -8049,7 +7539,7 @@
       "download_url": "/api/pastpapers/file?path=4th%20semester/1916%20Important%20Questions-1.pdf&download=1"
     },
     {
-      "id": "pp_4_1916_0393",
+      "id": "pp_4_1916_0369",
       "filename": "1916 Important Questions.pdf",
       "clean_title": "1916 Important Questions",
       "semester_num": "4",
@@ -8069,7 +7559,7 @@
       "download_url": "/api/pastpapers/file?path=4th%20semester/1916%20Important%20Questions.pdf&download=1"
     },
     {
-      "id": "pp_4_1916_0394",
+      "id": "pp_4_1916_0370",
       "filename": "1916 Key book 03087611772.pdf",
       "clean_title": "1916 Key book",
       "semester_num": "4",
@@ -8089,7 +7579,7 @@
       "download_url": "/api/pastpapers/file?path=4th%20semester/1916%20Key%20book%2003087611772.pdf&download=1"
     },
     {
-      "id": "pp_4_1916_0395",
+      "id": "pp_4_1916_0371",
       "filename": "1916 MCQS-1.pdf",
       "clean_title": "1916 MCQS 1",
       "semester_num": "4",
@@ -8109,7 +7599,7 @@
       "download_url": "/api/pastpapers/file?path=4th%20semester/1916%20MCQS-1.pdf&download=1"
     },
     {
-      "id": "pp_4_1916_0396",
+      "id": "pp_4_1916_0372",
       "filename": "1916 S-26.pdf",
       "clean_title": "1916 S 26",
       "semester_num": "4",
@@ -8129,7 +7619,7 @@
       "download_url": "/api/pastpapers/file?path=4th%20semester/1916%20S-26.pdf&download=1"
     },
     {
-      "id": "pp_4_1916_0397",
+      "id": "pp_4_1916_0373",
       "filename": "1916 Solved past paper spring 2023-1.pdf",
       "clean_title": "1916 Solved past paper spring 2023 1",
       "semester_num": "4",
@@ -8149,7 +7639,7 @@
       "download_url": "/api/pastpapers/file?path=4th%20semester/1916%20Solved%20past%20paper%20spring%202023-1.pdf&download=1"
     },
     {
-      "id": "pp_4_1916_0398",
+      "id": "pp_4_1916_0374",
       "filename": "1916 new ppr pattern keybook.pdf",
       "clean_title": "1916 new ppr pattern keybook",
       "semester_num": "4",
@@ -8169,7 +7659,7 @@
       "download_url": "/past_papers/4th%20semester/1916%20new%20ppr%20pattern%20keybook.pdf"
     },
     {
-      "id": "pp_4_1916_0399",
+      "id": "pp_4_1916_0375",
       "filename": "1916 notes Solved by Sherazi 03466537447.pdf.pdf",
       "clean_title": "1916 notes Solved by Sherazi .pdf",
       "semester_num": "4",
@@ -8189,7 +7679,7 @@
       "download_url": "/past_papers/4th%20semester/1916%20notes%20Solved%20by%20Sherazi%2003466537447.pdf.pdf"
     },
     {
-      "id": "pp_4_1916_0400",
+      "id": "pp_4_1916_0376",
       "filename": "1916 notes Solved.pdf",
       "clean_title": "1916 notes Solved",
       "semester_num": "4",
@@ -8209,7 +7699,7 @@
       "download_url": "/past_papers/4th%20semester/1916%20notes%20Solved.pdf"
     },
     {
-      "id": "pp_4_1916_0401",
+      "id": "pp_4_1916_0377",
       "filename": "1916 حل شدہ سوالات-1.pdf",
       "clean_title": "1916 حل شدہ سوالات 1",
       "semester_num": "4",
@@ -8229,7 +7719,7 @@
       "download_url": "/past_papers/4th%20semester/1916%20%D8%AD%D9%84%20%D8%B4%D8%AF%DB%81%20%D8%B3%D9%88%D8%A7%D9%84%D8%A7%D8%AA-1.pdf"
     },
     {
-      "id": "pp_4_1916_0402",
+      "id": "pp_4_1916_0378",
       "filename": "1916...30 marks Autumn 2025.pdf",
       "clean_title": "1916...30 marks Autumn 2025",
       "semester_num": "4",
@@ -8249,7 +7739,7 @@
       "download_url": "/api/pastpapers/file?path=4th%20semester/1916...30%20marks%20Autumn%202025.pdf&download=1"
     },
     {
-      "id": "pp_4_1916_0403",
+      "id": "pp_4_1916_0379",
       "filename": "1916.pdf",
       "clean_title": "1916",
       "semester_num": "4",
@@ -8269,7 +7759,7 @@
       "download_url": "/api/pastpapers/file?path=4th%20semester/1916.pdf&download=1"
     },
     {
-      "id": "pp_4_1916_0404",
+      "id": "pp_4_1916_0380",
       "filename": "1916_Keybook.pdf",
       "clean_title": "1916 Keybook",
       "semester_num": "4",
@@ -8289,7 +7779,7 @@
       "download_url": "/past_papers/4th%20semester/1916_Keybook.pdf"
     },
     {
-      "id": "pp_4_1916_0405",
+      "id": "pp_4_1916_0381",
       "filename": "1916۔۔۔30 مارکس خزاں 2025 (1).pdf",
       "clean_title": "1916۔۔۔30 مارکس خزاں 2025 (1)",
       "semester_num": "4",
@@ -8309,7 +7799,7 @@
       "download_url": "/api/pastpapers/file?path=4th%20semester/1916%DB%94%DB%94%DB%9430%20%D9%85%D8%A7%D8%B1%DA%A9%D8%B3%20%D8%AE%D8%B2%D8%A7%DA%BA%202025%20%281%29.pdf&download=1"
     },
     {
-      "id": "pp_4_4935_0406",
+      "id": "pp_4_4935_0382",
       "filename": "4935,1.docx.pdf",
       "clean_title": "4935,1.docx",
       "semester_num": "4",
@@ -8329,7 +7819,7 @@
       "download_url": "/past_papers/4th%20semester/4935%2C1.docx.pdf"
     },
     {
-      "id": "pp_4_4935_0407",
+      "id": "pp_4_4935_0383",
       "filename": "4935.pdf",
       "clean_title": "4935",
       "semester_num": "4",
@@ -8349,7 +7839,7 @@
       "download_url": "/api/pastpapers/file?path=4th%20semester/4935.pdf&download=1"
     },
     {
-      "id": "pp_4_1905_0408",
+      "id": "pp_4_1905_0384",
       "filename": "Assignment 1905 (1).pdf",
       "clean_title": "Assignment 1905 (1)",
       "semester_num": "4",
@@ -8369,7 +7859,7 @@
       "download_url": "/past_papers/4th%20semester/Assignment%201905%20%281%29.pdf"
     },
     {
-      "id": "pp_4_1916_0409",
+      "id": "pp_4_1916_0385",
       "filename": "Code 1916 Key Book.pdf",
       "clean_title": "Code 1916 Key Book",
       "semester_num": "4",
@@ -8389,7 +7879,7 @@
       "download_url": "/api/pastpapers/file?path=4th%20semester/Code%201916%20Key%20Book.pdf&download=1"
     },
     {
-      "id": "pp_4_1916_0410",
+      "id": "pp_4_1916_0386",
       "filename": "Hamid (1916)  1.pdf",
       "clean_title": "Hamid (1916) 1",
       "semester_num": "4",
@@ -8409,7 +7899,7 @@
       "download_url": "/past_papers/4th%20semester/Hamid%20%281916%29%20%201.pdf"
     },
     {
-      "id": "pp_4_1916_0411",
+      "id": "pp_4_1916_0387",
       "filename": "Hayat quiz notes 1916.. (1).pdf",
       "clean_title": "Hayat quiz notes 1916.. (1)",
       "semester_num": "4",
@@ -8429,7 +7919,7 @@
       "download_url": "/api/pastpapers/file?path=4th%20semester/Hayat%20quiz%20notes%201916..%20%281%29.pdf&download=1"
     },
     {
-      "id": "pp_4_1916_0412",
+      "id": "pp_4_1916_0388",
       "filename": "Hayat quiz notes 1916...pdf",
       "clean_title": "Hayat quiz notes 1916..",
       "semester_num": "4",
@@ -8449,7 +7939,7 @@
       "download_url": "/api/pastpapers/file?path=4th%20semester/Hayat%20quiz%20notes%201916...pdf&download=1"
     },
     {
-      "id": "pp_4_4935_0413",
+      "id": "pp_4_4935_0389",
       "filename": "Hayat quiz notes 4935.pdf",
       "clean_title": "Hayat quiz notes 4935",
       "semester_num": "4",
@@ -8469,7 +7959,7 @@
       "download_url": "/api/pastpapers/file?path=4th%20semester/Hayat%20quiz%20notes%204935.pdf&download=1"
     },
     {
-      "id": "pp_4_4935_0414",
+      "id": "pp_4_4935_0390",
       "filename": "Shah  all important quiz 4935 .pdf",
       "clean_title": "Shah all important quiz 4935",
       "semester_num": "4",
@@ -8489,7 +7979,7 @@
       "download_url": "/api/pastpapers/file?path=4th%20semester/Shah%20%20all%20important%20quiz%204935%20.pdf&download=1"
     },
     {
-      "id": "pp_4_4935_0415",
+      "id": "pp_4_4935_0391",
       "filename": "quize answer 4935.pdf",
       "clean_title": "quize answer 4935",
       "semester_num": "4",
@@ -8509,7 +7999,7 @@
       "download_url": "/past_papers/4th%20semester/quize%20answer%204935.pdf"
     },
     {
-      "id": "pp_5_1918_0416",
+      "id": "pp_5_1918_0392",
       "filename": "(1918) SPRNG-26.pdf",
       "clean_title": "(1918) SPRNG 26",
       "semester_num": "5",
@@ -8529,7 +8019,7 @@
       "download_url": "/past_papers/5th%20semester/%281918%29%20SPRNG-26.pdf"
     },
     {
-      "id": "pp_5_1922_0417",
+      "id": "pp_5_1922_0393",
       "filename": "(1922) SPRNG-26.pdf",
       "clean_title": "(1922) SPRNG 26",
       "semester_num": "5",
@@ -8549,7 +8039,7 @@
       "download_url": "/past_papers/5th%20semester/%281922%29%20SPRNG-26.pdf"
     },
     {
-      "id": "pp_5_1953_0418",
+      "id": "pp_5_1953_0394",
       "filename": "(1953) SPRNG-26.pdf",
       "clean_title": "(1953) SPRNG 26",
       "semester_num": "5",
@@ -8569,7 +8059,7 @@
       "download_url": "/past_papers/5th%20semester/%281953%29%20SPRNG-26.pdf"
     },
     {
-      "id": "pp_5_1915_0419",
+      "id": "pp_5_1915_0395",
       "filename": "1915 SPRING 2026.pdf",
       "clean_title": "1915 SPRING 2026",
       "semester_num": "5",
@@ -8589,7 +8079,7 @@
       "download_url": "/past_papers/5th%20semester/1915%20SPRING%202026.pdf"
     },
     {
-      "id": "pp_5_1918_0420",
+      "id": "pp_5_1918_0396",
       "filename": "1917-1918 past papers by Furqan Khan.pdf",
       "clean_title": "1917 1918 past papers by Furqan Khan",
       "semester_num": "5",
@@ -8609,7 +8099,7 @@
       "download_url": "/api/pastpapers/file?path=5th%20semester/1917-1918%20past%20papers%20by%20Furqan%20Khan.pdf&download=1"
     },
     {
-      "id": "pp_5_1918_0421",
+      "id": "pp_5_1918_0397",
       "filename": "1918 (1)-1.pdf",
       "clean_title": "1918 (1) 1",
       "semester_num": "5",
@@ -8629,7 +8119,7 @@
       "download_url": "/api/pastpapers/file?path=5th%20semester/1918%20%281%29-1.pdf&download=1"
     },
     {
-      "id": "pp_5_1918_0422",
+      "id": "pp_5_1918_0398",
       "filename": "1918 GUESS PAPER.pdf",
       "clean_title": "1918 GUESS PAPER",
       "semester_num": "5",
@@ -8649,7 +8139,7 @@
       "download_url": "/past_papers/5th%20semester/1918%20GUESS%20PAPER.pdf"
     },
     {
-      "id": "pp_5_1918_0423",
+      "id": "pp_5_1918_0399",
       "filename": "1918 Guess paper 03087611772 Impact Services AIOU.pdf",
       "clean_title": "1918 Guess paper Impact Services AIOU",
       "semester_num": "5",
@@ -8669,7 +8159,7 @@
       "download_url": "/past_papers/5th%20semester/1918%20Guess%20paper%2003087611772%20Impact%20Services%20AIOU.pdf"
     },
     {
-      "id": "pp_5_1918_0424",
+      "id": "pp_5_1918_0400",
       "filename": "1918 Past pepar.pdf",
       "clean_title": "1918 Past pepar",
       "semester_num": "5",
@@ -8689,7 +8179,7 @@
       "download_url": "/past_papers/5th%20semester/1918%20Past%20pepar.pdf"
     },
     {
-      "id": "pp_5_1918_0425",
+      "id": "pp_5_1918_0401",
       "filename": "1918 Spring 2025.pdf",
       "clean_title": "1918 Spring 2025",
       "semester_num": "5",
@@ -8709,7 +8199,7 @@
       "download_url": "/api/pastpapers/file?path=5th%20semester/1918%20Spring%202025.pdf&download=1"
     },
     {
-      "id": "pp_5_1918_0426",
+      "id": "pp_5_1918_0402",
       "filename": "1918 key book 03466537447.pdf",
       "clean_title": "1918 key book",
       "semester_num": "5",
@@ -8729,7 +8219,7 @@
       "download_url": "/api/pastpapers/file?path=5th%20semester/1918%20key%20book%2003466537447.pdf&download=1"
     },
     {
-      "id": "pp_5_1918_0427",
+      "id": "pp_5_1918_0403",
       "filename": "1918-1.pdf",
       "clean_title": "1918 1",
       "semester_num": "5",
@@ -8749,7 +8239,7 @@
       "download_url": "/api/pastpapers/file?path=5th%20semester/1918-1.pdf&download=1"
     },
     {
-      "id": "pp_5_1918_0428",
+      "id": "pp_5_1918_0404",
       "filename": "1918.pdf",
       "clean_title": "1918",
       "semester_num": "5",
@@ -8769,7 +8259,7 @@
       "download_url": "/api/pastpapers/file?path=5th%20semester/1918.pdf&download=1"
     },
     {
-      "id": "pp_5_1918_0429",
+      "id": "pp_5_1918_0405",
       "filename": "1918_Keybook_.pdf",
       "clean_title": "1918 Keybook",
       "semester_num": "5",
@@ -8789,7 +8279,7 @@
       "download_url": "/past_papers/5th%20semester/1918_Keybook_.pdf"
     },
     {
-      "id": "pp_5_1922_0430",
+      "id": "pp_5_1922_0406",
       "filename": "1922  mcqs+ans  300 معروضی سوالات.pdf",
       "clean_title": "1922 mcqs+ans 300 معروضی سوالات",
       "semester_num": "5",
@@ -8809,7 +8299,7 @@
       "download_url": "/past_papers/5th%20semester/1922%20%20mcqs%2Bans%20%20300%20%D9%85%D8%B9%D8%B1%D9%88%D8%B6%DB%8C%20%D8%B3%D9%88%D8%A7%D9%84%D8%A7%D8%AA.pdf"
     },
     {
-      "id": "pp_5_1922_0431",
+      "id": "pp_5_1922_0407",
       "filename": "1922 Autumn 2025 Assignment Question.pdf",
       "clean_title": "1922 Autumn 2025 Assignment Question",
       "semester_num": "5",
@@ -8829,7 +8319,7 @@
       "download_url": "/past_papers/5th%20semester/1922%20Autumn%202025%20Assignment%20Question.pdf"
     },
     {
-      "id": "pp_5_1922_0432",
+      "id": "pp_5_1922_0408",
       "filename": "1922 Important Questions.pdf",
       "clean_title": "1922 Important Questions",
       "semester_num": "5",
@@ -8849,7 +8339,7 @@
       "download_url": "/api/pastpapers/file?path=5th%20semester/1922%20Important%20Questions.pdf&download=1"
     },
     {
-      "id": "pp_5_1922_0433",
+      "id": "pp_5_1922_0409",
       "filename": "1922 KeyBook.pdf",
       "clean_title": "1922 KeyBook",
       "semester_num": "5",
@@ -8869,7 +8359,7 @@
       "download_url": "/api/pastpapers/file?path=5th%20semester/1922%20KeyBook.pdf&download=1"
     },
     {
-      "id": "pp_5_1922_0434",
+      "id": "pp_5_1922_0410",
       "filename": "1922 QUIZ SOLVED.pdf",
       "clean_title": "1922 QUIZ SOLVED",
       "semester_num": "5",
@@ -8889,7 +8379,7 @@
       "download_url": "/api/pastpapers/file?path=5th%20semester/1922%20QUIZ%20SOLVED.pdf&download=1"
     },
     {
-      "id": "pp_5_1922_0435",
+      "id": "pp_5_1922_0411",
       "filename": "1922 SOLVED PAPER SPRING 🌼 2025-1.pdf",
       "clean_title": "1922 SOLVED PAPER SPRING 🌼 2025 1",
       "semester_num": "5",
@@ -8909,7 +8399,7 @@
       "download_url": "/past_papers/5th%20semester/1922%20SOLVED%20PAPER%20SPRING%20%F0%9F%8C%BC%202025-1.pdf"
     },
     {
-      "id": "pp_5_1922_0436",
+      "id": "pp_5_1922_0412",
       "filename": "1922 SPRING 2026.pdf",
       "clean_title": "1922 SPRING 2026",
       "semester_num": "5",
@@ -8929,7 +8419,7 @@
       "download_url": "/past_papers/5th%20semester/1922%20SPRING%202026.pdf"
     },
     {
-      "id": "pp_5_1922_0437",
+      "id": "pp_5_1922_0413",
       "filename": "1922 URDU new pattren.pdf",
       "clean_title": "1922 URDU new pattren",
       "semester_num": "5",
@@ -8949,7 +8439,7 @@
       "download_url": "/api/pastpapers/file?path=5th%20semester/1922%20URDU%20new%20pattren.pdf&download=1"
     },
     {
-      "id": "pp_5_1922_0438",
+      "id": "pp_5_1922_0414",
       "filename": "1922 quiz.pdf",
       "clean_title": "1922 quiz",
       "semester_num": "5",
@@ -8969,7 +8459,7 @@
       "download_url": "/past_papers/5th%20semester/1922%20quiz.pdf"
     },
     {
-      "id": "pp_5_1922_0439",
+      "id": "pp_5_1922_0415",
       "filename": "1922 solved Notes by Sherazi 0346-6537447.pdf",
       "clean_title": "1922 solved Notes by Sherazi",
       "semester_num": "5",
@@ -8989,7 +8479,7 @@
       "download_url": "/past_papers/5th%20semester/1922%20solved%20Notes%20by%20Sherazi%200346-6537447.pdf"
     },
     {
-      "id": "pp_5_1922_0440",
+      "id": "pp_5_1922_0416",
       "filename": "1922_Research_Methodology.pdf",
       "clean_title": "1922 Research Methodology",
       "semester_num": "5",
@@ -9009,7 +8499,7 @@
       "download_url": "/past_papers/5th%20semester/1922_Research_Methodology.pdf"
     },
     {
-      "id": "pp_5_3900_0441",
+      "id": "pp_5_3900_0417",
       "filename": "3900 S-26.pdf",
       "clean_title": "3900 S 26",
       "semester_num": "5",
@@ -9029,7 +8519,7 @@
       "download_url": "/api/pastpapers/file?path=5th%20semester/3900%20S-26.pdf&download=1"
     },
     {
-      "id": "pp_5_3900_0442",
+      "id": "pp_5_3900_0418",
       "filename": "3900 SPRING 2026.pdf",
       "clean_title": "3900 SPRING 2026",
       "semester_num": "5",
@@ -9049,7 +8539,7 @@
       "download_url": "/past_papers/5th%20semester/3900%20SPRING%202026.pdf"
     },
     {
-      "id": "pp_5_3903_0443",
+      "id": "pp_5_3903_0419",
       "filename": "3903 SPRING 2026.pdf",
       "clean_title": "3903 SPRING 2026",
       "semester_num": "5",
@@ -9069,7 +8559,7 @@
       "download_url": "/past_papers/5th%20semester/3903%20SPRING%202026.pdf"
     },
     {
-      "id": "pp_5_3903_0444",
+      "id": "pp_5_3903_0420",
       "filename": "3903.01 Unique.docx",
       "clean_title": "3903.01 Unique",
       "semester_num": "5",
@@ -9089,7 +8579,7 @@
       "download_url": "/past_papers/5th%20semester/3903.01%20Unique.docx"
     },
     {
-      "id": "pp_5_3903_0445",
+      "id": "pp_5_3903_0421",
       "filename": "3903.02 Unique.docx",
       "clean_title": "3903.02 Unique",
       "semester_num": "5",
@@ -9109,7 +8599,7 @@
       "download_url": "/past_papers/5th%20semester/3903.02%20Unique.docx"
     },
     {
-      "id": "pp_5_3903_0446",
+      "id": "pp_5_3903_0422",
       "filename": "3903.pdf",
       "clean_title": "3903",
       "semester_num": "5",
@@ -9129,7 +8619,7 @@
       "download_url": "/api/pastpapers/file?path=5th%20semester/3903.pdf&download=1"
     },
     {
-      "id": "pp_5_1922_0447",
+      "id": "pp_5_1922_0423",
       "filename": "Course_1922_Guess_Paper_1.pdf",
       "clean_title": "Course 1922 Guess Paper 1",
       "semester_num": "5",
@@ -9149,7 +8639,7 @@
       "download_url": "/past_papers/5th%20semester/Course_1922_Guess_Paper_1.pdf"
     },
     {
-      "id": "pp_5_1922_0448",
+      "id": "pp_5_1922_0424",
       "filename": "Course_1922_Guess_Paper_2.pdf",
       "clean_title": "Course 1922 Guess Paper 2",
       "semester_num": "5",
@@ -9169,7 +8659,7 @@
       "download_url": "/past_papers/5th%20semester/Course_1922_Guess_Paper_2.pdf"
     },
     {
-      "id": "pp_5_1922_0449",
+      "id": "pp_5_1922_0425",
       "filename": "Course_1922_Guess_Paper_3.pdf",
       "clean_title": "Course 1922 Guess Paper 3",
       "semester_num": "5",
@@ -9189,7 +8679,7 @@
       "download_url": "/past_papers/5th%20semester/Course_1922_Guess_Paper_3.pdf"
     },
     {
-      "id": "pp_5_1922_0450",
+      "id": "pp_5_1922_0426",
       "filename": "Course_1922_Guess_Paper_4.pdf",
       "clean_title": "Course 1922 Guess Paper 4",
       "semester_num": "5",
@@ -9209,7 +8699,7 @@
       "download_url": "/past_papers/5th%20semester/Course_1922_Guess_Paper_4.pdf"
     },
     {
-      "id": "pp_5_1922_0451",
+      "id": "pp_5_1922_0427",
       "filename": "Course_1922_Guess_Paper_5.pdf",
       "clean_title": "Course 1922 Guess Paper 5",
       "semester_num": "5",
@@ -9229,7 +8719,7 @@
       "download_url": "/past_papers/5th%20semester/Course_1922_Guess_Paper_5.pdf"
     },
     {
-      "id": "pp_5_3900_0452",
+      "id": "pp_5_3900_0428",
       "filename": "keybook 3900, 9488 ALI AIOU ACADEMY.pdf",
       "clean_title": "keybook 3900, 9488 ALI AIOU ACADEMY",
       "semester_num": "5",
@@ -9249,7 +8739,7 @@
       "download_url": "/api/pastpapers/file?path=5th%20semester/keybook%203900%2C%209488%20ALI%20AIOU%20ACADEMY.pdf&download=1"
     },
     {
-      "id": "pp_5_1912_0453",
+      "id": "pp_5_1912_0429",
       "filename": "past ppr 1911 1912 1913 1921 1922 4951 remember in prayers.pdf",
       "clean_title": "past ppr 1911 1912 1913 1921 1922 4951 remember in prayers",
       "semester_num": "5",
@@ -9269,7 +8759,7 @@
       "download_url": "/api/pastpapers/file?path=5th%20semester/past%20ppr%201911%201912%201913%201921%201922%204951%20remember%20in%20prayers.pdf&download=1"
     },
     {
-      "id": "pp_5_1922_0454",
+      "id": "pp_5_1922_0430",
       "filename": "quiz_1922.pdf",
       "clean_title": "quiz 1922",
       "semester_num": "5",
@@ -9289,7 +8779,7 @@
       "download_url": "/past_papers/5th%20semester/quiz_1922.pdf"
     },
     {
-      "id": "pp_5_1912_0455",
+      "id": "pp_5_1912_0431",
       "filename": "ᵖᵃˢᵗ ᵖᵃᵖᵉʳ,ˢ 1911,1912,1917,1918 ᵇⁱˢᵐⁱˡˡᵃʰ.pdf",
       "clean_title": "ᵖᵃˢᵗ ᵖᵃᵖᵉʳ,ˢ 1911,1912,1917,1918 ᵇⁱˢᵐⁱˡˡᵃʰ",
       "semester_num": "5",
@@ -9309,7 +8799,7 @@
       "download_url": "/api/pastpapers/file?path=5th%20semester/%E1%B5%96%E1%B5%83%CB%A2%E1%B5%97%20%E1%B5%96%E1%B5%83%E1%B5%96%E1%B5%89%CA%B3%2C%CB%A2%201911%2C1912%2C1917%2C1918%20%E1%B5%87%E2%81%B1%CB%A2%E1%B5%90%E2%81%B1%CB%A1%CB%A1%E1%B5%83%CA%B0.pdf&download=1"
     },
     {
-      "id": "pp_5_1918_0456",
+      "id": "pp_5_1918_0432",
       "filename": "ᵖᵃˢᵗ ᵖᵃᵖᵉʳ,ˢ 1917,1918 ᵇⁱˢᵐⁱˡˡᵃʰ.pdf",
       "clean_title": "ᵖᵃˢᵗ ᵖᵃᵖᵉʳ,ˢ 1917,1918 ᵇⁱˢᵐⁱˡˡᵃʰ",
       "semester_num": "5",

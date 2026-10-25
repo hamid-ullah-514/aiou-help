@@ -15,6 +15,16 @@ let lastMCQGenData = null;
 let lastQuizResult = null;
 let areAllMCQsRevealed = false;
 
+function smoothScrollToElement(elemOrId, offset = 80) {
+    const el = typeof elemOrId === "string" ? document.getElementById(elemOrId) : elemOrId;
+    if (!el) return;
+    const y = el.getBoundingClientRect().top + window.pageYOffset - offset;
+    window.scrollTo({
+        top: Math.max(0, y),
+        behavior: "smooth"
+    });
+}
+
 // ==========================================
 // INITIALIZATION
 // ==========================================
@@ -224,7 +234,7 @@ function switchFeature(feat, autoTriggerFile = false) {
     if (activeMobBtn) activeMobBtn.classList.add("active");
     if (activeSec) {
         activeSec.style.display = "block";
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        smoothScrollToElement(activeSec, 75);
     }
 
     if (norm === "assignment" || under === "assignment") {
@@ -465,22 +475,29 @@ function switchExamPrepMode(mode) {
         if (pastView) pastView.style.display = "block";
         if (bookView) bookView.style.display = "none";
         renderPastPapers();
+        // Immediately smooth-scroll down to the past papers filters & semester selector
+        setTimeout(() => smoothScrollToElement("past-filters-card", 75), 80);
     } else {
         if (bookBtn) bookBtn.classList.add("active");
         if (pastBtn) pastBtn.classList.remove("active");
         if (bookView) bookView.style.display = "block";
         if (pastView) pastView.style.display = "none";
+        // Smoothly scroll down to the book prep options
+        setTimeout(() => smoothScrollToElement("exam-prep-book-view", 75), 80);
     }
 }
 
 function openPastPapersDirectly() {
     switchFeature("exam");
     switchExamPrepMode("past");
+    setTimeout(() => smoothScrollToElement("past-filters-card", 75), 150);
 }
 
 function onPastSemesterChange() {
     populatePastCourseDropdown();
     renderPastPapers();
+    // Smooth scroll down to course selector
+    setTimeout(() => smoothScrollToElement("past-course-select", 120), 120);
 }
 
 function populatePastCourseDropdown() {
@@ -504,6 +521,8 @@ function populatePastCourseDropdown() {
 
 function onPastCourseChange() {
     renderPastPapers();
+    // Smooth scroll down to the papers grid
+    setTimeout(() => smoothScrollToElement("past-papers-grid", 120), 120);
 }
 
 function onPastCategoryClick(catKey) {
@@ -514,6 +533,8 @@ function onPastCategoryClick(catKey) {
     const pill = document.getElementById(`past-pill-${catKey}`);
     if (pill) pill.classList.add("active");
     renderPastPapers();
+    // Smooth scroll down to papers grid
+    setTimeout(() => smoothScrollToElement("past-papers-grid", 120), 100);
 }
 
 function onPastSearchInput() {
@@ -1041,6 +1062,9 @@ function showPdfFallbackCard(p) {
     }
 }
 
+let currentPdfDocument = null;
+let currentRenderToken = 0;
+
 async function openPdfViewerModal(paperId) {
     const p = getPaperById(paperId);
     if (!p) return;
@@ -1050,15 +1074,27 @@ async function openPdfViewerModal(paperId) {
     const titleEl = document.getElementById("pdf-modal-title");
     const metaEl = document.getElementById("pdf-modal-meta");
     const iframe = document.getElementById("pdf-modal-iframe");
+    const canvasContainer = document.getElementById("pdf-modal-canvas-container");
     const loading = document.getElementById("pdf-modal-loading");
+    const loadingText = document.getElementById("pdf-modal-loading-text") || (loading ? loading.querySelector("span") : null);
     const fallback = document.getElementById("pdf-modal-fallback");
 
     if (titleEl) titleEl.textContent = p.clean_title;
     if (metaEl) metaEl.textContent = `${p.course_code}: ${p.course_title_ur} | ${p.category_ur} | سائز: ${p.size_formatted} | سمسٹر ${p.semester_num}`;
 
     if (fallback) fallback.style.display = "none";
-    if (iframe) iframe.style.display = "block";
-    if (loading) loading.style.display = "flex";
+    if (iframe) {
+        iframe.style.display = "none";
+        iframe.src = "about:blank";
+    }
+    if (canvasContainer) {
+        canvasContainer.innerHTML = "";
+        canvasContainer.style.display = "flex";
+    }
+    if (loading) {
+        loading.style.display = "flex";
+        if (loadingText) loadingText.textContent = "پرچہ کے صفحات تیار ہو رہے ہیں، براہِ کرم انتظار فرمائیں...";
+    }
 
     const fileUrl = `${API_BASE}${p.view_url}`;
 
@@ -1075,10 +1111,73 @@ async function openPdfViewerModal(paperId) {
             return;
         }
     } catch (e) {
-        // In case of CORS or network error, let iframe attempt loading
+        // Continue
     }
 
+    const renderId = ++currentRenderToken;
+
+    // 1. PRIMARY IN-PAGE RENDERER: Mozilla PDF.js Canvas (Directly on-page, ZERO Android 'Open' prompt!)
+    if (window.pdfjsLib) {
+        try {
+            if (window.pdfjsLib.GlobalWorkerOptions) {
+                window.pdfjsLib.GlobalWorkerOptions.workerSrc = "js/pdf.worker.min.js";
+            }
+            const loadingTask = window.pdfjsLib.getDocument({ url: fileUrl });
+            const pdfDoc = await loadingTask.promise;
+
+            if (renderId !== currentRenderToken) return;
+            currentPdfDocument = pdfDoc;
+
+            if (canvasContainer) canvasContainer.innerHTML = "";
+
+            const totalPages = pdfDoc.numPages;
+            for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+                if (renderId !== currentRenderToken) return;
+
+                const page = await pdfDoc.getPage(pageNum);
+                
+                const containerWidth = canvasContainer ? (canvasContainer.clientWidth || window.innerWidth) - 24 : 650;
+                const unscaledViewport = page.getViewport({ scale: 1 });
+                const targetScale = Math.min(2.5, Math.max(1.0, containerWidth / unscaledViewport.width));
+                const viewport = page.getViewport({ scale: targetScale });
+
+                const wrapper = document.createElement("div");
+                wrapper.className = "pdf-page-wrapper";
+
+                if (totalPages > 1) {
+                    const badge = document.createElement("span");
+                    badge.className = "pdf-page-badge";
+                    badge.textContent = `صفحہ ${pageNum} از ${totalPages}`;
+                    wrapper.appendChild(badge);
+                }
+
+                const canvas = document.createElement("canvas");
+                canvas.className = "pdf-page-canvas";
+                const ctx = canvas.getContext("2d");
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                wrapper.appendChild(canvas);
+                if (canvasContainer) canvasContainer.appendChild(wrapper);
+
+                await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+                if (pageNum === 1 && loading) {
+                    loading.style.display = "none";
+                }
+            }
+
+            if (loading) loading.style.display = "none";
+            return;
+        } catch (pdfErr) {
+            console.warn("PDF.js render failed, falling back to embedded viewer:", pdfErr);
+        }
+    }
+
+    // 2. FALLBACK RENDERER: Google Docs Viewer for mobile, native iframe for desktop
+    if (canvasContainer) canvasContainer.style.display = "none";
     if (iframe) {
+        iframe.style.display = "block";
         iframe.onload = () => {
             if (loading) loading.style.display = "none";
         };
@@ -1086,22 +1185,35 @@ async function openPdfViewerModal(paperId) {
             if (loading) loading.style.display = "none";
             showPdfFallbackCard(p);
         };
-        iframe.src = `${fileUrl}#toolbar=1&navpanes=1`;
+
+        if (isMobileDevice()) {
+            const absoluteUrl = fileUrl.startsWith("http") ? fileUrl : `https://aiou-help.vercel.app${fileUrl}`;
+            iframe.src = `https://docs.google.com/viewer?url=${encodeURIComponent(absoluteUrl)}&embedded=true`;
+        } else {
+            iframe.src = `${fileUrl}#toolbar=1&navpanes=1`;
+        }
     }
 }
 
 function closePdfViewerModal() {
+    currentRenderToken++;
     const modal = document.getElementById("pdf-viewer-modal");
     const iframe = document.getElementById("pdf-modal-iframe");
+    const canvasContainer = document.getElementById("pdf-modal-canvas-container");
     const fallback = document.getElementById("pdf-modal-fallback");
     if (iframe) {
         iframe.src = "about:blank";
-        iframe.style.display = "block";
+        iframe.style.display = "none";
+    }
+    if (canvasContainer) {
+        canvasContainer.innerHTML = "";
+        canvasContainer.style.display = "none";
     }
     if (fallback) fallback.style.display = "none";
     if (modal) modal.style.display = "none";
     document.body.style.overflow = "";
     activePdfModalPaper = null;
+    currentPdfDocument = null;
 }
 
 function downloadActivePdfModal() {

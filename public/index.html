@@ -660,8 +660,8 @@
                                 </label>
                                 <select id="past-semester-select" class="form-select urdu-text" onchange="onPastSemesterChange()">
                                     <option value="1">سمسٹر 1 (Semester 1 - 125 پرچے)</option>
-                                    <option value="2">سمسٹر 2 (Semester 2 - 132 پرچے)</option>
-                                    <option value="3">سمسٹر 3 (Semester 3 - 121 پرچے)</option>
+                                    <option value="2">سمسٹر 2 (Semester 2 - 129 پرچے)</option>
+                                    <option value="3">سمسٹر 3 (Semester 3 - 100 پرچے)</option>
                                     <option value="4">سمسٹر 4 (Semester 4 - 37 پرچے)</option>
                                     <option value="5">سمسٹر 5 (Semester 5 - 41 پرچے)</option>
                                 </select>
@@ -1163,11 +1163,12 @@
                 </div>
             </div>
             <div class="pdf-modal-body">
-                <iframe id="pdf-modal-iframe" src="about:blank" class="pdf-modal-iframe"></iframe>
+                <div id="pdf-modal-canvas-container" class="pdf-modal-canvas-container"></div>
+                <iframe id="pdf-modal-iframe" src="about:blank" class="pdf-modal-iframe" style="display: none;"></iframe>
                 <div id="pdf-modal-fallback" class="pdf-modal-fallback" style="display: none;"></div>
                 <div id="pdf-modal-loading" class="pdf-modal-loading" style="display: none;">
                     <div class="spinner"></div>
-                    <span>پرچہ لوڈ ہو رہا ہے، براہِ کرم انتظار فرمائیں...</span>
+                    <span id="pdf-modal-loading-text">پرچہ لوڈ ہو رہا ہے، براہِ کرم انتظار فرمائیں...</span>
                 </div>
             </div>
         </div>
@@ -1179,6 +1180,7 @@
         <span id="toast-message">مواد کامیابی سے کاپی ہوگیا۔</span>
     </div>
 
+    <script src="js/pdf.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
