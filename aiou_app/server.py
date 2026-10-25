@@ -2,12 +2,13 @@ import os
 from typing import Dict, List, Any, Optional
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from aiou_app.config import STATIC_DIR, HOST, PORT
 from aiou_app.catalog import build_or_load_catalog
+from aiou_app.past_papers import get_past_papers_catalog, filter_past_papers, get_paper_file_path, create_batch_zip
 from aiou_app.indexer import get_indexing_stats, index_all_books
 from aiou_app.ocr_engine import get_ocr_engine_status
 from aiou_app.ai_service import get_ai_service_status
@@ -36,15 +37,15 @@ async def vercel_path_middleware(request, call_next):
     Ensures seamless routing both locally and on Vercel Serverless environment.
     If rewritten via vercel.json with ?path=..., maps path to scope['path'].
     """
-    path_param = request.query_params.get("path")
-    if path_param:
-        clean_path = "/" + path_param.lstrip("/")
-        if len(clean_path) > 1 and clean_path.endswith("/"):
-            clean_path = clean_path[:-1]
-        request.scope["path"] = clean_path
-    else:
-        cur_path = request.scope.get("path", "")
-        if cur_path.endswith(".py") or "index.py" in cur_path:
+    cur_path = request.scope.get("path", "")
+    if cur_path.endswith(".py") or "index.py" in cur_path:
+        path_param = request.query_params.get("path")
+        if path_param:
+            clean_path = "/" + path_param.lstrip("/")
+            if len(clean_path) > 1 and clean_path.endswith("/"):
+                clean_path = clean_path[:-1]
+            request.scope["path"] = clean_path
+        else:
             fwd = request.headers.get("x-forwarded-uri")
             if fwd and not fwd.endswith(".py"):
                 raw_fwd = fwd.split("?")[0]
@@ -103,6 +104,9 @@ class AssignmentRequest(BaseModel):
     raw_text: Optional[str] = None
     image_b64: Optional[str] = None
     mime_type: str = "image/jpeg"
+
+class BatchZipRequest(BaseModel):
+    paper_ids: List[str]
 
 @app.get("/")
 def get_index():
@@ -285,6 +289,79 @@ def solve_assignment_api(req: AssignmentRequest):
 @app.get("/health")
 def health_api():
     return {"status": "ok", "app": "AIOU Help"}
+
+@app.get("/api/pastpapers/catalog")
+@app.get("/pastpapers/catalog")
+def get_past_papers_catalog_api():
+    """Returns full catalog of all 5 semester past papers, courses, and stats."""
+    return get_past_papers_catalog()
+
+@app.get("/api/pastpapers/list")
+@app.get("/pastpapers/list")
+def list_past_papers_api(
+    semester: Optional[str] = Query(None),
+    course: Optional[str] = Query(None),
+    category: Optional[str] = Query(None),
+    q: Optional[str] = Query(None)
+):
+    """Filters past papers by semester, course code, category, or search query."""
+    papers = filter_past_papers(
+        semester_num=semester,
+        course_code=course,
+        category=category,
+        search_query=q
+    )
+    return {
+        "success": True,
+        "count": len(papers),
+        "papers": papers
+    }
+
+@app.get("/api/pastpapers/file")
+@app.get("/pastpapers/file")
+def get_past_paper_file_api(
+    path: Optional[str] = Query(None),
+    file_path: Optional[str] = Query(None),
+    download: int = Query(0)
+):
+    """Streams or downloads past paper PDF or DOCX file."""
+    target = path or file_path or ""
+    fpath = get_paper_file_path(target)
+    if not fpath or not fpath.exists():
+        raise HTTPException(status_code=404, detail="فائل دستیاب نہیں ہے یا پاتھ درست نہیں ہے۔")
+
+    filename = fpath.name
+    media_type = "application/pdf" if filename.lower().endswith(".pdf") else "application/octet-stream"
+    disposition = "attachment" if download == 1 else "inline"
+
+    return FileResponse(
+        str(fpath),
+        media_type=media_type,
+        filename=filename,
+        headers={
+            "Content-Disposition": f"{disposition}; filename=\"{filename}\"",
+            "Accept-Ranges": "bytes"
+        }
+    )
+
+@app.post("/api/pastpapers/batch-zip")
+@app.post("/pastpapers/batch-zip")
+def download_batch_zip_api(req: BatchZipRequest):
+    """Generates on-the-fly zip file containing all selected past papers."""
+    if not req.paper_ids:
+        raise HTTPException(status_code=400, detail="کوئی فائل منتخب نہیں کی گئی۔")
+
+    zip_buffer = create_batch_zip(req.paper_ids)
+    if not zip_buffer:
+        raise HTTPException(status_code=404, detail="منتخب کردہ فائلیں تلاش نہیں کی جا سکیں۔")
+
+    return StreamingResponse(
+        zip_buffer,
+        media_type="application/zip",
+        headers={
+            "Content-Disposition": "attachment; filename=\"AIOU_Selected_Past_Papers.zip\""
+        }
+    )
 
 @app.get("/api/page/{doc_id}/{page_idx}")
 @app.get("/page/{doc_id}/{page_idx}")

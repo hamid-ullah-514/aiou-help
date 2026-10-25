@@ -42,6 +42,9 @@
                 <button class="nav-link-btn" id="nav-btn-exam" onclick="switchFeature('exam')">
                     <span>📝</span><span>امتحانی تیاری</span>
                 </button>
+                <button class="nav-link-btn" id="nav-btn-past-papers" onclick="openPastPapersDirectly()">
+                    <span>📑</span><span>ماضی کے پرچے</span>
+                </button>
                 <button class="nav-link-btn" id="nav-btn-mcq-gen" onclick="switchFeature('mcq_gen')">
                     <span>📊</span><span>MCQs تیار کریں</span>
                 </button>
@@ -135,6 +138,14 @@
                     <h3 class="home-feat-title">اسائنمنٹ حل کریں</h3>
                     <p class="home-feat-desc">مشق ۱ یا ۲ کے ۱ تا ۵ سوالات کے ۴۰۰-۵۰۰ الفاظ کے مفصل جوابات مع ۱۰ سرخیاں اور ورڈ فائل حاصل کریں</p>
                     <span class="home-feat-badge">مکمل اسائنمنٹ و ورڈ فائل ←</span>
+                </div>
+
+                <!-- Card 7: ماضی کے امتحانی پرچہ جات -->
+                <div class="home-feat-card feat-amber" onclick="openPastPapersDirectly()">
+                    <div class="home-feat-icon">📑</div>
+                    <h3 class="home-feat-title">ماضی کے پرچہ جات (PDF)</h3>
+                    <p class="home-feat-desc">تمام سمسٹرز کے 450+ اصل امتحانی پرچے، حل شدہ پیپرز، کی بکس اور گیس پیپرز آن لائن پڑھیں اور ڈاؤن لوڈ کریں</p>
+                    <span class="home-feat-badge">450+ پی ڈی ایف لائبریری ←</span>
                 </div>
             </div>
 
@@ -602,127 +613,249 @@
             </div>
         </section>
 
-        <!-- FEATURE 3: پیپر کی تیاری -->
+        <!-- FEATURE 3: پیپر کی تیاری و ماضی کے پرچہ جات -->
         <section id="section-exam" class="feature-panel" style="display: none;">
             <div class="card">
                 <div class="panel-header">
-                    <h2 class="panel-title">📝 فیچر نمبر ۳: پیپر کی تیاری (Exam Preparation)</h2>
-                    <p class="panel-subtitle">منتخب کردہ کتاب کے تمام چیپٹرز سے جامع تعلیمی ماڈل نوٹس، تعریفات، ذیلی سرخیاں، مستند حوالہ جات اور خلاصہ جات حاصل کریں۔</p>
+                    <h2 class="panel-title">📝 فیچر نمبر ۳: پیپر کی تیاری و امتحانی پرچہ جات (Exam Preparation & Past Papers)</h2>
+                    <p class="panel-subtitle">امتحانی تیاری کے لیے نصابی کتب سے AI گیس پیپر نوٹس تیار کریں یا علامہ اقبال اوپن یونیورسٹی کے 450+ اصل سابقہ پرچہ جات، حل شدہ پیپرز اور کی بکس آن لائن پڑھیں، ڈاؤن لوڈ اور شیئر کریں۔</p>
                 </div>
 
-                <div class="feature-layout-3col">
-                    <!-- Right side (Desktop): مرحلہ وار ہدایات -->
-                    <div class="steps-guide-card">
-                        <div class="guide-title">
-                            <span>📋</span>
-                            <span>مرحلہ وار ہدایات</span>
+                <!-- Mode Selection Banner: Book Prep vs Past Papers -->
+                <div class="exam-prep-mode-selector-banner">
+                    <div class="mode-selector-header">
+                        <span class="mode-badge">طریقہ انتخاب فرمائیں</span>
+                        <h3 class="mode-main-question">🎯 آپ پیپر کی تیاری کس ذریعے سے کرنا چاہتے ہیں؟</h3>
+                        <p class="mode-main-subtitle">اپنی سہولت کے مطابق پاسٹ پیپرز لائبریری منتخب کریں یا نصابی کتاب سے چیپٹر وائز ماڈل امتحانی نوٹس تیار فرمائیں۔</p>
+                    </div>
+                    <div class="mode-selector-tabs">
+                        <button type="button" class="mode-tab-btn active" id="btn-mode-past-papers" onclick="switchExamPrepMode('past')">
+                            <span class="tab-icon">📑</span>
+                            <div class="tab-text-block">
+                                <span class="tab-head-title">ماضی کے اصل پرچہ جات (AIOU Past Papers PDFs)</span>
+                                <span class="tab-sub-title">تمام سمسٹرز کے 450+ اصلی سابقہ پرچے، حل شدہ پیپرز، کی بکس، نوٹس اور گیس پیپرز</span>
+                            </div>
+                            <span class="tab-tag-pill">مستند لائبریری 🔥</span>
+                        </button>
+                        <button type="button" class="mode-tab-btn" id="btn-mode-book-prep" onclick="switchExamPrepMode('book')">
+                            <span class="tab-icon">📚</span>
+                            <div class="tab-text-block">
+                                <span class="tab-head-title">نصابی کتاب سے تیاری (AI گیس پیپر و نوٹس)</span>
+                                <span class="tab-sub-title">ہر چیپٹر سے 3 تا 5 تفصیلی امتحانی سوالات، ماڈل جوابات اور قرآنی و نصابی حوالہ جات</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- VIEW 1: PAST PAPERS LIBRARY (Default & Active) -->
+                <div id="exam-prep-past-view">
+                    <!-- Filters & Search Card -->
+                    <div class="past-filters-card">
+                        <div class="past-filters-grid">
+                            <!-- Semester Select -->
+                            <div class="form-group">
+                                <label class="form-label" for="past-semester-select">
+                                    <span class="label-icon">🎓</span>
+                                    <span>۱۔ سمسٹر منتخب کریں:</span>
+                                </label>
+                                <select id="past-semester-select" class="form-select urdu-text" onchange="onPastSemesterChange()">
+                                    <option value="1">سمسٹر 1 (Semester 1 - 125 پرچے)</option>
+                                    <option value="2">سمسٹر 2 (Semester 2 - 132 پرچے)</option>
+                                    <option value="3">سمسٹر 3 (Semester 3 - 121 پرچے)</option>
+                                    <option value="4">سمسٹر 4 (Semester 4 - 37 پرچے)</option>
+                                    <option value="5">سمسٹر 5 (Semester 5 - 41 پرچے)</option>
+                                </select>
+                            </div>
+
+                            <!-- Course Code Select -->
+                            <div class="form-group">
+                                <label class="form-label" for="past-course-select">
+                                    <span class="label-icon">📚</span>
+                                    <span>۲۔ کتاب / کورس منتخب کریں:</span>
+                                </label>
+                                <select id="past-course-select" class="form-select urdu-text" onchange="onPastCourseChange()">
+                                    <option value="ALL">-- منتخب کردہ سمسٹر کی تمام کتب کے پرچے --</option>
+                                </select>
+                            </div>
+
+                            <!-- Search Input -->
+                            <div class="form-group">
+                                <label class="form-label" for="past-search-input">
+                                    <span class="label-icon">🔍</span>
+                                    <span>۳۔ پرچہ تلاش کریں:</span>
+                                </label>
+                                <div class="search-input-wrap">
+                                    <input type="text" id="past-search-input" class="form-input urdu-text" placeholder="مثلاً: 2025، حل شدہ، گیس پیپر، بہار، 1902..." oninput="onPastSearchInput()">
+                                    <button type="button" class="search-clear-btn" onclick="clearPastSearch()" title="تلاش ختم کریں">✕</button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="guide-steps-list">
-                            <div class="guide-step-item">
-                                <span class="step-num-badge">۱</span>
-                                <span class="step-text">سمسٹر کا انتخاب کریں</span>
-                            </div>
-                            <div class="guide-step-item">
-                                <span class="step-num-badge">۲</span>
-                                <span class="step-text">متعلقہ کتاب منتخب کریں</span>
-                            </div>
-                            <div class="guide-step-item">
-                                <span class="step-num-badge">۳</span>
-                                <span class="step-text">سوالات کی تعداد مقرر کریں</span>
-                            </div>
-                            <div class="guide-step-item">
-                                <span class="step-num-badge">۴</span>
-                                <span class="step-text">سوالات تیار کریں پر کلک کریں</span>
-                            </div>
-                            <div class="guide-step-item">
-                                <span class="step-num-badge">۵</span>
-                                <span class="step-text">مکمل امتحانی نوٹس حاصل کریں</span>
+
+                        <!-- Category Filter Pills -->
+                        <div class="past-category-pills-row">
+                            <span class="pills-label">قسم کے لحاظ سے فلٹر:</span>
+                            <div class="pills-wrap">
+                                <button type="button" class="past-cat-pill active" id="past-pill-ALL" onclick="onPastCategoryClick('ALL')">🌟 تمام (<span id="cat-count-all">0</span>)</button>
+                                <button type="button" class="past-cat-pill" id="past-pill-past_paper" onclick="onPastCategoryClick('past_paper')">📄 سابقہ پرچے (<span id="cat-count-past">0</span>)</button>
+                                <button type="button" class="past-cat-pill" id="past-pill-solved_paper" onclick="onPastCategoryClick('solved_paper')">✍️ حل شدہ (<span id="cat-count-solved">0</span>)</button>
+                                <button type="button" class="past-cat-pill" id="past-pill-guess_paper" onclick="onPastCategoryClick('guess_paper')">🎯 گیس پیپرز (<span id="cat-count-guess">0</span>)</button>
+                                <button type="button" class="past-cat-pill" id="past-pill-key_book" onclick="onPastCategoryClick('key_book')">📚 کی بکس و نوٹس (<span id="cat-count-keybook">0</span>)</button>
+                                <button type="button" class="past-cat-pill" id="past-pill-quiz_mcq" onclick="onPastCategoryClick('quiz_mcq')">❓ کوئز و معروضی (<span id="cat-count-quiz">0</span>)</button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Center Form: Form controls (First on Mobile!) -->
-                    <div class="center-feature-card">
-                        <div class="selection-row-inline">
-                            <div class="form-group">
-                                <label class="form-label" for="exam-semester-select">
-                                    <span>۱۔ سمسٹر منتخب کریں:</span>
-                                </label>
-                                <select id="exam-semester-select" class="form-select urdu-text" onchange="onSemesterChange('exam')">
-                                    <option value="1">سمسٹر 1 (بہار 2024)</option>
-                                    <option value="2">سمسٹر 2 (خزاں 2024)</option>
-                                    <option value="3">سمسٹر 3 (بہار 2025)</option>
-                                    <option value="4">سمسٹر 4 (خزاں 2025)</option>
-                                    <option value="5">سمسٹر 5 (تکمیلی سمسٹر)</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label" for="exam-course-select">
-                                    <span>۲۔ کتاب / کورس منتخب کریں:</span>
-                                </label>
-                                <select id="exam-course-select" class="form-select urdu-text" onchange="onCourseChange('exam')">
-                                    <option value="">-- کتاب منتخب کریں --</option>
-                                </select>
-                            </div>
+                    <!-- Batch Action Toolbar -->
+                    <div class="past-batch-toolbar" id="past-batch-toolbar">
+                        <div class="batch-left-info">
+                            <label class="batch-select-all-label">
+                                <input type="checkbox" id="past-select-all-checkbox" onchange="toggleSelectAllPastPapers(this.checked)">
+                                <span>تمام پرچہ جات منتخب کریں</span>
+                            </label>
+                            <span class="batch-counter-badge" id="past-selected-counter">۰ پرچہ جات منتخب</span>
                         </div>
-
-                        <!-- Question Count Selection -->
-                        <div class="option-picker-box" style="margin-top: 1rem;">
-                            <span class="picker-label">۳۔ آپ ہر چیپٹر سے کتنے تفصیلی سوالات تیار کرنا چاہتے ہیں؟</span>
-                            <div class="picker-radios">
-                                <label class="picker-pill">
-                                    <input type="radio" name="exam-count" value="3" checked>
-                                    <span>3 سوالات (کل 27 نوٹس)</span>
-                                </label>
-                                <label class="picker-pill">
-                                    <input type="radio" name="exam-count" value="4">
-                                    <span>4 سوالات (کل 36 نوٹس)</span>
-                                </label>
-                                <label class="picker-pill">
-                                    <input type="radio" name="exam-count" value="5">
-                                    <span>5 سوالات (کل 45 نوٹس)</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="button-row" style="margin-top: 1.25rem;">
-                            <button id="exam-generate-btn" class="btn btn-primary" style="width: 100%; font-size: 1.05rem; padding: 0.85rem;" onclick="handleExamGenerate()">
-                                <span id="exam-spinner" class="spinner" style="display: none;"></span>
-                                <span>📝 امتحانی سوالات و ماڈل جوابات تیار کریں</span>
+                        <div class="batch-actions-buttons">
+                            <button type="button" class="btn btn-batch btn-batch-download" onclick="downloadSelectedPastPapers()" id="btn-batch-download" disabled>
+                                <span>⬇️ منتخب شدہ اکٹھے ڈاؤن لوڈ کریں</span>
+                            </button>
+                            <button type="button" class="btn btn-batch btn-batch-share" onclick="shareSelectedPastPapersWhatsApp()" id="btn-batch-share-wa" disabled>
+                                <span>📲 منتخب شدہ واٹس ایپ پر شیئر کریں</span>
+                            </button>
+                            <button type="button" class="btn btn-batch btn-batch-copy" onclick="copySelectedPastPapersList()" id="btn-batch-copy" disabled>
+                                <span>📋 منتخب فہرست کاپی کریں</span>
                             </button>
                         </div>
                     </div>
 
-                    <!-- Left side (Desktop): خصوصیات -->
-                    <div class="features-summary-card">
-                        <div class="guide-title">
-                            <span>✨</span>
-                            <span>اہم خصوصیات</span>
-                        </div>
-                        <ul class="features-checklist">
-                            <li><span class="check-icon">✓</span> <span>ہر باب سے تفصیلی امتحانی سوالات</span></li>
-                            <li><span class="check-icon">✓</span> <span>تعریف، تشریح، قرآنی دلائل و خلاصہ</span></li>
-                            <li><span class="check-icon">✓</span> <span>کتاب کے مصدقہ صفحات کا حوالہ</span></li>
-                            <li><span class="check-icon">✓</span> <span>یک کلک کاپی برائے MS Word و موبائل</span></li>
-                        </ul>
+                    <!-- Papers Grid -->
+                    <div id="past-papers-grid" class="past-papers-grid">
+                        <!-- Dynamic Cards rendered via JS -->
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="past-papers-empty" class="past-papers-empty" style="display: none;">
+                        <span class="empty-icon">📭</span>
+                        <h4>کوئی پرچہ نہیں ملا</h4>
+                        <p>براہِ کرم تلاش کے الفاظ یا سمسٹر/کورس کا انتخاب تبدیل کر کے دوبارہ کوشش فرمائیں۔</p>
                     </div>
                 </div>
 
-                <!-- Exam Questions Display Area -->
-                <div id="exam-results-container" class="exam-display-area" style="display: none; margin-top: 2rem;">
-                    <div class="exam-summary-bar">
-                        <div>
-                            <strong id="exam-summary-title">کتاب کے تمام چیپٹرز کے امتحانی سوالات</strong>
-                            <div style="font-size: 0.85rem; color: var(--text-secondary);" id="exam-summary-subtitle"></div>
+                <!-- VIEW 2: BOOK PREP VIEW (Chapter Questions & Model Answers) -->
+                <div id="exam-prep-book-view" style="display: none;">
+                    <div class="feature-layout-3col">
+                        <!-- Right side (Desktop): مرحلہ وار ہدایات -->
+                        <div class="steps-guide-card">
+                            <div class="guide-title">
+                                <span>📋</span>
+                                <span>مرحلہ وار ہدایات</span>
+                            </div>
+                            <div class="guide-steps-list">
+                                <div class="guide-step-item">
+                                    <span class="step-num-badge">۱</span>
+                                    <span class="step-text">سمسٹر کا انتخاب کریں</span>
+                                </div>
+                                <div class="guide-step-item">
+                                    <span class="step-num-badge">۲</span>
+                                    <span class="step-text">متعلقہ کتاب منتخب کریں</span>
+                                </div>
+                                <div class="guide-step-item">
+                                    <span class="step-num-badge">۳</span>
+                                    <span class="step-text">سوالات کی تعداد مقرر کریں</span>
+                                </div>
+                                <div class="guide-step-item">
+                                    <span class="step-num-badge">۴</span>
+                                    <span class="step-text">سوالات تیار کریں پر کلک کریں</span>
+                                </div>
+                                <div class="guide-step-item">
+                                    <span class="step-num-badge">۵</span>
+                                    <span class="step-text">مکمل امتحانی نوٹس حاصل کریں</span>
+                                </div>
+                            </div>
                         </div>
-                        <button class="btn btn-primary" onclick="copyEntireBookExamPrep()">
-                            <span>💾 تمام سوالات، جوابات اور حوالہ جات کاپی کریں (برائے MS Word)</span>
-                        </button>
+
+                        <!-- Center Form: Form controls (First on Mobile!) -->
+                        <div class="center-feature-card">
+                            <div class="selection-row-inline">
+                                <div class="form-group">
+                                    <label class="form-label" for="exam-semester-select">
+                                        <span>۱۔ سمسٹر منتخب کریں:</span>
+                                    </label>
+                                    <select id="exam-semester-select" class="form-select urdu-text" onchange="onSemesterChange('exam')">
+                                        <option value="1">سمسٹر 1 (بہار 2024)</option>
+                                        <option value="2">سمسٹر 2 (خزاں 2024)</option>
+                                        <option value="3">سمسٹر 3 (بہار 2025)</option>
+                                        <option value="4">سمسٹر 4 (خزاں 2025)</option>
+                                        <option value="5">سمسٹر 5 (تکمیلی سمسٹر)</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="exam-course-select">
+                                        <span>۲۔ کتاب / کورس منتخب کریں:</span>
+                                    </label>
+                                    <select id="exam-course-select" class="form-select urdu-text" onchange="onCourseChange('exam')">
+                                        <option value="">-- کتاب منتخب کریں --</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Question Count Selection -->
+                            <div class="option-picker-box" style="margin-top: 1rem;">
+                                <span class="picker-label">۳۔ آپ ہر چیپٹر سے کتنے تفصیلی سوالات تیار کرنا چاہتے ہیں؟</span>
+                                <div class="picker-radios">
+                                    <label class="picker-pill">
+                                        <input type="radio" name="exam-count" value="3" checked>
+                                        <span>3 سوالات (کل 27 نوٹس)</span>
+                                    </label>
+                                    <label class="picker-pill">
+                                        <input type="radio" name="exam-count" value="4">
+                                        <span>4 سوالات (کل 36 نوٹس)</span>
+                                    </label>
+                                    <label class="picker-pill">
+                                        <input type="radio" name="exam-count" value="5">
+                                        <span>5 سوالات (کل 45 نوٹس)</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="button-row" style="margin-top: 1.25rem;">
+                                <button id="exam-generate-btn" class="btn btn-primary" style="width: 100%; font-size: 1.05rem; padding: 0.85rem;" onclick="handleExamGenerate()">
+                                    <span id="exam-spinner" class="spinner" style="display: none;"></span>
+                                    <span>📝 امتحانی سوالات و ماڈل جوابات تیار کریں</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Left side (Desktop): خصوصیات -->
+                        <div class="features-summary-card">
+                            <div class="guide-title">
+                                <span>✨</span>
+                                <span>اہم خصوصیات</span>
+                            </div>
+                            <ul class="features-checklist">
+                                <li><span class="check-icon">✓</span> <span>ہر باب سے تفصیلی امتحانی سوالات</span></li>
+                                <li><span class="check-icon">✓</span> <span>تعریف، تشریح، قرآنی دلائل و خلاصہ</span></li>
+                                <li><span class="check-icon">✓</span> <span>کتاب کے مصدقہ صفحات کا حوالہ</span></li>
+                                <li><span class="check-icon">✓</span> <span>یک کلک کاپی برائے MS Word و موبائل</span></li>
+                            </ul>
+                        </div>
                     </div>
 
-                    <!-- Chapters Accordion Container -->
-                    <div id="exam-chapters-accordion" class="chapters-accordion-list"></div>
+                    <!-- Exam Questions Display Area -->
+                    <div id="exam-results-container" class="exam-display-area" style="display: none; margin-top: 2rem;">
+                        <div class="exam-summary-bar">
+                            <div>
+                                <strong id="exam-summary-title">کتاب کے تمام چیپٹرز کے امتحانی سوالات</strong>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);" id="exam-summary-subtitle"></div>
+                            </div>
+                            <button class="btn btn-primary" onclick="copyEntireBookExamPrep()">
+                                <span>💾 تمام سوالات، جوابات اور حوالہ جات کاپی کریں (برائے MS Word)</span>
+                            </button>
+                        </div>
+
+                        <!-- Chapters Accordion Container -->
+                        <div id="exam-chapters-accordion" class="chapters-accordion-list"></div>
+                    </div>
                 </div>
 
             </div>
@@ -997,6 +1130,42 @@
             <span class="mobile-nav-label">کوئز</span>
         </button>
     </nav>
+
+    <!-- In-App PDF Viewer Modal -->
+    <div id="pdf-viewer-modal" class="pdf-modal-overlay" style="display: none;">
+        <div class="pdf-modal-container">
+            <div class="pdf-modal-header">
+                <div class="pdf-modal-title-wrap">
+                    <span class="pdf-modal-icon">📖</span>
+                    <div>
+                        <h3 id="pdf-modal-title" class="pdf-modal-title">پرچہ کا عنوان</h3>
+                        <span id="pdf-modal-meta" class="pdf-modal-meta">کورس | سائز | سمسٹر</span>
+                    </div>
+                </div>
+                <div class="pdf-modal-controls">
+                    <button type="button" class="pdf-modal-btn" onclick="downloadActivePdfModal()" title="ڈاؤن لوڈ کریں">
+                        <span>⬇️ ڈاؤن لوڈ</span>
+                    </button>
+                    <button type="button" class="pdf-modal-btn" onclick="shareActivePdfModal()" title="واٹس ایپ پر شیئر کریں">
+                        <span>📲 شیئر</span>
+                    </button>
+                    <button type="button" class="pdf-modal-btn" onclick="togglePdfModalFullscreen()" title="فل اسکرین ویو">
+                        <span>🖥️</span>
+                    </button>
+                    <button type="button" class="pdf-modal-btn pdf-modal-close-btn" onclick="closePdfViewerModal()" title="بند کریں">
+                        <span>✕</span>
+                    </button>
+                </div>
+            </div>
+            <div class="pdf-modal-body">
+                <iframe id="pdf-modal-iframe" src="about:blank" class="pdf-modal-iframe"></iframe>
+                <div id="pdf-modal-loading" class="pdf-modal-loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <span>پرچہ لوڈ ہو رہا ہے، براہِ کرم انتظار فرمائیں...</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Toast Notification -->
     <div id="toast" class="toast">

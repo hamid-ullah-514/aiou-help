@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function initApp() {
     try {
         setupImageDropzone();
+        initPastPapers();
         const resp = await fetch(`${API_BASE}/api/catalog`);
         if (!resp.ok) {
             throw new Error(`Catalog request failed: ${resp.status}`);
@@ -233,6 +234,12 @@ function switchFeature(feat, autoTriggerFile = false) {
         }
     }
 
+    if (norm === "exam" || under === "exam") {
+        if (currentExamPrepMode === "past") {
+            renderPastPapers();
+        }
+    }
+
     if ((norm === "image-qa" || under === "image_qa") && autoTriggerFile && !selectedImageDataUrl) {
         setTimeout(() => {
             triggerImageFileInput();
@@ -406,6 +413,509 @@ async function copyQAOriginalQuote(btn = null) {
 async function copyQAQuestion(btn = null) {
     const q = document.getElementById("question-input").value.trim();
     if (q) await copyToClipboard(q, "سوال کاپی ہو گیا۔", btn);
+}
+
+// ==========================================
+// FEATURE: ماضی کے امتحانی پرچہ جات (AIOU Past Papers PDFs)
+// ==========================================
+let pastPapersCatalog = null;
+let currentExamPrepMode = "past"; // "past" or "book"
+let currentPastCategoryFilter = "ALL";
+let selectedPastPaperIds = new Set();
+let activePdfModalPaper = null;
+
+async function initPastPapers() {
+    try {
+        let resp = await fetch(`${API_BASE}/api/pastpapers/catalog`);
+        if (!resp.ok) {
+            resp = await fetch("past_papers_index.json");
+        }
+        if (resp.ok) {
+            pastPapersCatalog = await resp.json();
+            populatePastCourseDropdown();
+            renderPastPapers();
+            return;
+        }
+    } catch (e) {
+        console.warn("Could not load past papers from API, trying fallback:", e);
+    }
+
+    try {
+        let resp2 = await fetch("past_papers_index.json");
+        if (resp2.ok) {
+            pastPapersCatalog = await resp2.json();
+            populatePastCourseDropdown();
+            renderPastPapers();
+        }
+    } catch (err) {
+        console.error("Fallback past papers fetch failed:", err);
+    }
+}
+
+function switchExamPrepMode(mode) {
+    currentExamPrepMode = mode;
+    const pastBtn = document.getElementById("btn-mode-past-papers");
+    const bookBtn = document.getElementById("btn-mode-book-prep");
+    const pastView = document.getElementById("exam-prep-past-view");
+    const bookView = document.getElementById("exam-prep-book-view");
+
+    if (mode === "past") {
+        if (pastBtn) pastBtn.classList.add("active");
+        if (bookBtn) bookBtn.classList.remove("active");
+        if (pastView) pastView.style.display = "block";
+        if (bookView) bookView.style.display = "none";
+        renderPastPapers();
+    } else {
+        if (bookBtn) bookBtn.classList.add("active");
+        if (pastBtn) pastBtn.classList.remove("active");
+        if (bookView) bookView.style.display = "block";
+        if (pastView) pastView.style.display = "none";
+    }
+}
+
+function openPastPapersDirectly() {
+    switchFeature("exam");
+    switchExamPrepMode("past");
+}
+
+function onPastSemesterChange() {
+    populatePastCourseDropdown();
+    renderPastPapers();
+}
+
+function populatePastCourseDropdown() {
+    const semSelect = document.getElementById("past-semester-select");
+    const courseSelect = document.getElementById("past-course-select");
+    if (!semSelect || !courseSelect || !pastPapersCatalog) return;
+
+    const semNum = semSelect.value || "1";
+    courseSelect.innerHTML = `<option value="ALL">-- سمسٹر ${semNum} کی تمام کتب کے پرچے --</option>`;
+
+    const semData = pastPapersCatalog.semesters ? pastPapersCatalog.semesters.find(s => String(s.semester_num) === String(semNum)) : null;
+    if (semData && semData.courses) {
+        semData.courses.forEach(c => {
+            const opt = document.createElement("option");
+            opt.value = c.course_code;
+            opt.textContent = `${c.course_code}: ${c.course_title_ur} (${c.papers_count} پرچے)`;
+            courseSelect.appendChild(opt);
+        });
+    }
+}
+
+function onPastCourseChange() {
+    renderPastPapers();
+}
+
+function onPastCategoryClick(catKey) {
+    currentPastCategoryFilter = catKey;
+    document.querySelectorAll(".past-cat-pill").forEach(p => {
+        p.classList.remove("active");
+    });
+    const pill = document.getElementById(`past-pill-${catKey}`);
+    if (pill) pill.classList.add("active");
+    renderPastPapers();
+}
+
+function onPastSearchInput() {
+    renderPastPapers();
+}
+
+function clearPastSearch() {
+    const inp = document.getElementById("past-search-input");
+    if (inp) inp.value = "";
+    renderPastPapers();
+}
+
+function getFilteredPastPapers() {
+    if (!pastPapersCatalog || !pastPapersCatalog.papers) return [];
+
+    const semSelect = document.getElementById("past-semester-select");
+    const courseSelect = document.getElementById("past-course-select");
+    const searchInp = document.getElementById("past-search-input");
+
+    const semNum = semSelect ? semSelect.value : "1";
+    const courseCode = courseSelect ? courseSelect.value : "ALL";
+    const query = searchInp ? searchInp.value.trim().toLowerCase() : "";
+
+    return pastPapersCatalog.papers.filter(p => {
+        if (semNum && String(p.semester_num) !== String(semNum)) return false;
+        if (courseCode && courseCode !== "ALL" && p.course_code !== courseCode) return false;
+        if (currentPastCategoryFilter && currentPastCategoryFilter !== "ALL" && p.category_key !== currentPastCategoryFilter) return false;
+        if (query) {
+            const match = p.clean_title.toLowerCase().includes(query) ||
+                          p.filename.toLowerCase().includes(query) ||
+                          p.course_code.toLowerCase().includes(query) ||
+                          (p.season_ur && p.season_ur.toLowerCase().includes(query)) ||
+                          (p.course_title_ur && p.course_title_ur.toLowerCase().includes(query));
+            if (!match) return false;
+        }
+        return true;
+    });
+}
+
+function updateCategoryCounts() {
+    if (!pastPapersCatalog || !pastPapersCatalog.papers) return;
+    const semSelect = document.getElementById("past-semester-select");
+    const courseSelect = document.getElementById("past-course-select");
+    const semNum = semSelect ? semSelect.value : "1";
+    const courseCode = courseSelect ? courseSelect.value : "ALL";
+
+    const basePapers = pastPapersCatalog.papers.filter(p => {
+        if (semNum && String(p.semester_num) !== String(semNum)) return false;
+        if (courseCode && courseCode !== "ALL" && p.course_code !== courseCode) return false;
+        return true;
+    });
+
+    const counts = {
+        all: basePapers.length,
+        past: basePapers.filter(p => p.category_key === "past_paper").length,
+        solved: basePapers.filter(p => p.category_key === "solved_paper").length,
+        guess: basePapers.filter(p => p.category_key === "guess_paper").length,
+        keybook: basePapers.filter(p => p.category_key === "key_book").length,
+        quiz: basePapers.filter(p => p.category_key === "quiz_mcq").length
+    };
+
+    const elAll = document.getElementById("cat-count-all");
+    const elPast = document.getElementById("cat-count-past");
+    const elSolved = document.getElementById("cat-count-solved");
+    const elGuess = document.getElementById("cat-count-guess");
+    const elKey = document.getElementById("cat-count-keybook");
+    const elQuiz = document.getElementById("cat-count-quiz");
+
+    if (elAll) elAll.textContent = counts.all;
+    if (elPast) elPast.textContent = counts.past;
+    if (elSolved) elSolved.textContent = counts.solved;
+    if (elGuess) elGuess.textContent = counts.guess;
+    if (elKey) elKey.textContent = counts.keybook;
+    if (elQuiz) elQuiz.textContent = counts.quiz;
+}
+
+function renderPastPapers() {
+    updateCategoryCounts();
+    const grid = document.getElementById("past-papers-grid");
+    const empty = document.getElementById("past-papers-empty");
+    if (!grid) return;
+
+    const filtered = getFilteredPastPapers();
+    if (filtered.length === 0) {
+        grid.innerHTML = "";
+        if (empty) empty.style.display = "block";
+        updateBatchToolbar();
+        return;
+    }
+    if (empty) empty.style.display = "none";
+
+    let html = "";
+    filtered.forEach(p => {
+        const isChecked = selectedPastPaperIds.has(p.id) ? "checked" : "";
+        const seasonBadge = p.season_ur ? `<span class="badge-season">🗓️ ${escapeHtml(p.season_ur)}</span>` : "";
+        html += `
+            <div class="past-paper-card ${isChecked ? 'selected' : ''}" id="card-${p.id}">
+                <div class="card-top-row">
+                    <label class="card-checkbox-label" title="منتخب کریں">
+                        <input type="checkbox" class="paper-checkbox" value="${p.id}" ${isChecked} onchange="onPastPaperCheck('${p.id}', this.checked)">
+                        <span class="custom-chk"></span>
+                    </label>
+                    <div class="card-badges">
+                        <span class="badge-category cat-${p.category_key}">
+                            <span>${p.category_icon}</span>
+                            <span>${p.category_ur}</span>
+                        </span>
+                        ${seasonBadge}
+                    </div>
+                </div>
+
+                <div class="card-course-info">
+                    <span class="course-code-tag">${p.course_code}</span>
+                    <span class="course-title-tag">${escapeHtml(p.course_title_ur)}</span>
+                </div>
+
+                <h4 class="card-paper-title" title="${escapeHtml(p.filename)}">
+                    ${escapeHtml(p.clean_title)}
+                </h4>
+
+                <div class="card-meta-row">
+                    <span class="meta-item">💾 ${p.size_formatted}</span>
+                    <span class="meta-item">📁 ${p.file_type.toUpperCase()}</span>
+                    <span class="meta-item">🎓 سمسٹر ${p.semester_num}</span>
+                </div>
+
+                <div class="card-actions-grid">
+                    <button type="button" class="btn-card-action btn-read" onclick="openPdfViewerModal('${p.id}')">
+                        <span>👁️</span><span>آن لائن پڑھیں</span>
+                    </button>
+                    <button type="button" class="btn-card-action btn-download" onclick="downloadSinglePastPaper('${p.id}')">
+                        <span>⬇️</span><span>ڈاؤن لوڈ</span>
+                    </button>
+                    <button type="button" class="btn-card-action btn-share" onclick="shareSinglePastPaper('${p.id}')">
+                        <span>📲</span><span>شیئر</span>
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+
+    grid.innerHTML = html;
+    updateBatchToolbar();
+}
+
+function onPastPaperCheck(paperId, isChecked) {
+    if (isChecked) {
+        selectedPastPaperIds.add(paperId);
+    } else {
+        selectedPastPaperIds.delete(paperId);
+    }
+    const card = document.getElementById(`card-${paperId}`);
+    if (card) {
+        if (isChecked) card.classList.add("selected");
+        else card.classList.remove("selected");
+    }
+    updateBatchToolbar();
+}
+
+function toggleSelectAllPastPapers(checked) {
+    const filtered = getFilteredPastPapers();
+    filtered.forEach(p => {
+        if (checked) {
+            selectedPastPaperIds.add(p.id);
+        } else {
+            selectedPastPaperIds.delete(p.id);
+        }
+        const card = document.getElementById(`card-${p.id}`);
+        if (card) {
+            if (checked) card.classList.add("selected");
+            else card.classList.remove("selected");
+        }
+    });
+
+    const chks = document.querySelectorAll(".paper-checkbox");
+    chks.forEach(c => c.checked = checked);
+
+    updateBatchToolbar();
+}
+
+function updateBatchToolbar() {
+    const count = selectedPastPaperIds.size;
+    const counterBadge = document.getElementById("past-selected-counter");
+    const btnDownload = document.getElementById("btn-batch-download");
+    const btnShareWA = document.getElementById("btn-batch-share-wa");
+    const btnCopy = document.getElementById("btn-batch-copy");
+    const chkAll = document.getElementById("past-select-all-checkbox");
+
+    const filtered = getFilteredPastPapers();
+    if (chkAll) {
+        chkAll.checked = filtered.length > 0 && filtered.every(p => selectedPastPaperIds.has(p.id));
+    }
+
+    if (counterBadge) {
+        counterBadge.textContent = `${count} پرچہ جات منتخب`;
+    }
+
+    const disabled = count === 0;
+    if (btnDownload) btnDownload.disabled = disabled;
+    if (btnShareWA) btnShareWA.disabled = disabled;
+    if (btnCopy) btnCopy.disabled = disabled;
+}
+
+function getPaperById(paperId) {
+    if (!pastPapersCatalog || !pastPapersCatalog.papers) return null;
+    return pastPapersCatalog.papers.find(p => p.id === paperId);
+}
+
+function downloadSinglePastPaper(paperId) {
+    const p = getPaperById(paperId);
+    if (!p) return;
+
+    const link = document.createElement("a");
+    link.href = `${API_BASE}${p.download_url}`;
+    link.download = p.filename;
+    link.target = "_blank";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast(`ڈاؤن لوڈ شروع ہو گیا: ${p.clean_title}`);
+}
+
+async function shareSinglePastPaper(paperId) {
+    const p = getPaperById(paperId);
+    if (!p) return;
+
+    const shareText = [
+        `📚 *علامہ اقبال اوپن یونیورسٹی (AIOU BS Islamic Studies)*`,
+        `📑 *پرچہ:* ${p.clean_title}`,
+        `📖 *کورس:* ${p.course_code} - ${p.course_title_ur}`,
+        `🎓 *سمسٹر:* سمسٹر ${p.semester_num}`,
+        `📁 *قسم:* ${p.category_ur}`,
+        p.season_ur ? `🗓️ *سیشن:* ${p.season_ur}` : ``,
+        `💾 *سائز:* ${p.size_formatted}`,
+        `----------------------------------------`,
+        `🌐 *آن لائن مطالعہ و تیاری پورٹل:* https://aiou-help.vercel.app`,
+        `----------------------------------------`,
+        `[AIOU Help Study Portal]`
+    ].filter(Boolean).join("\n");
+
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: p.clean_title,
+                text: shareText,
+                url: window.location.href
+            });
+            return;
+        } catch (e) {
+            // fallback to whatsapp
+        }
+    }
+
+    const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+    window.open(waUrl, "_blank");
+    showToast("واٹس ایپ پر شیئر ونڈو کھل گئی۔");
+}
+
+function shareSelectedPastPapersWhatsApp() {
+    if (selectedPastPaperIds.size === 0) return;
+    const selected = Array.from(selectedPastPaperIds).map(id => getPaperById(id)).filter(Boolean);
+
+    let text = [
+        `📚 *علامہ اقبال اوپن یونیورسٹی (AIOU) - منتخب شدہ امتحانی پرچہ جات*`,
+        `📋 *کل منتخب پرچے:* ${selected.length} پرچہ جات`,
+        `----------------------------------------`
+    ];
+
+    selected.forEach((p, i) => {
+        text.push(`${i + 1}. ${p.category_icon} *${p.course_code}:* ${p.clean_title} (${p.size_formatted})`);
+    });
+
+    text.push(`----------------------------------------`);
+    text.push(`🌐 *تمام پرچے آن لائن پڑھیں اور ڈاؤن لوڈ کریں:*`);
+    text.push(`👉 https://aiou-help.vercel.app`);
+    text.push(`----------------------------------------`);
+    text.push(`[AIOU Help Study Portal]`);
+
+    const fullText = text.join("\n");
+    const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(fullText)}`;
+    window.open(waUrl, "_blank");
+    showToast(`${selected.length} پرچہ جات واٹس ایپ پر شیئر کیے جا رہے ہیں...`);
+}
+
+async function copySelectedPastPapersList() {
+    if (selectedPastPaperIds.size === 0) return;
+    const selected = Array.from(selectedPastPaperIds).map(id => getPaperById(id)).filter(Boolean);
+
+    let text = [
+        `============================================================`,
+        `   علامہ اقبال اوپن یونیورسٹی - منتخب شدہ امتحانی پرچہ جات`,
+        `   کل تعداد: ${selected.length} پرچہ جات`,
+        `============================================================\r\n`
+    ];
+
+    selected.forEach((p, i) => {
+        text.push(`${i + 1}. [${p.course_code}] ${p.clean_title} | ${p.category_ur} | سائز: ${p.size_formatted} | سمسٹر: ${p.semester_num}`);
+    });
+
+    text.push(`\r\n============================================================`);
+    text.push(`آن لائن مطالعہ و ڈاؤن لوڈ پورٹل: https://aiou-help.vercel.app`);
+    text.push(`============================================================`);
+
+    await copyToClipboard(text.join("\r\n"), `${selected.length} پرچہ جات کی مکمل فہرست کاپی ہو گئی۔`);
+}
+
+async function downloadSelectedPastPapers() {
+    if (selectedPastPaperIds.size === 0) return;
+    const ids = Array.from(selectedPastPaperIds);
+
+    showToast(`${ids.length} پرچہ جات کا زپ آرکائیو تیار ہو رہا ہے...`);
+
+    try {
+        const resp = await fetch(`${API_BASE}/api/pastpapers/batch-zip`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ paper_ids: ids })
+        });
+
+        if (resp.ok) {
+            const blob = await resp.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `AIOU_Selected_Past_Papers_${ids.length}.zip`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            showToast(`کامیابی! زپ فائل ڈاؤن لوڈ ہو گئی (${ids.length} پرچہ جات)`);
+            return;
+        }
+    } catch (e) {
+        console.warn("Batch zip fetch failed, falling back to individual download:", e);
+    }
+
+    let delay = 0;
+    ids.forEach(pid => {
+        const p = getPaperById(pid);
+        if (p) {
+            setTimeout(() => {
+                downloadSinglePastPaper(pid);
+            }, delay);
+            delay += 600;
+        }
+    });
+}
+
+function openPdfViewerModal(paperId) {
+    const p = getPaperById(paperId);
+    if (!p) return;
+    activePdfModalPaper = p;
+
+    const modal = document.getElementById("pdf-viewer-modal");
+    const titleEl = document.getElementById("pdf-modal-title");
+    const metaEl = document.getElementById("pdf-modal-meta");
+    const iframe = document.getElementById("pdf-modal-iframe");
+    const loading = document.getElementById("pdf-modal-loading");
+
+    if (titleEl) titleEl.textContent = p.clean_title;
+    if (metaEl) metaEl.textContent = `${p.course_code}: ${p.course_title_ur} | ${p.category_ur} | سائز: ${p.size_formatted} | سمسٹر ${p.semester_num}`;
+
+    if (loading) loading.style.display = "flex";
+    if (iframe) {
+        iframe.onload = () => {
+            if (loading) loading.style.display = "none";
+        };
+        iframe.src = `${API_BASE}${p.view_url}#toolbar=1&navpanes=1`;
+    }
+
+    if (modal) {
+        modal.style.display = "flex";
+        document.body.style.overflow = "hidden";
+    }
+}
+
+function closePdfViewerModal() {
+    const modal = document.getElementById("pdf-viewer-modal");
+    const iframe = document.getElementById("pdf-modal-iframe");
+    if (iframe) iframe.src = "about:blank";
+    if (modal) modal.style.display = "none";
+    document.body.style.overflow = "";
+    activePdfModalPaper = null;
+}
+
+function downloadActivePdfModal() {
+    if (activePdfModalPaper) {
+        downloadSinglePastPaper(activePdfModalPaper.id);
+    }
+}
+
+function shareActivePdfModal() {
+    if (activePdfModalPaper) {
+        shareSinglePastPaper(activePdfModalPaper.id);
+    }
+}
+
+function togglePdfModalFullscreen() {
+    const container = document.querySelector(".pdf-modal-container");
+    if (container) {
+        container.classList.toggle("fullscreen-mode");
+    }
 }
 
 // ==========================================
