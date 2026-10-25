@@ -754,14 +754,39 @@ async function downloadSinglePastPaper(paperId) {
     const p = getPaperById(paperId);
     if (!p) return;
 
-    showToast(`پرچہ ڈاؤن لوڈ کیا جا رہا ہے: ${p.clean_title}...`);
-    const fileUrl = `${API_BASE}${p.download_url}`;
+    showToast(`پرچہ ڈاؤن لوڈ ہو رہا ہے: ${p.clean_title}...`);
+
+    const rawUrl = p.download_url || "";
+    const isDirectHttp = rawUrl.startsWith("http://") || rawUrl.startsWith("https://");
+
+    // Case 1: External CDN / Direct Cloud Link (GitHub Releases / Azure CDN)
+    if (isDirectHttp) {
+        const a = document.createElement("a");
+        a.href = rawUrl;
+        a.download = p.filename;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        showToast(`✓ فائل آپ کے ڈاؤن لوڈز میں محفوظ ہو رہی ہے: ${p.clean_title}`);
+        return;
+    }
+
+    // Case 2: Same-origin / Relative Static Link (/past_papers/...)
+    const fileUrl = `${API_BASE}${rawUrl}`;
 
     try {
         const resp = await fetch(fileUrl);
         if (!resp.ok) {
-            throw new Error(`سرور سے ڈاؤن لوڈ نہیں ہو سکا (${resp.status})`);
+            throw new Error(`FILE_NOT_FOUND_${resp.status}`);
         }
+        const contentType = (resp.headers.get("content-type") || "").toLowerCase();
+        if (contentType.includes("json")) {
+            // Server returned JSON error message, NOT a real PDF file!
+            throw new Error(`SERVER_ERROR_JSON`);
+        }
+
         const blob = await resp.blob();
 
         // 1. On PC (Desktop Chrome/Edge): allow user to choose folder location via File System Access API
@@ -781,15 +806,12 @@ async function downloadSinglePastPaper(paperId) {
                 return;
             } catch (err) {
                 if (err.name === "AbortError") {
-                    // User cancelled the save dialog
                     return;
                 }
-                // Fall through to blob anchor download
             }
         }
 
         // 2. Direct Blob anchor download: forces Android / iOS / PC to save directly to Downloads storage
-        // (WITHOUT target="_blank" so mobile Chrome saves the file rather than viewing in a tab)
         const blobUrl = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = blobUrl;
@@ -801,16 +823,63 @@ async function downloadSinglePastPaper(paperId) {
 
         showToast(`✓ پرچہ آپ کی ڈیوائس (Downloads) میں محفوظ ہو گیا!`);
     } catch (e) {
-        console.warn("Direct blob download failed, falling back to direct anchor:", e);
-        // Fallback: standard anchor download
-        const a = document.createElement("a");
-        a.href = fileUrl;
-        a.download = p.filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        showToast(`ڈاؤن لوڈ شروع ہوا: ${p.clean_title}`);
+        console.warn("Download error:", e);
+        // CRITICAL: NEVER navigate to 404 or trigger corrupt .json download!
+        if (e.message && (e.message.startsWith("FILE_NOT_FOUND") || e.message === "SERVER_ERROR_JSON")) {
+            showToast(`⚠️ معذرت! یہ فائل کلاؤڈ پر دستیاب نہیں ہے`);
+            showPaperUnavailableModal(p);
+        } else {
+            // Only if it's an existing static file path, try anchor as fallback
+            if (rawUrl.startsWith("/past_papers/")) {
+                const a = document.createElement("a");
+                a.href = fileUrl;
+                a.download = p.filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                showToast(`ڈاؤن لوڈ شروع ہوا: ${p.clean_title}`);
+            } else {
+                showPaperUnavailableModal(p);
+            }
+        }
     }
+}
+
+// Modal for unavailable papers with 1-click WhatsApp Admin request
+function showPaperUnavailableModal(p) {
+    let modal = document.getElementById("unavailable-modal");
+    if (!modal) {
+        modal = document.createElement("div");
+        modal.id = "unavailable-modal";
+        modal.className = "modal-overlay";
+        modal.style.cssText = "position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.65); z-index:99999; display:flex; align-items:center; justify-content:center; padding:15px;";
+        document.body.appendChild(modal);
+    }
+    const adminMsg = `السلام علیکم! مجھے علامہ اقبال اوپن یونیورسٹی کی یہ کتاب / پی ڈی ایف فائل درکار ہے:\n📑 ${p.clean_title}\n📖 کورس کوڈ: ${p.course_code} (${p.course_title_ur})\n🎓 سمسٹر: ${p.semester_num}\n💾 سائز: ${p.size_formatted}`;
+    const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(adminMsg)}`;
+
+    modal.innerHTML = `
+        <div class="modal-box text-center" style="max-width: 480px; width: 100%; background: #ffffff; color: #1e293b; padding: 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.25); text-align: center; direction: rtl; font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', system-ui, sans-serif;">
+            <div style="font-size: 3rem; margin-bottom: 10px;">📦</div>
+            <h3 style="color: #0f766e; margin-bottom: 8px; font-size: 1.3rem;">${escapeHtml(p.clean_title)}</h3>
+            <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 15px;">
+                یہ فائل اپنے بڑے سائز (${p.size_formatted}) کی وجہ سے کلاؤڈ پر محفوظ ہو رہی ہے۔
+            </p>
+            <div style="background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 20px; font-size: 0.9rem; text-align: right; line-height: 1.8;">
+                💡 <strong>فوری حاصل کرنے کا طریقہ:</strong><br>
+                نیچے واٹس ایپ کے بٹن پر کلک کر کے ایڈمن سے فوری طور پر اصل پی ڈی ایف فائل منگوائیں۔
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <a href="${waUrl}" target="_blank" rel="noopener" class="btn" style="background: #25D366; color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span>📲 واٹس ایپ پر ایڈمن سے حاصل کریں</span>
+                </a>
+                <button type="button" class="btn" onclick="document.getElementById('unavailable-modal').style.display='none'" style="background: #e2e8f0; color: #334155; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.95rem;">
+                    بند کریں
+                </button>
+            </div>
+        </div>
+    `;
+    modal.style.display = "flex";
 }
 
 // ==========================================
@@ -820,28 +889,41 @@ async function shareSinglePastPaper(paperId) {
     const p = getPaperById(paperId);
     if (!p) return;
 
-    const fileUrl = `${API_BASE}${p.download_url}`;
-    const absoluteUrl = fileUrl.startsWith("http") ? fileUrl : `https://aiou-help.vercel.app${fileUrl}`;
+    let downloadLink = p.download_url || "";
+    const isDirectHttp = downloadLink.startsWith("http://") || downloadLink.startsWith("https://");
+    const isStatic = downloadLink.startsWith("/past_papers/");
+
+    let finalShareUrl = "";
+    if (isDirectHttp) {
+        finalShareUrl = downloadLink;
+    } else if (isStatic) {
+        finalShareUrl = `https://aiou-help.vercel.app${downloadLink}`;
+    } else {
+        finalShareUrl = "https://aiou-help.vercel.app";
+    }
 
     const shareText = [
         `📚 *علامہ اقبال اوپن یونیورسٹی (AIOU BS Islamic Studies)*`,
-        `📑 *پرچہ:* ${p.clean_title}`,
+        `📑 *پرچہ / کتاب:* ${p.clean_title}`,
         `📖 *کورس:* ${p.course_code} - ${p.course_title_ur}`,
         `🎓 *سمسٹر:* سمسٹر ${p.semester_num}`,
         `📁 *قسم:* ${p.category_ur}`,
         p.season_ur ? `🗓️ *سیشن:* ${p.season_ur}` : ``,
         `💾 *سائز:* ${p.size_formatted}`,
         `----------------------------------------`,
+        `📥 *براہِ راست پی ڈی ایف ڈاؤن لوڈ:*`,
+        `👉 ${finalShareUrl}`,
+        `----------------------------------------`,
         `🌐 *آن لائن پورٹل:* https://aiou-help.vercel.app`,
         `[AIOU Help Study Portal]`
     ].filter(Boolean).join("\n");
 
-    showToast(`شیئر کے لیے پی ڈی ایف فائل تیار ہو رہی ہے...`);
+    showToast(`شیئر کے لیے پی ڈی ایف تیار کی جا رہی ہے...`);
 
-    // 1. Try Web Share API with real PDF file attachment (WhatsApp receives actual .pdf document!)
-    if (navigator.share) {
+    // 1. If it's a same-origin static file, try Web Share API with real PDF file attachment!
+    if (isStatic && navigator.share) {
         try {
-            const resp = await fetch(fileUrl);
+            const resp = await fetch(`${API_BASE}${p.download_url}`);
             if (resp.ok) {
                 const blob = await resp.blob();
                 const file = new File([blob], p.filename, { type: "application/pdf" });
@@ -857,18 +939,17 @@ async function shareSinglePastPaper(paperId) {
                 }
             }
         } catch (err) {
-            if (err.name === "AbortError") {
-                return; // User closed the native share dialog
-            }
-            console.warn("Native file sharing error, falling back to link sharing:", err);
+            if (err.name === "AbortError") return;
         }
+    }
 
-        // Try native text/link share if file sharing wasn't accepted
+    // 2. Try native text/link share if available
+    if (navigator.share) {
         try {
             await navigator.share({
                 title: p.clean_title,
                 text: shareText,
-                url: absoluteUrl
+                url: finalShareUrl
             });
             showToast("✓ پرچہ شیئر ہو گیا۔");
             return;
@@ -877,9 +958,8 @@ async function shareSinglePastPaper(paperId) {
         }
     }
 
-    // 2. Fallback to WhatsApp URL with direct download link
-    const waText = `${shareText}\n📥 *براہ راست پی ڈی ایف ڈاؤن لوڈ:* ${absoluteUrl}`;
-    const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(waText)}`;
+    // 3. Fallback to WhatsApp Web/App direct link
+    const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
     window.open(waUrl, "_blank");
     showToast("واٹس ایپ پر شیئر ونڈو کھل گئی۔");
 }
@@ -899,10 +979,16 @@ async function shareSelectedPastPapersWhatsApp() {
         try {
             showToast(`${selected.length} پرچہ جات شیئر کے لیے تیار ہو رہے ہیں...`);
             const filePromises = selected.map(async p => {
-                const resp = await fetch(`${API_BASE}${p.download_url}`);
-                if (!resp.ok) return null;
-                const blob = await resp.blob();
-                return new File([blob], p.filename, { type: "application/pdf" });
+                const dl = p.download_url || "";
+                if (!dl.startsWith("/past_papers/")) return null;
+                try {
+                    const resp = await fetch(`${API_BASE}${dl}`);
+                    if (!resp.ok) return null;
+                    const blob = await resp.blob();
+                    return new File([blob], p.filename, { type: "application/pdf" });
+                } catch (e) {
+                    return null;
+                }
             });
             const files = (await Promise.all(filePromises)).filter(Boolean);
             if (files.length > 0 && navigator.canShare({ files })) {
@@ -920,7 +1006,7 @@ async function shareSelectedPastPapersWhatsApp() {
         }
     }
 
-    // Text summary fallback
+    // Text summary fallback with working direct links
     let text = [
         `📚 *علامہ اقبال اوپن یونیورسٹی (AIOU) - منتخب شدہ امتحانی پرچہ جات*`,
         `📋 *کل منتخب پرچے:* ${selected.length} پرچہ جات`,
@@ -928,7 +1014,8 @@ async function shareSelectedPastPapersWhatsApp() {
     ];
 
     selected.forEach((p, i) => {
-        text.push(`${i + 1}. ${p.category_icon} *${p.course_code}:* ${p.clean_title} (${p.size_formatted})`);
+        const link = (p.download_url && p.download_url.startsWith("http")) ? p.download_url : `https://aiou-help.vercel.app${p.download_url || ''}`;
+        text.push(`${i + 1}. ${p.category_icon} *${p.course_code}:* ${p.clean_title} (${p.size_formatted})\n   📥 ڈاؤن لوڈ: ${link}`);
     });
 
     text.push(`----------------------------------------`);
@@ -1036,25 +1123,32 @@ function showPdfFallbackCard(p) {
     if (iframe) iframe.style.display = "none";
     if (loading) loading.style.display = "none";
 
+    const dlUrl = p.download_url || "";
+    const isDirectHttp = dlUrl.startsWith("http://") || dlUrl.startsWith("https://");
+
     if (fallback) {
         fallback.innerHTML = `
             <div class="pdf-fallback-card">
-                <div class="pdf-fallback-icon">📑</div>
+                <div class="pdf-fallback-icon">📖</div>
                 <h3 class="pdf-fallback-title">${escapeHtml(p.clean_title)}</h3>
                 <p class="pdf-fallback-meta">${escapeHtml(p.course_code)} - ${escapeHtml(p.course_title_ur)} (سمسٹر ${p.semester_num})</p>
                 
                 <div class="pdf-fallback-tip-box">
-                    <strong>💡 اس پرچے کا سائز ${p.size_formatted} ہے:</strong><br>
-                    براہِ راست اپنی ڈیوائس کی میموری (Downloads) میں محفوظ کرنے کے لیے نیچے بٹن دبائیں یا واٹس ایپ پر حاصل کریں۔
+                    <strong>💡 اس فائل / کی بک کا سائز ${p.size_formatted} ہے:</strong><br>
+                    تیز رفتار ڈاؤن لوڈنگ کے لیے نیچے دیے گئے بٹن سے براہِ راست اپنی ڈیوائس (Downloads) میں محفوظ کریں یا واٹس ایپ پر شیئر کریں۔
                 </div>
 
                 <div class="pdf-fallback-btns">
                     <button type="button" class="pdf-modal-btn btn-modal-download" onclick="downloadSinglePastPaper('${p.id}')">
-                        <span>⬇️ ڈیوائس میں محفوظ کریں</span>
+                        <span>⬇️ ڈیوائس میں محفوظ کریں (${p.size_formatted})</span>
                     </button>
                     <button type="button" class="pdf-modal-btn btn-modal-share" onclick="shareSinglePastPaper('${p.id}')">
                         <span>📲 واٹس ایپ پر فائل بھیجیں</span>
                     </button>
+                    ${isDirectHttp ? `
+                    <a href="${dlUrl}" target="_blank" rel="noopener noreferrer" class="pdf-modal-btn" style="text-decoration:none; background:#2563eb; color:white; display:flex; align-items:center; justify-content:center; gap:6px;">
+                        <span>🌐 براؤزر میں کھولیں</span>
+                    </a>` : ''}
                 </div>
             </div>
         `;
@@ -1086,7 +1180,7 @@ async function renderActivePdfInViewer(p) {
         if (loadingText) loadingText.textContent = "پرچہ کے صفحات تیار ہو رہے ہیں، براہِ کرم انتظار فرمائیں...";
     }
 
-    const fileUrl = `${API_BASE}${p.view_url}`;
+    const fileUrl = (p.view_url && (p.view_url.startsWith("http://") || p.view_url.startsWith("https://"))) ? p.view_url : `${API_BASE}${p.view_url}`;
     const absoluteUrl = fileUrl.startsWith("http") ? fileUrl : `https://aiou-help.vercel.app${fileUrl}`;
 
     // 1. GOOGLE DOCS HD VIEWER (Official Google Cloud PDF engine: 100% authentic Jameel Noori Nastaliq / Urdu fonts!)
@@ -1219,19 +1313,21 @@ async function openPdfViewerModal(paperId) {
         console.warn("History pushState failed:", e);
     }
 
-    // Verify whether file is reachable
-    const fileUrl = `${API_BASE}${p.view_url}`;
-    try {
-        const headCheck = await fetch(fileUrl, { method: "HEAD" });
-        if (!headCheck.ok) {
-            showPdfFallbackCard(p);
-            return;
-        }
-    } catch (e) {
-        // Continue
+    // 1. Files >= 20 MB (large keybooks) cannot be rendered reliably by Google Docs Viewer or PDF.js
+    // Show direct device download / WhatsApp card immediately
+    if (p.size_mb && p.size_mb >= 20.0) {
+        showPdfFallbackCard(p);
+        return;
     }
 
-    // Default to Google Docs HD viewer: preserves 100% authentic Urdu Nastaliq fonts and connected text
+    // 2. If file is neither static nor hosted on cloud CDN, show request card
+    const isDirectCloud = p.view_url && (p.view_url.startsWith("http://") || p.view_url.startsWith("https://"));
+    if (!p.is_static && !isDirectCloud) {
+        showPdfFallbackCard(p);
+        return;
+    }
+
+    // 3. Default to Google Docs HD viewer: preserves 100% authentic Urdu Nastaliq fonts and connected text
     currentPdfViewerMode = "google";
     renderActivePdfInViewer(p);
 }
