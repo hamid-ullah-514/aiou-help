@@ -3289,11 +3289,18 @@ button, input, textarea, select,
 .pdf-modal-header {
     background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
     color: #ffffff;
-    padding: 0.85rem 1.25rem;
+    padding: 0.9rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.pdf-modal-top-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
+    gap: 0.75rem;
+    width: 100%;
 }
 
 .pdf-modal-title-wrap {
@@ -3301,11 +3308,17 @@ button, input, textarea, select,
     align-items: center;
     gap: 0.75rem;
     min-width: 0;
+    flex-grow: 1;
 }
 
 .pdf-modal-icon {
     font-size: 1.5rem;
     flex-shrink: 0;
+}
+
+.pdf-modal-heading-text {
+    min-width: 0;
+    flex-grow: 1;
 }
 
 .pdf-modal-title {
@@ -3319,49 +3332,145 @@ button, input, textarea, select,
 }
 
 .pdf-modal-meta {
-    font-size: 0.78rem;
+    font-size: 0.8rem;
     color: #ccfbf1;
     display: block;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    margin-top: 0.15rem;
+}
+
+.pdf-modal-close-icon-btn {
+    background: #ef4444;
+    color: #ffffff;
+    border: none;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.15s ease;
+}
+
+.pdf-modal-close-icon-btn:hover {
+    background: #dc2626;
+    transform: scale(1.05);
 }
 
 .pdf-modal-controls {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    flex-shrink: 0;
+    flex-wrap: wrap;
 }
 
 .pdf-modal-btn {
     background: rgba(255, 255, 255, 0.15);
     color: #ffffff;
     border: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 0.35rem 0.75rem;
+    padding: 0.4rem 0.85rem;
     border-radius: var(--radius-sm);
-    font-size: 0.82rem;
+    font-size: 0.84rem;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.15s ease;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0.35rem;
 }
 
 .pdf-modal-btn:hover {
     background: rgba(255, 255, 255, 0.28);
 }
 
-.pdf-modal-close-btn {
-    background: #ef4444 !important;
-    border-color: #dc2626 !important;
-    font-size: 1.1rem;
-    padding: 0.3rem 0.65rem;
+.btn-modal-download {
+    background: #0d9488 !important;
+    border-color: #14b8a6 !important;
+}
+.btn-modal-download:hover {
+    background: #0f766e !important;
 }
 
-.pdf-modal-close-btn:hover {
-    background: #b91c1c !important;
+.btn-modal-share {
+    background: #16a34a !important;
+    border-color: #22c55e !important;
+}
+.btn-modal-share:hover {
+    background: #15803d !important;
+}
+
+.btn-modal-fullscreen {
+    background: #2563eb !important;
+    border-color: #3b82f6 !important;
+}
+
+/* Fallback card inside modal */
+.pdf-modal-fallback {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #ffffff;
+    color: var(--text-primary);
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow-y: auto;
+    z-index: 5;
+}
+
+.pdf-fallback-card {
+    max-width: 550px;
+    background: #f8fafc;
+    border: 2px dashed #cbd5e1;
+    border-radius: var(--radius-lg);
+    padding: 2rem 1.5rem;
+}
+
+.pdf-fallback-icon {
+    font-size: 3rem;
+    margin-bottom: 0.75rem;
+}
+
+.pdf-fallback-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 0.35rem;
+}
+
+.pdf-fallback-meta {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.25rem;
+}
+
+.pdf-fallback-tip-box {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    text-align: right;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.pdf-fallback-btns {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .pdf-modal-body {
@@ -3429,6 +3538,41 @@ button, input, textarea, select,
         height: 100vh;
         max-width: 100vw;
         border-radius: 0;
+    }
+
+    .pdf-modal-header {
+        padding: 0.65rem 0.85rem;
+        gap: 0.45rem;
+    }
+
+    .pdf-modal-top-row {
+        gap: 0.5rem;
+    }
+
+    .pdf-modal-title {
+        font-size: 0.95rem;
+    }
+
+    .pdf-modal-meta {
+        font-size: 0.75rem;
+    }
+
+    .pdf-modal-controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.4rem;
+        width: 100%;
+    }
+
+    .pdf-modal-controls .btn-modal-fullscreen {
+        display: none;
+    }
+
+    .pdf-modal-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 0.5rem 0.4rem;
+        font-size: 0.78rem;
     }
 }
 

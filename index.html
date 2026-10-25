@@ -1135,30 +1135,36 @@
     <div id="pdf-viewer-modal" class="pdf-modal-overlay" style="display: none;">
         <div class="pdf-modal-container">
             <div class="pdf-modal-header">
-                <div class="pdf-modal-title-wrap">
-                    <span class="pdf-modal-icon">📖</span>
-                    <div>
-                        <h3 id="pdf-modal-title" class="pdf-modal-title">پرچہ کا عنوان</h3>
-                        <span id="pdf-modal-meta" class="pdf-modal-meta">کورس | سائز | سمسٹر</span>
+                <!-- Top Row: Icon, Title, and Close Button -->
+                <div class="pdf-modal-top-row">
+                    <div class="pdf-modal-title-wrap">
+                        <span class="pdf-modal-icon">📖</span>
+                        <div class="pdf-modal-heading-text">
+                            <h3 id="pdf-modal-title" class="pdf-modal-title">پرچہ کا عنوان</h3>
+                            <span id="pdf-modal-meta" class="pdf-modal-meta">کورس | سائز | سمسٹر</span>
+                        </div>
                     </div>
-                </div>
-                <div class="pdf-modal-controls">
-                    <button type="button" class="pdf-modal-btn" onclick="downloadActivePdfModal()" title="ڈاؤن لوڈ کریں">
-                        <span>⬇️ ڈاؤن لوڈ</span>
-                    </button>
-                    <button type="button" class="pdf-modal-btn" onclick="shareActivePdfModal()" title="واٹس ایپ پر شیئر کریں">
-                        <span>📲 شیئر</span>
-                    </button>
-                    <button type="button" class="pdf-modal-btn" onclick="togglePdfModalFullscreen()" title="فل اسکرین ویو">
-                        <span>🖥️</span>
-                    </button>
-                    <button type="button" class="pdf-modal-btn pdf-modal-close-btn" onclick="closePdfViewerModal()" title="بند کریں">
+                    <button type="button" class="pdf-modal-close-icon-btn" onclick="closePdfViewerModal()" title="بند کریں">
                         <span>✕</span>
+                    </button>
+                </div>
+
+                <!-- Bottom Row: Action Toolbar (Download, Share, Fullscreen) -->
+                <div class="pdf-modal-controls">
+                    <button type="button" class="pdf-modal-btn btn-modal-download" onclick="downloadActivePdfModal()" title="موبائل یا پی سی پر محفوظ کریں">
+                        <span>⬇️ فائل ڈاؤن لوڈ کریں</span>
+                    </button>
+                    <button type="button" class="pdf-modal-btn btn-modal-share" onclick="shareActivePdfModal()" title="واٹس ایپ پر پی ڈی ایف فائل بھیجیں">
+                        <span>📲 واٹس ایپ پر فائل شیئر</span>
+                    </button>
+                    <button type="button" class="pdf-modal-btn btn-modal-fullscreen" onclick="togglePdfModalFullscreen()" title="مکمل اسکرین ویو">
+                        <span>🖥️ فل اسکرین</span>
                     </button>
                 </div>
             </div>
             <div class="pdf-modal-body">
                 <iframe id="pdf-modal-iframe" src="about:blank" class="pdf-modal-iframe"></iframe>
+                <div id="pdf-modal-fallback" class="pdf-modal-fallback" style="display: none;"></div>
                 <div id="pdf-modal-loading" class="pdf-modal-loading" style="display: none;">
                     <div class="spinner"></div>
                     <span>پرچہ لوڈ ہو رہا ہے، براہِ کرم انتظار فرمائیں...</span>

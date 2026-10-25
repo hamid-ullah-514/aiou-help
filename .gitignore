@@ -38,9 +38,11 @@ ENV/
 3rd semester/
 4th semester/
 5th semester/
-*.pdf
+# Ignore root documents except static web past papers in public/past_papers
 *.docx
 *.doc
+*.pdf
+!public/past_papers/**
 
 # Large Local SQLite Search Database (>100MB exceeds GitHub push limit)
 data/aiou_search.db

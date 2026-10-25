@@ -722,23 +722,85 @@ function getPaperById(paperId) {
     return pastPapersCatalog.papers.find(p => p.id === paperId);
 }
 
-function downloadSinglePastPaper(paperId) {
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+// ==========================================
+// DIRECT FILE DOWNLOAD (To Device / Storage)
+// ==========================================
+async function downloadSinglePastPaper(paperId) {
     const p = getPaperById(paperId);
     if (!p) return;
 
-    const link = document.createElement("a");
-    link.href = `${API_BASE}${p.download_url}`;
-    link.download = p.filename;
-    link.target = "_blank";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    showToast(`ڈاؤن لوڈ شروع ہو گیا: ${p.clean_title}`);
+    showToast(`پرچہ ڈاؤن لوڈ کیا جا رہا ہے: ${p.clean_title}...`);
+    const fileUrl = `${API_BASE}${p.download_url}`;
+
+    try {
+        const resp = await fetch(fileUrl);
+        if (!resp.ok) {
+            throw new Error(`سرور سے ڈاؤن لوڈ نہیں ہو سکا (${resp.status})`);
+        }
+        const blob = await resp.blob();
+
+        // 1. On PC (Desktop Chrome/Edge): allow user to choose folder location via File System Access API
+        if (window.showSaveFilePicker && !isMobileDevice()) {
+            try {
+                const handle = await window.showSaveFilePicker({
+                    suggestedName: p.filename,
+                    types: [{
+                        description: "PDF Document",
+                        accept: { "application/pdf": [".pdf"] }
+                    }]
+                });
+                const writable = await handle.createWritable();
+                await writable.write(blob);
+                await writable.close();
+                showToast(`✓ فائل آپ کے کمپیوٹر میں محفوظ ہو گئی: ${p.clean_title}`);
+                return;
+            } catch (err) {
+                if (err.name === "AbortError") {
+                    // User cancelled the save dialog
+                    return;
+                }
+                // Fall through to blob anchor download
+            }
+        }
+
+        // 2. Direct Blob anchor download: forces Android / iOS / PC to save directly to Downloads storage
+        // (WITHOUT target="_blank" so mobile Chrome saves the file rather than viewing in a tab)
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = blobUrl;
+        a.download = p.filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => window.URL.revokeObjectURL(blobUrl), 30000);
+
+        showToast(`✓ پرچہ آپ کی ڈیوائس (Downloads) میں محفوظ ہو گیا!`);
+    } catch (e) {
+        console.warn("Direct blob download failed, falling back to direct anchor:", e);
+        // Fallback: standard anchor download
+        const a = document.createElement("a");
+        a.href = fileUrl;
+        a.download = p.filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        showToast(`ڈاؤن لوڈ شروع ہوا: ${p.clean_title}`);
+    }
 }
 
+// ==========================================
+// DIRECT FILE SHARE (Actual PDF to WhatsApp)
+// ==========================================
 async function shareSinglePastPaper(paperId) {
     const p = getPaperById(paperId);
     if (!p) return;
+
+    const fileUrl = `${API_BASE}${p.download_url}`;
+    const absoluteUrl = fileUrl.startsWith("http") ? fileUrl : `https://aiou-help.vercel.app${fileUrl}`;
 
     const shareText = [
         `📚 *علامہ اقبال اوپن یونیورسٹی (AIOU BS Islamic Studies)*`,
@@ -749,33 +811,95 @@ async function shareSinglePastPaper(paperId) {
         p.season_ur ? `🗓️ *سیشن:* ${p.season_ur}` : ``,
         `💾 *سائز:* ${p.size_formatted}`,
         `----------------------------------------`,
-        `🌐 *آن لائن مطالعہ و تیاری پورٹل:* https://aiou-help.vercel.app`,
-        `----------------------------------------`,
+        `🌐 *آن لائن پورٹل:* https://aiou-help.vercel.app`,
         `[AIOU Help Study Portal]`
     ].filter(Boolean).join("\n");
 
+    showToast(`شیئر کے لیے پی ڈی ایف فائل تیار ہو رہی ہے...`);
+
+    // 1. Try Web Share API with real PDF file attachment (WhatsApp receives actual .pdf document!)
     if (navigator.share) {
+        try {
+            const resp = await fetch(fileUrl);
+            if (resp.ok) {
+                const blob = await resp.blob();
+                const file = new File([blob], p.filename, { type: "application/pdf" });
+
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        files: [file],
+                        title: p.clean_title,
+                        text: `علامہ اقبال اوپن یونیورسٹی - ${p.clean_title}`
+                    });
+                    showToast("✓ پی ڈی ایف فائل واٹس ایپ / ایپس پر شیئر ہو گئی!");
+                    return;
+                }
+            }
+        } catch (err) {
+            if (err.name === "AbortError") {
+                return; // User closed the native share dialog
+            }
+            console.warn("Native file sharing error, falling back to link sharing:", err);
+        }
+
+        // Try native text/link share if file sharing wasn't accepted
         try {
             await navigator.share({
                 title: p.clean_title,
                 text: shareText,
-                url: window.location.href
+                url: absoluteUrl
             });
+            showToast("✓ پرچہ شیئر ہو گیا۔");
             return;
-        } catch (e) {
-            // fallback to whatsapp
+        } catch (err) {
+            if (err.name === "AbortError") return;
         }
     }
 
-    const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+    // 2. Fallback to WhatsApp URL with direct download link
+    const waText = `${shareText}\n📥 *براہ راست پی ڈی ایف ڈاؤن لوڈ:* ${absoluteUrl}`;
+    const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(waText)}`;
     window.open(waUrl, "_blank");
     showToast("واٹس ایپ پر شیئر ونڈو کھل گئی۔");
 }
 
-function shareSelectedPastPapersWhatsApp() {
+async function shareSelectedPastPapersWhatsApp() {
     if (selectedPastPaperIds.size === 0) return;
     const selected = Array.from(selectedPastPaperIds).map(id => getPaperById(id)).filter(Boolean);
 
+    // If only 1 paper is selected, use single paper file share
+    if (selected.length === 1) {
+        await shareSinglePastPaper(selected[0].id);
+        return;
+    }
+
+    // If 2 to 5 papers, attempt native multi-file sharing
+    if (navigator.share && navigator.canShare && selected.length <= 5) {
+        try {
+            showToast(`${selected.length} پرچہ جات شیئر کے لیے تیار ہو رہے ہیں...`);
+            const filePromises = selected.map(async p => {
+                const resp = await fetch(`${API_BASE}${p.download_url}`);
+                if (!resp.ok) return null;
+                const blob = await resp.blob();
+                return new File([blob], p.filename, { type: "application/pdf" });
+            });
+            const files = (await Promise.all(filePromises)).filter(Boolean);
+            if (files.length > 0 && navigator.canShare({ files })) {
+                await navigator.share({
+                    files: files,
+                    title: `علامہ اقبال اوپن یونیورسٹی - ${selected.length} امتحانی پرچہ جات`,
+                    text: `علامہ اقبال اوپن یونیورسٹی (AIOU BS Islamic Studies) کے ${selected.length} منتخب پرچہ جات:`
+                });
+                showToast(`✓ تمام ${files.length} پرچہ جات واٹس ایپ / ایپس پر شیئر ہو گئے!`);
+                return;
+            }
+        } catch (err) {
+            if (err.name === "AbortError") return;
+            console.warn("Multiple files share failed, falling back to text:", err);
+        }
+    }
+
+    // Text summary fallback
     let text = [
         `📚 *علامہ اقبال اوپن یونیورسٹی (AIOU) - منتخب شدہ امتحانی پرچہ جات*`,
         `📋 *کل منتخب پرچے:* ${selected.length} پرچہ جات`,
@@ -835,6 +959,27 @@ async function downloadSelectedPastPapers() {
 
         if (resp.ok) {
             const blob = await resp.blob();
+
+            // PC File Picker
+            if (window.showSaveFilePicker && !isMobileDevice()) {
+                try {
+                    const handle = await window.showSaveFilePicker({
+                        suggestedName: `AIOU_Selected_Past_Papers_${ids.length}.zip`,
+                        types: [{
+                            description: "ZIP Archive",
+                            accept: { "application/zip": [".zip"] }
+                        }]
+                    });
+                    const writable = await handle.createWritable();
+                    await writable.write(blob);
+                    await writable.close();
+                    showToast(`✓ تمام ${ids.length} پرچہ جات کی زپ فائل آپ کے کمپیوٹر میں محفوظ ہو گئی!`);
+                    return;
+                } catch (err) {
+                    if (err.name === "AbortError") return;
+                }
+            }
+
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
@@ -842,8 +987,8 @@ async function downloadSelectedPastPapers() {
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-            showToast(`کامیابی! زپ فائل ڈاؤن لوڈ ہو گئی (${ids.length} پرچہ جات)`);
+            setTimeout(() => window.URL.revokeObjectURL(url), 30000);
+            showToast(`کامیابی! زپ فائل ڈاؤن لوڈز میں محفوظ ہو گئی (${ids.length} پرچہ جات)`);
             return;
         }
     } catch (e) {
@@ -862,7 +1007,41 @@ async function downloadSelectedPastPapers() {
     });
 }
 
-function openPdfViewerModal(paperId) {
+function showPdfFallbackCard(p) {
+    const iframe = document.getElementById("pdf-modal-iframe");
+    const fallback = document.getElementById("pdf-modal-fallback");
+    const loading = document.getElementById("pdf-modal-loading");
+
+    if (iframe) iframe.style.display = "none";
+    if (loading) loading.style.display = "none";
+
+    if (fallback) {
+        fallback.innerHTML = `
+            <div class="pdf-fallback-card">
+                <div class="pdf-fallback-icon">📑</div>
+                <h3 class="pdf-fallback-title">${escapeHtml(p.clean_title)}</h3>
+                <p class="pdf-fallback-meta">${escapeHtml(p.course_code)} - ${escapeHtml(p.course_title_ur)} (سمسٹر ${p.semester_num})</p>
+                
+                <div class="pdf-fallback-tip-box">
+                    <strong>💡 اس پرچے کا سائز ${p.size_formatted} ہے:</strong><br>
+                    براہِ راست اپنی ڈیوائس کی میموری (Downloads) میں محفوظ کرنے کے لیے نیچے بٹن دبائیں یا واٹس ایپ پر حاصل کریں۔
+                </div>
+
+                <div class="pdf-fallback-btns">
+                    <button type="button" class="pdf-modal-btn btn-modal-download" onclick="downloadSinglePastPaper('${p.id}')">
+                        <span>⬇️ ڈیوائس میں محفوظ کریں</span>
+                    </button>
+                    <button type="button" class="pdf-modal-btn btn-modal-share" onclick="shareSinglePastPaper('${p.id}')">
+                        <span>📲 واٹس ایپ پر فائل بھیجیں</span>
+                    </button>
+                </div>
+            </div>
+        `;
+        fallback.style.display = "flex";
+    }
+}
+
+async function openPdfViewerModal(paperId) {
     const p = getPaperById(paperId);
     if (!p) return;
     activePdfModalPaper = p;
@@ -872,28 +1051,54 @@ function openPdfViewerModal(paperId) {
     const metaEl = document.getElementById("pdf-modal-meta");
     const iframe = document.getElementById("pdf-modal-iframe");
     const loading = document.getElementById("pdf-modal-loading");
+    const fallback = document.getElementById("pdf-modal-fallback");
 
     if (titleEl) titleEl.textContent = p.clean_title;
     if (metaEl) metaEl.textContent = `${p.course_code}: ${p.course_title_ur} | ${p.category_ur} | سائز: ${p.size_formatted} | سمسٹر ${p.semester_num}`;
 
+    if (fallback) fallback.style.display = "none";
+    if (iframe) iframe.style.display = "block";
     if (loading) loading.style.display = "flex";
-    if (iframe) {
-        iframe.onload = () => {
-            if (loading) loading.style.display = "none";
-        };
-        iframe.src = `${API_BASE}${p.view_url}#toolbar=1&navpanes=1`;
-    }
+
+    const fileUrl = `${API_BASE}${p.view_url}`;
 
     if (modal) {
         modal.style.display = "flex";
         document.body.style.overflow = "hidden";
+    }
+
+    // Verify whether file is reachable
+    try {
+        const headCheck = await fetch(fileUrl, { method: "HEAD" });
+        if (!headCheck.ok) {
+            showPdfFallbackCard(p);
+            return;
+        }
+    } catch (e) {
+        // In case of CORS or network error, let iframe attempt loading
+    }
+
+    if (iframe) {
+        iframe.onload = () => {
+            if (loading) loading.style.display = "none";
+        };
+        iframe.onerror = () => {
+            if (loading) loading.style.display = "none";
+            showPdfFallbackCard(p);
+        };
+        iframe.src = `${fileUrl}#toolbar=1&navpanes=1`;
     }
 }
 
 function closePdfViewerModal() {
     const modal = document.getElementById("pdf-viewer-modal");
     const iframe = document.getElementById("pdf-modal-iframe");
-    if (iframe) iframe.src = "about:blank";
+    const fallback = document.getElementById("pdf-modal-fallback");
+    if (iframe) {
+        iframe.src = "about:blank";
+        iframe.style.display = "block";
+    }
+    if (fallback) fallback.style.display = "none";
     if (modal) modal.style.display = "none";
     document.body.style.overflow = "";
     activePdfModalPaper = null;

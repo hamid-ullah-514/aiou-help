@@ -57,6 +57,9 @@ async def vercel_path_middleware(request, call_next):
 # Mount static files
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+    past_papers_static = STATIC_DIR / "past_papers"
+    if past_papers_static.exists():
+        app.mount("/past_papers", StaticFiles(directory=str(past_papers_static)), name="past_papers")
 
 # Request Models
 class AskRequest(BaseModel):

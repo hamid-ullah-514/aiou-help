@@ -168,7 +168,20 @@ def scan_and_build_past_papers_index(force_refresh: bool = False) -> Dict[str, A
             paper_id = f"pp_{sem_num}_{course_code}_{idx:04d}"
             rel_path = f"{folder_name}/{item}"
 
+            static_file = BASE_DIR / "public" / "past_papers" / folder_name / item
+            is_static = static_file.exists() and static_file.is_file()
+
             quoted_path = urllib.parse.quote(rel_path)
+            quoted_item = urllib.parse.quote(item)
+            quoted_folder = urllib.parse.quote(folder_name)
+
+            if is_static:
+                v_url = f"/past_papers/{quoted_folder}/{quoted_item}"
+                d_url = f"/past_papers/{quoted_folder}/{quoted_item}"
+            else:
+                v_url = f"/api/pastpapers/file?path={quoted_path}&download=0"
+                d_url = f"/api/pastpapers/file?path={quoted_path}&download=1"
+
             papers.append({
                 "id": paper_id,
                 "filename": item,
@@ -185,8 +198,9 @@ def scan_and_build_past_papers_index(force_refresh: bool = False) -> Dict[str, A
                 "size_formatted": f"{size_mb} MB" if size_mb >= 1.0 else f"{round(size_bytes / 1024, 1)} KB",
                 "file_type": ext,
                 "rel_path": rel_path,
-                "view_url": f"/api/pastpapers/file?path={quoted_path}&download=0",
-                "download_url": f"/api/pastpapers/file?path={quoted_path}&download=1"
+                "is_static": is_static,
+                "view_url": v_url,
+                "download_url": d_url
             })
             idx += 1
 
