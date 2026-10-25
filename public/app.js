@@ -435,10 +435,11 @@ let selectedPastPaperIds = new Set();
 let activePdfModalPaper = null;
 
 async function initPastPapers() {
+    const buster = `?t=${Date.now()}`;
     try {
-        let resp = await fetch(`${API_BASE}/api/pastpapers/catalog`);
+        let resp = await fetch(`${API_BASE}/api/pastpapers/catalog${buster}`);
         if (!resp.ok) {
-            resp = await fetch("past_papers_index.json");
+            resp = await fetch(`past_papers_index.json${buster}`);
         }
         if (resp.ok) {
             pastPapersCatalog = await resp.json();
@@ -451,7 +452,7 @@ async function initPastPapers() {
     }
 
     try {
-        let resp2 = await fetch("past_papers_index.json");
+        let resp2 = await fetch(`past_papers_index.json${buster}`);
         if (resp2.ok) {
             pastPapersCatalog = await resp2.json();
             populatePastCourseDropdown();
@@ -750,99 +751,30 @@ function isMobileDevice() {
 // ==========================================
 // DIRECT FILE DOWNLOAD (To Device / Storage)
 // ==========================================
-async function downloadSinglePastPaper(paperId) {
+function downloadSinglePastPaper(paperId) {
     const p = getPaperById(paperId);
     if (!p) return;
 
     showToast(`پرچہ ڈاؤن لوڈ ہو رہا ہے: ${p.clean_title}...`);
 
-    const rawUrl = p.download_url || "";
+    let rawUrl = p.download_url || "";
+    if (!rawUrl || (!rawUrl.startsWith("http://") && !rawUrl.startsWith("https://") && !rawUrl.startsWith("/"))) {
+        rawUrl = `/api/pastpapers/file?id=${encodeURIComponent(p.id)}&download=1`;
+    }
     const isDirectHttp = rawUrl.startsWith("http://") || rawUrl.startsWith("https://");
+    const fileUrl = isDirectHttp ? rawUrl : `${API_BASE}${rawUrl}`;
 
-    // Case 1: External CDN / Direct Cloud Link (GitHub Releases / Azure CDN)
-    if (isDirectHttp) {
-        const a = document.createElement("a");
-        a.href = rawUrl;
-        a.download = p.filename;
-        a.target = "_blank";
-        a.rel = "noopener noreferrer";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        showToast(`✓ فائل آپ کے ڈاؤن لوڈز میں محفوظ ہو رہی ہے: ${p.clean_title}`);
-        return;
-    }
+    // Direct Anchor download (without target="_blank" so mobile Chrome saves directly to Downloads)
+    const a = document.createElement("a");
+    a.href = fileUrl;
+    a.setAttribute("download", p.filename || `${p.clean_title}.pdf`);
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+        if (document.body.contains(a)) document.body.removeChild(a);
+    }, 2000);
 
-    // Case 2: Same-origin / Relative Static Link (/past_papers/...)
-    const fileUrl = `${API_BASE}${rawUrl}`;
-
-    try {
-        const resp = await fetch(fileUrl);
-        if (!resp.ok) {
-            throw new Error(`FILE_NOT_FOUND_${resp.status}`);
-        }
-        const contentType = (resp.headers.get("content-type") || "").toLowerCase();
-        if (contentType.includes("json")) {
-            // Server returned JSON error message, NOT a real PDF file!
-            throw new Error(`SERVER_ERROR_JSON`);
-        }
-
-        const blob = await resp.blob();
-
-        // 1. On PC (Desktop Chrome/Edge): allow user to choose folder location via File System Access API
-        if (window.showSaveFilePicker && !isMobileDevice()) {
-            try {
-                const handle = await window.showSaveFilePicker({
-                    suggestedName: p.filename,
-                    types: [{
-                        description: "PDF Document",
-                        accept: { "application/pdf": [".pdf"] }
-                    }]
-                });
-                const writable = await handle.createWritable();
-                await writable.write(blob);
-                await writable.close();
-                showToast(`✓ فائل آپ کے کمپیوٹر میں محفوظ ہو گئی: ${p.clean_title}`);
-                return;
-            } catch (err) {
-                if (err.name === "AbortError") {
-                    return;
-                }
-            }
-        }
-
-        // 2. Direct Blob anchor download: forces Android / iOS / PC to save directly to Downloads storage
-        const blobUrl = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = blobUrl;
-        a.download = p.filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        setTimeout(() => window.URL.revokeObjectURL(blobUrl), 30000);
-
-        showToast(`✓ پرچہ آپ کی ڈیوائس (Downloads) میں محفوظ ہو گیا!`);
-    } catch (e) {
-        console.warn("Download error:", e);
-        // CRITICAL: NEVER navigate to 404 or trigger corrupt .json download!
-        if (e.message && (e.message.startsWith("FILE_NOT_FOUND") || e.message === "SERVER_ERROR_JSON")) {
-            showToast(`⚠️ معذرت! یہ فائل کلاؤڈ پر دستیاب نہیں ہے`);
-            showPaperUnavailableModal(p);
-        } else {
-            // Only if it's an existing static file path, try anchor as fallback
-            if (rawUrl.startsWith("/past_papers/")) {
-                const a = document.createElement("a");
-                a.href = fileUrl;
-                a.download = p.filename;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                showToast(`ڈاؤن لوڈ شروع ہوا: ${p.clean_title}`);
-            } else {
-                showPaperUnavailableModal(p);
-            }
-        }
-    }
+    showToast(`✓ ڈاؤن لوڈ شروع ہو گیا: ${p.clean_title}`);
 }
 
 // Modal for unavailable papers with 1-click WhatsApp Admin request
@@ -1123,7 +1055,10 @@ function showPdfFallbackCard(p) {
     if (iframe) iframe.style.display = "none";
     if (loading) loading.style.display = "none";
 
-    const dlUrl = p.download_url || "";
+    let dlUrl = p.download_url || `/api/pastpapers/file?id=${encodeURIComponent(p.id)}&download=1`;
+    if (dlUrl.startsWith("/")) {
+        dlUrl = `${API_BASE}${dlUrl}`;
+    }
     const isDirectHttp = dlUrl.startsWith("http://") || dlUrl.startsWith("https://");
 
     if (fallback) {
@@ -1139,14 +1074,14 @@ function showPdfFallbackCard(p) {
                 </div>
 
                 <div class="pdf-fallback-btns">
-                    <button type="button" class="pdf-modal-btn btn-modal-download" onclick="downloadSinglePastPaper('${p.id}')">
+                    <a href="${dlUrl}" download="${escapeHtml(p.filename || p.clean_title + '.pdf')}" class="pdf-modal-btn btn-modal-download" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:8px;">
                         <span>⬇️ ڈیوائس میں محفوظ کریں (${p.size_formatted})</span>
-                    </button>
+                    </a>
                     <button type="button" class="pdf-modal-btn btn-modal-share" onclick="shareSinglePastPaper('${p.id}')">
                         <span>📲 واٹس ایپ پر فائل بھیجیں</span>
                     </button>
                     ${isDirectHttp ? `
-                    <a href="${dlUrl}" target="_blank" rel="noopener noreferrer" class="pdf-modal-btn" style="text-decoration:none; background:#2563eb; color:white; display:flex; align-items:center; justify-content:center; gap:6px;">
+                    <a href="${dlUrl}" target="_blank" rel="noopener noreferrer" class="pdf-modal-btn" style="text-decoration:none; background:#2563eb; color:white; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
                         <span>🌐 براؤزر میں کھولیں</span>
                     </a>` : ''}
                 </div>

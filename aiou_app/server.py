@@ -1,8 +1,9 @@
 import os
+import urllib.parse
 from typing import Dict, List, Any, Optional
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -325,27 +326,59 @@ def list_past_papers_api(
 def get_past_paper_file_api(
     path: Optional[str] = Query(None),
     file_path: Optional[str] = Query(None),
+    id: Optional[str] = Query(None),
+    paper_id: Optional[str] = Query(None),
     download: int = Query(0)
 ):
-    """Streams or downloads past paper PDF or DOCX file."""
-    target = path or file_path or ""
+    """Streams or downloads past paper PDF or DOCX file with cloud CDN fallback."""
+    target = path or file_path or id or paper_id or ""
+    
+    # 1. Check local physical file (works on local PC development server)
     fpath = get_paper_file_path(target)
-    if not fpath or not fpath.exists():
-        raise HTTPException(status_code=404, detail="فائل دستیاب نہیں ہے یا پاتھ درست نہیں ہے۔")
+    if fpath and fpath.exists() and fpath.is_file():
+        filename = fpath.name
+        media_type = "application/pdf" if filename.lower().endswith(".pdf") else "application/octet-stream"
+        disposition = "attachment" if download == 1 else "inline"
+        safe_ascii = filename.encode("ascii", "ignore").decode("ascii").strip() or "aiou_paper.pdf"
+        quoted_name = urllib.parse.quote(filename)
+        content_disposition = f"{disposition}; filename=\"{safe_ascii}\"; filename*=UTF-8''{quoted_name}"
+        return FileResponse(
+            str(fpath),
+            media_type=media_type,
+            headers={
+                "Content-Disposition": content_disposition,
+                "Accept-Ranges": "bytes"
+            }
+        )
 
-    filename = fpath.name
-    media_type = "application/pdf" if filename.lower().endswith(".pdf") else "application/octet-stream"
-    disposition = "attachment" if download == 1 else "inline"
+    # 2. On Cloud (Vercel), resolve to permanent high-speed CDN URL from catalog
+    clean_target = urllib.parse.unquote(target).replace("\\", "/").lstrip("/")
+    catalog = get_past_papers_catalog()
+    matched_paper = None
+    
+    for p in catalog.get("papers", []):
+        if target and (p.get("id") == target or p.get("id") == clean_target):
+            matched_paper = p
+            break
+        rel_p = p.get("rel_path", "").replace("\\", "/").lstrip("/")
+        fname = p.get("filename", "")
+        if clean_target and (
+            rel_p.lower() == clean_target.lower() or
+            fname.lower() == clean_target.lower() or
+            clean_target.lower().endswith(fname.lower()) or
+            fname.lower().endswith(clean_target.lower())
+        ):
+            matched_paper = p
+            break
 
-    return FileResponse(
-        str(fpath),
-        media_type=media_type,
-        filename=filename,
-        headers={
-            "Content-Disposition": f"{disposition}; filename=\"{filename}\"",
-            "Accept-Ranges": "bytes"
-        }
-    )
+    if matched_paper:
+        dl_url = matched_paper.get("download_url") or matched_paper.get("view_url") or ""
+        if dl_url.startswith("http://") or dl_url.startswith("https://"):
+            return RedirectResponse(url=dl_url, status_code=302)
+        elif dl_url.startswith("/"):
+            return RedirectResponse(url=dl_url, status_code=302)
+
+    raise HTTPException(status_code=404, detail="فائل دستیاب نہیں ہے یا پاتھ درست نہیں ہے۔")
 
 @app.post("/api/pastpapers/batch-zip")
 @app.post("/pastpapers/batch-zip")
