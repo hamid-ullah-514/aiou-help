@@ -2920,15 +2920,16 @@
       "category_key": "key_book",
       "category_ur": "کی بک و اہم نوٹس",
       "category_icon": "📚",
-      "size_mb": 24.36,
-      "size_formatted": "24.36 MB",
+      "size_mb": 13.56,
+      "size_formatted": "13.6 MB",
       "file_type": "pdf",
       "rel_path": "2nd semester/1901  مقاصد شریعہ Keybook Semester 4.pdf",
       "is_static": false,
       "view_url": "https://github.com/hamid-ullah-514/aiou-help/releases/download/v1.0-papers/1901_Maqasid_Shariah_Keybook_Semester_4.pdf",
       "download_url": "https://github.com/hamid-ullah-514/aiou-help/releases/download/v1.0-papers/1901_Maqasid_Shariah_Keybook_Semester_4.pdf",
       "cloud_source": "github_release",
-      "is_available": true
+      "is_available": true,
+      "size_bytes": 14213918
     },
     {
       "id": "pp_2_1901_0132",

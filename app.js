@@ -1069,11 +1069,14 @@ function showPdfFallbackCard(p) {
                 <p class="pdf-fallback-meta">${escapeHtml(p.course_code)} - ${escapeHtml(p.course_title_ur)} (سمسٹر ${p.semester_num})</p>
                 
                 <div class="pdf-fallback-tip-box">
-                    <strong>💡 اس فائل / کی بک کا سائز ${p.size_formatted} ہے:</strong><br>
-                    تیز رفتار ڈاؤن لوڈنگ کے لیے نیچے دیے گئے بٹن سے براہِ راست اپنی ڈیوائس (Downloads) میں محفوظ کریں یا واٹس ایپ پر شیئر کریں۔
+                    <strong>💡 کتاب / پرچہ کے اختیارات:</strong><br>
+                    اگر آپ فائل اپنے فون یا کمپیوٹر میں محفوظ کرنا چاہتے ہیں تو نیچے دیے گئے بٹن سے براہِ راست ڈاؤن لوڈ کریں یا واٹس ایپ پر شیئر کریں۔
                 </div>
 
                 <div class="pdf-fallback-btns">
+                    <button type="button" class="pdf-modal-btn" onclick="togglePdfViewerMode()" style="background:#0f766e; color:white; display:inline-flex; align-items:center; justify-content:center; gap:8px;">
+                        <span>🖼️ کینوس موڈ میں صفحات دیکھیں</span>
+                    </button>
                     <a href="${dlUrl}" download="${escapeHtml(p.filename || p.clean_title + '.pdf')}" class="pdf-modal-btn btn-modal-download" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:8px;">
                         <span>⬇️ ڈیوائس میں محفوظ کریں (${p.size_formatted})</span>
                     </a>
@@ -1127,10 +1130,15 @@ async function renderActivePdfInViewer(p) {
         }
         if (iframe) {
             iframe.style.display = "block";
+            let gdocsTimer = setTimeout(() => {
+                if (loading) loading.style.display = "none";
+            }, 4000);
             iframe.onload = () => {
+                clearTimeout(gdocsTimer);
                 if (loading) loading.style.display = "none";
             };
             iframe.onerror = () => {
+                clearTimeout(gdocsTimer);
                 console.warn("Google Docs viewer error, switching to canvas mode...");
                 currentPdfViewerMode = "canvas";
                 renderActivePdfInViewer(p);
@@ -1248,21 +1256,7 @@ async function openPdfViewerModal(paperId) {
         console.warn("History pushState failed:", e);
     }
 
-    // 1. Files >= 20 MB (large keybooks) cannot be rendered reliably by Google Docs Viewer or PDF.js
-    // Show direct device download / WhatsApp card immediately
-    if (p.size_mb && p.size_mb >= 20.0) {
-        showPdfFallbackCard(p);
-        return;
-    }
-
-    // 2. If file is neither static nor hosted on cloud CDN, show request card
-    const isDirectCloud = p.view_url && (p.view_url.startsWith("http://") || p.view_url.startsWith("https://"));
-    if (!p.is_static && !isDirectCloud) {
-        showPdfFallbackCard(p);
-        return;
-    }
-
-    // 3. Default to Google Docs HD viewer: preserves 100% authentic Urdu Nastaliq fonts and connected text
+    // Always open viewer directly without blocking on file size
     currentPdfViewerMode = "google";
     renderActivePdfInViewer(p);
 }
